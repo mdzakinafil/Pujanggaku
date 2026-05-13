@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pujanggaku - Arsip Mantra & Sajak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --leather-red: linear-gradient(135deg, #7b2c2c, #4a1515);
+            --leather-gold: linear-gradient(135deg, #c5a059, #8b6d1b);
+            --paper-old: #e8dcc4;
+            --desk: #1a120b;
+        }
+
+        body {
+            background-color: var(--desk);
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            font-family: 'Playfair Display', serif;
+            color: #333;
+            min-height: 100vh;
+            overflow: hidden; /* Mencegah scroll agar terasa seperti game */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .font-magic { font-family: 'Cinzel', serif; }
+
+        /* Efek Sinar Matahari dari Jendela */
+        .light-ray {
+            position: absolute;
+            top: -10%; left: -10%;
+            width: 150vw; height: 150vh;
+            background: linear-gradient(135deg, rgba(255,245,200,0.15) 0%, rgba(255,245,200,0) 40%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Desain Buku di Menu (Mirip Referensi Panel Tengah) */
+        .book-cover {
+            width: 220px; height: 320px;
+            border-radius: 5px 15px 15px 5px;
+            box-shadow: 
+                inset 4px 0 10px rgba(0,0,0,0.5),
+                10px 15px 25px rgba(0,0,0,0.6);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            border-left: 8px solid rgba(0,0,0,0.3);
+        }
+        
+        .book-cover:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 15px 25px 30px rgba(0,0,0,0.7);
+        }
+
+        .book-red { background: var(--leather-red); border: 2px solid #a34848; color: #f4e4bc; }
+        .book-gold { background: var(--leather-gold); border: 2px solid #e2c78d; color: #3e2723; }
+        .book-faded { 
+            background: transparent; 
+            border: 2px dashed rgba(197, 160, 89, 0.5); 
+            color: rgba(197, 160, 89, 0.7);
+            box-shadow: none;
+        }
+        .book-faded:hover { background: rgba(197, 160, 89, 0.05); }
+
+        /* Segel Lilin (Wax Seal) */
+        .wax-seal {
+            width: 50px; height: 50px;
+            background: #8b0000;
+            border-radius: 50%;
+            border: 3px solid #5a0000;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 10px rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: bold; font-family: 'Cinzel';
+            color: rgba(255,255,255,0.7);
+            position: absolute;
+            right: -20px; top: 40%;
+        }
+
+        /* Pita Buku */
+        .ribbon {
+            position: absolute;
+            top: 40%; left: 0; width: 100%; height: 30px;
+            background: #fff;
+            opacity: 0.8;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* Buku Terbuka (Mirip Referensi Panel Atas) */
+        .open-book-container {
+            display: flex;
+            width: 900px;
+            height: 550px;
+            background: var(--paper-old);
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            border-radius: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 50px rgba(139, 100, 71, 0.3);
+            position: relative;
+            z-index: 20;
+        }
+
+        .book-spine {
+            width: 40px;
+            background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+            box-shadow: inset 5px 0 10px rgba(0,0,0,0.1), inset -5px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .page {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .page-left { border-right: 1px solid rgba(0,0,0,0.1); }
+        .page-right { border-left: 1px solid rgba(255,255,255,0.5); }
+
+        /* Polaroid / Photo Card */
+        .photo-card {
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 2px 5px 15px rgba(0,0,0,0.2);
+            transform: rotate(-3deg);
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .photo-card:hover { transform: rotate(0deg) scale(1.05); z-index: 30; }
+
+        /* Animasi */
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .hidden { display: none !important; }
+
+        /* Tombol Pilihan Diksi */
+        .btn-diksi {
+            background: transparent;
+            border: 1px solid #8b6d1b;
+            color: #4a3728;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-diksi:hover {
+            background: #8b6d1b;
+            color: white;
+            box-shadow: 0 4px 10px rgba(139, 109, 27, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Effects -->
+    <audio id="sfx-hover" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio> <!-- Paper rustle -->
+    <audio id="sfx-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio> <!-- Page turn -->
+    <audio id="sfx-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio> <!-- Magic chime -->
+    <audio id="sfx-wrong" src="https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3"></audio> <!-- Low thud -->
+
+    <div class="light-ray"></div>
+
+    <!-- MAIN MENU UI -->
+    <div id="ui-menu" class="flex gap-10 fade-in z-20">
+        
+        <!-- Buku 1: Tutorial -->
+        <div class="book-cover book-gold" onmouseenter="playSfx('hover')" onclick="openBook('tutorial')">
+            <h3 class="font-magic text-xl mb-2">Panduan</h3>
+            <div class="h-[1px] w-1/2 bg-current opacity-50 mb-4"></div>
+            <p class="text-xs italic opacity-80">Pelajari seni<br>merangkai kata</p>
+            <div class="mt-auto text-[10px] uppercase tracking-widest font-bold">Pujangga Pemula</div>
+        </div>
+
+        <!-- Buku 2: Mulai Level 1 -->
+        <div class="book-cover book-red" onmouseenter="playSfx('hover')" onclick="openBook('game', 1)">
+            <div class="ribbon"></div>
+            <h3 class="font-magic text-2xl mb-2 z-10">Tahun Pertama</h3>
+            <div class="h-[1px] w-1/2 bg-white opacity-50 mb-4 z-10"></div>
+            <p class="text-xs italic opacity-80 z-10">Sajak Klasik &<br>Kenangan</p>
+            <div class="mt-auto text-[10px] uppercase tracking-widest font-bold z-10">Mulai Perjalanan</div>
+            <div class="wax-seal">P</div>
+        </div>
+
+        <!-- Buku 3: Lanjutkan Level -->
+        <div class="book-cover book-faded" onmouseenter="playSfx('hover')" onclick="checkProgress()">
+            <svg class="w-12 h-12 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            <h3 class="font-magic text-lg mb-2">Tahun Kedua</h3>
+            <p class="text-xs italic opacity-60">Selesaikan Tahun Pertama<br>untuk membuka</p>
+        </div>
+    </div>
+
+
+    <!-- OPEN BOOK UI (Tutorial & Game) -->
+    <div id="ui-book" class="hidden fade-in">
+        
+        <!-- Tombol Kembali ke Menu -->
+        <button onclick="backToMenu()" class="absolute -top-12 left-0 text-[#c5a059] font-magic tracking-widest hover:text-white transition flex items-center gap-2">
+            <span>&laquo;</span> Kembali ke Meja
+        </button>
+
+        <div class="open-book-container">
+            
+            <!-- HALAMAN KIRI (Informasi / Foto / Status) -->
+            <div class="page page-left justify-between">
+                <div>
+                    <h2 id="left-title" class="font-magic text-2xl text-[#5a3a22] font-bold mb-4 border-b border-[#5a3a22]/20 pb-2">Catatan</h2>
+                    
+                    <!-- Area Polaroid (Muncul saat Game) -->
+                    <div id="photo-area" class="hidden">
+                        <div class="photo-card">
+                            <div class="w-full h-32 bg-stone-200 mb-2 overflow-hidden flex items-center justify-center">
+                                <span class="text-4xl">🖋️</span>
+                            </div>
+                            <p id="poet-name" class="font-magic text-center text-xs font-bold text-stone-800 uppercase"></p>
+                        </div>
+                    </div>
+
+                    <!-- Area Tutorial (Muncul saat Tutorial) -->
+                    <div id="tutorial-text" class="hidden text-sm italic text-stone-700 space-y-4 leading-relaxed">
+                        <p>Selamat datang di Arsip Sajak. Di sini, tinta masa lalu menunggumu untuk disempurnakan.</p>
+                        <p>1. Bacalah penggalan sajak di halaman kanan.</p>
+                        <p>2. Ada satu <strong>diksi (kata)</strong> yang terhapus oleh waktu.</p>
+                        <p>3. Pilih kata yang tepat untuk mengembalikan sihir sajak tersebut sebelum waktumu habis.</p>
+                    </div>
+                </div>
+
+                <div id="status-area" class="hidden flex justify-between text-xs font-magic font-bold text-[#8b6d1b]">
+                    <span>Level: <span id="level-label">1</span></span>
+                    <span>Skor: <span id="score-label">0</span></span>
+                </div>
+            </div>
+
+            <div class="book-spine"></div>
+
+            <!-- HALAMAN KANAN (Konten Utama / Permainan) -->
+            <div class="page page-right">
+                
+                <div class="flex justify-between items-center mb-6">
+                    <span class="font-magic text-xs text-stone-400">Lembar ke- <span id="page-num">1</span></span>
+                    <span id="timer-ui" class="hidden font-magic text-xs text-red-800 font-bold">Waktu: <span id="timer-val">30</span>s</span>
+                </div>
+
+                <!-- Area Pertanyaan -->
+                <div id="game-content" class="hidden flex-col h-full">
+                    <div class="flex-grow">
+                        <p id="poetry-text" class="text-xl leading-loose italic text-stone-800 mb-8 whitespace-pre-line text-center"></p>
+                        <div id="options-grid" class="grid grid-cols-1 gap-3">
+                            <!-- Tombol Diksi akan muncul di sini -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area Feedback / Hasil Jawaban -->
+                <div id="feedback-content" class="hidden flex-col h-full justify-center items-center text-center">
+                    <h3 id="feedback-title" class="font-magic text-3xl mb-4 text-[#5a3a22]">Tepat Sekali</h3>
+                    <p id="feedback-desc" class="text-sm italic text-stone-600 mb-8 leading-relaxed"></p>
+                    <button onclick="nextPoem()" class="btn-diksi px-8 w-full">Buka Lembar Selanjutnya</button>
+                </div>
+
+                <!-- Area Mulai Tutorial -->
+                <div id="tutorial-btn-area" class="hidden h-full flex items-center justify-center">
+                    <button onclick="openBook('game', 1)" class="btn-diksi px-8">Mulai Tahun Pertama</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database Sajak
+        const poetryQuest = [
+            { t: "Aku ingin mencintaimu dengan [sederhana]", p: "Sapardi Djoko Damono", k: "sederhana", o: ["sederhana", "sempurna", "setia"], e: "Kesederhanaan adalah puncak tertinggi cinta bagi Sapardi." },
+            { t: "Cintaku jauh di [pulau],\ngadis manis, sekarang iseng sendiri", p: "Chairil Anwar", k: "pulau", o: ["pulau", "rantau", "sepi"], e: "'Pulau' melambangkan jarak dan keterasingan emosional." },
+            { t: "Sebab [perpisahan]\nadalah cara mencintai yang paling sunyi", p: "Theoresia Rumthe", k: "perpisahan", o: ["pertemuan", "kerinduan", "perpisahan"], e: "Berpisah demi kebaikan adalah bentuk cinta dalam keheningan." },
+            { t: "Tak ada yang lebih [tabah]\ndari hujan bulan Juni", p: "Sapardi Djoko Damono", k: "tabah", o: ["tabah", "indah", "sabar"], e: "Hujan dipersonifikasikan mampu menahan diri demi kerinduan." }
+        ];
+
+        let score = 0;
+        let currentLevel = 1;
+        let poetryIndex = 0;
+        let timer;
+        let isLocked = true; // Kunci buku ke-3
+
+        // Fungsi Audio
+        function playSfx(type) {
+            const sound = document.getElementById(`sfx-${type}`);
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Audio autoplay dicegah browser."));
+            }
+        }
+
+        function checkProgress() {
+            playSfx('hover');
+            if(isLocked) {
+                alert("Segel masih tertutup. Selesaikan 'Tahun Pertama' terlebih dahulu.");
+            }
+        }
+
+        // Navigasi UI
+        function openBook(mode, level = 1) {
+            playSfx('click');
+            document.getElementById('ui-menu').classList.add('hidden');
+            document.getElementById('ui-book').classList.remove('hidden');
+
+            // Reset Area
+            document.getElementById('photo-area').classList.add('hidden');
+            document.getElementById('tutorial-text').classList.add('hidden');
+            document.getElementById('status-area').classList.add('hidden');
+            document.getElementById('timer-ui').classList.add('hidden');
+            document.getElementById('game-content').classList.add('hidden');
+            document.getElementById('feedback-content').classList.add('hidden');
+            document.getElementById('tutorial-btn-area').classList.add('hidden');
+
+            if (mode === 'tutorial') {
+                document.getElementById('left-title').innerText = "Panduan Utama";
+                document.getElementById('tutorial-text').classList.remove('hidden');
+                document.getElementById('tutorial-btn-area').classList.remove('hidden');
+                document.getElementById('page-num').innerText = "I";
+            } else if (mode === 'game') {
+                currentLevel = level;
+                poetryIndex = 0;
+                score = 0;
+                document.getElementById('left-title').innerText = "Sajak Terpilih";
+                document.getElementById('photo-area').classList.remove('hidden');
+                document.getElementById('status-area').classList.remove('hidden');
+                document.getElementById('timer-ui').classList.remove('hidden');
+                document.getElementById('game-content').classList.remove('hidden');
+                updateStatus();
+                loadPoem();
+            }
+        }
+
+        function backToMenu() {
+            playSfx('click');
+            clearInterval(timer);
+            document.getElementById('ui-book').classList.add('hidden');
+            document.getElementById('ui-menu').classList.remove('hidden');
+        }
+
+        // Gameplay Logic
+        function updateStatus() {
+            document.getElementById('level-label').innerText = currentLevel;
+            document.getElementById('score-label').innerText = score;
+            document.getElementById('page-num').innerText = poetryIndex + 1;
+        }
+
+        function loadPoem() {
+            if (poetryIndex >= poetryQuest.length) {
+                // Selesai Bab 1
+                isLocked = false;
+                document.getElementById('feedback-title').innerText = "Bab Selesai!";
+                document.getElementById('feedback-title').className = "font-magic text-3xl mb-4 text-[#c5a059]";
+                document.getElementById('feedback-desc').innerText = `Skor Akhirmu: ${score}. Kamu kini berhak membuka buku Tahun Kedua.`;
+                document.getElementById('game-content').classList.add('hidden');
+                document.getElementById('feedback-content').classList.remove('hidden');
+                document.querySelector('#feedback-content button').innerText = "Kembali ke Meja";
+                document.querySelector('#feedback-content button').onclick = backToMenu;
+                return;
+            }
+
+            const data = poetryQuest[poetryIndex];
+            
+            document.getElementById('poet-name').innerText = data.p;
+            document.getElementById('poetry-text').innerText = data.t.replace(`[${data.k}]`, "_______");
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            // Acak jawaban
+            let options = [...data.o].sort(() => Math.random() - 0.5);
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "btn-diksi";
+                btn.innerText = opt;
+                btn.onmouseenter = () => playSfx('hover');
+                btn.onclick = () => checkAnswer(opt, data);
+                grid.appendChild(btn);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            let timeLeft = 30;
+            document.getElementById('timer-val').innerText = timeLeft;
+            clearInterval(timer);
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer-val').innerText = timeLeft;
+                if(timeLeft <= 0) checkAnswer(null, poetryQuest[poetryIndex]);
+            }, 1000);
+        }
+
+        function checkAnswer(answer, data) {
+            clearInterval(timer);
+            const isCorrect = answer === data.k;
+            
+            if (isCorrect) {
+                playSfx('correct');
+                score += 100 + (parseInt(document.getElementById('timer-val').innerText) * 5);
+            } else {
+                playSfx('wrong');
+            }
+
+            updateStatus();
+
+            document.getElementById('game-content').classList.add('hidden');
+            document.getElementById('feedback-content').classList.remove('hidden');
+
+            const title = document.getElementById('feedback-title');
+            title.innerText = isCorrect ? "Sihir Tepat!" : "Tinta Pudar...";
+            title.className = `font-magic text-3xl mb-4 ${isCorrect ? 'text-green-700' : 'text-red-700'}`;
+            document.getElementById('feedback-desc').innerText = data.e;
+
+            // Reset button action for next poem
+            document.querySelector('#feedback-content button').innerText = "Buka Lembar Selanjutnya";
+            document.querySelector('#feedback-content button').onclick = nextPoem;
+        }
+
+        function nextPoem() {
+            playSfx('click');
+            poetryIndex++;
+            document.getElementById('feedback-content').classList.add('hidden');
+            document.getElementById('game-content').classList.remove('hidden');
+            loadPoem();
+        }
+    </script>
+</body>
+</html>
