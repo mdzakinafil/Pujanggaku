@@ -1,273 +1,1192 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pujanggaku - Hogwarts Archive</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --gold: #c5a059;
-            --paper: #e8dcc4;
-            --deep-red: #4a1515;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUJANGGAKU — Meja Penulis Nusantara</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   ROOT TOKENS
+───────────────────────────────────────── */
+:root{
+  --maroon:#6b1a1a; --maroon-d:#4a0f0f; --maroon-l:#8b2525;
+  --gold:#c9a84c;   --gold-l:#e8c96a;   --gold-d:#9a7a2e;
+  --teak:#1e0c04;   --teak-m:#3d1e0a;   --teak-l:#5c3218;
+  --parch:#f0e6c8;  --parch-d:#d4c49a;
+  --ink:#1a0a0a;    --amber:#d4882a;
+  --r:2px; /* border-radius base */
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;background:var(--teak);color:var(--parch);}
 
-        body {
-            background: #121212;
-            font-family: 'Playfair Display', serif;
-            height: 100vh;
-            overflow: hidden;
-            color: #333;
-        }
+/* ─────────────────────────────────────────
+   PERSISTENT LAYERS
+───────────────────────────────────────── */
+#layer-wood{
+  position:fixed;inset:0;z-index:0;
+  background:
+    repeating-linear-gradient(93deg,transparent 0,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px),
+    repeating-linear-gradient(87deg,transparent 0,transparent 9px,rgba(255,255,255,.012) 9px,rgba(255,255,255,.012) 11px),
+    linear-gradient(155deg,#0a0301 0%,#1e0c04 18%,#3d1e0a 35%,#2d1508 50%,#4a2510 62%,#3d1e0a 75%,#1e0c04 90%,#0a0301 100%);
+}
+#layer-grain{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.65;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.013 0.88' numOctaves='5' seed='9'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E");
+}
+#layer-light{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 80% at 90% 20%,rgba(212,136,42,.2) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 55% at 8% 90%,rgba(80,25,8,.5) 0%,transparent 55%),
+    linear-gradient(to right,rgba(0,0,0,.45) 0%,transparent 32%,rgba(0,0,0,.1) 100%);
+  animation:candleFlicker 8s ease-in-out infinite;
+}
+@keyframes candleFlicker{
+  0%,100%{opacity:1;}20%{opacity:.88;}45%{opacity:1;}70%{opacity:.93;}85%{opacity:1;}
+}
 
-        /* Latar Belakang Ruangan (Mirip Gambar) */
-        .ambient-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80');
-            background-size: cover; background-position: center;
-            z-index: -1;
-        }
+/* ─────────────────────────────────────────
+   SCREEN SYSTEM
+───────────────────────────────────────── */
+.screen{
+  position:fixed;inset:0;z-index:10;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .75s cubic-bezier(.4,0,.2,1),transform .75s cubic-bezier(.4,0,.2,1);
+}
+.screen.off{opacity:0;pointer-events:none;transform:translateY(14px);}
 
-        /* Cahaya Jendela Dramatis */
-        .window-light {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 10% 10%, rgba(255,245,200,0.15) 0%, transparent 60%);
-            pointer-events: none; z-index: 1;
-        }
+/* ─────────────────────────────────────────
+   SCREEN 1: PROLOG — CINEMATIC SCROLL
+───────────────────────────────────────── */
+#sc-prolog{z-index:50;align-items:flex-start;overflow:hidden;}
 
-        /* Overlay Story & Tutorial */
-        .overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 100; transition: 0.5s; padding: 20px;
-        }
+#prolog-scroll{
+  position:absolute;inset:0;overflow-y:scroll;
+  scroll-behavior:smooth;scrollbar-width:none;
+}
+#prolog-scroll::-webkit-scrollbar{display:none;}
 
-        /* UI Buku Terbuka (Mengacu ke 787e8366f281d4f30ee5d2dc47f2794f_2.jpg) */
-        .book-container {
-            width: 95%; max-width: 1000px; height: 600px;
-            background: var(--paper);
-            box-shadow: 0 0 100px rgba(0,0,0,1), inset 0 0 50px rgba(0,0,0,0.2);
-            border-radius: 4px; display: flex; position: relative;
-            border: 2px solid #333;
-        }
+/* Progress bar */
+#prolog-bar{
+  position:fixed;top:0;left:0;right:0;height:2px;z-index:65;
+  background:linear-gradient(to right,var(--gold-d),var(--gold));
+  transform-origin:left;transform:scaleX(0);
+  transition:transform .1s linear;
+}
 
-        .page-left, .page-right { flex: 1; padding: 50px; position: relative; overflow-y: auto; }
-        .spine { width: 40px; background: linear-gradient(to right, #d4c5a9, #b1a182, #d4c5a9); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+/* Each cinematic scene */
+.cscene{
+  position:relative;width:100%;min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  overflow:hidden;
+}
 
-        /* Tombol Navigasi Mewah */
-        .btn-nav {
-            font-family: 'Cinzel'; border: 1px solid var(--gold); color: var(--gold);
-            padding: 8px 20px; transition: 0.3s; font-size: 0.8rem; letter-spacing: 2px;
-        }
-        .btn-nav:hover { background: var(--gold); color: black; }
+/* Parallax layer */
+.para-bg{
+  position:absolute;inset:-8% -4%;width:108%;height:116%;
+  pointer-events:none;will-change:transform;
+}
 
-        /* Kartu Buku di Menu Utama */
-        .book-card {
-            width: 200px; height: 280px; background: var(--deep-red);
-            border-radius: 5px 15px 15px 5px; border-left: 8px solid rgba(0,0,0,0.3);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 20px 20px 40px rgba(0,0,0,0.6); transition: 0.4s; cursor: pointer;
-        }
-        .book-card:hover { transform: translateY(-20px) scale(1.05); }
-        .book-card.locked { filter: grayscale(1) opacity(0.5); cursor: not-allowed; }
+/* SVG illustration */
+.cscene-art{
+  position:absolute;pointer-events:none;
+}
 
-        .hidden { display: none !important; }
-        .text-gold { color: var(--gold); }
-    </style>
+/* Text block */
+.cscene-text{
+  position:relative;z-index:5;
+  text-align:center;padding:2rem 1.5rem 3.5rem;
+  max-width:660px;
+  display:flex;flex-direction:column;align-items:center;gap:1.3rem;
+}
+
+/* Reveal animations */
+.rv{opacity:0;transform:translateY(22px);transition:opacity 1.3s ease,transform 1.3s ease;}
+.rv.d1{transition-delay:.1s;}
+.rv.d2{transition-delay:.28s;}
+.rv.d3{transition-delay:.44s;}
+.rv.d4{transition-delay:.6s;}
+.cscene.seen .rv{opacity:1;transform:translateY(0);}
+
+.cap{font-family:'Cinzel',serif;font-size:clamp(.58rem,1.3vw,.72rem);letter-spacing:.45em;text-transform:uppercase;color:var(--gold-d);}
+.big{font-family:'Cinzel Decorative',cursive;font-size:clamp(1.6rem,5vw,3.4rem);color:var(--gold);line-height:1.1;text-shadow:0 0 60px rgba(201,168,76,.5),0 4px 18px rgba(0,0,0,.8);}
+.bod{font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(.9rem,2vw,1.2rem);color:rgba(240,230,200,.88);line-height:1.92;}
+.gold-line{font-family:'Cinzel',serif;font-style:normal;font-size:clamp(.78rem,1.6vw,.95rem);letter-spacing:.18em;color:rgba(201,168,76,.95);}
+.hdiv{width:110px;height:1px;background:linear-gradient(to right,transparent,var(--gold-d),transparent);}
+
+/* Fireflies */
+.ff{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:rgba(232,201,106,.75);filter:blur(1px);pointer-events:none;
+  animation:ffmove var(--d,7s) ease-in-out infinite var(--dl,0s);opacity:0;
+}
+@keyframes ffmove{
+  0%{opacity:0;transform:translate(0,0);}
+  12%{opacity:.9;}
+  50%{opacity:.5;transform:translate(var(--x1,30px),var(--y1,-45px));}
+  88%{opacity:.7;transform:translate(var(--x2,55px),var(--y2,-20px));}
+  100%{opacity:0;transform:translate(var(--x3,15px),var(--y3,-65px));}
+}
+
+/* Ink dust */
+.idot{
+  position:absolute;width:2px;height:2px;border-radius:50%;
+  background:rgba(201,168,76,.4);
+  animation:idrift var(--d,9s) ease-in-out infinite var(--dl,0s);
+}
+@keyframes idrift{
+  0%,100%{transform:translate(0,0) scale(1);opacity:.25;}
+  33%{transform:translate(10px,-20px) scale(1.5);opacity:.7;}
+  66%{transform:translate(-12px,-8px) scale(.7);opacity:.35;}
+}
+
+/* Scroll hint */
+#scroll-hint{
+  position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%);
+  z-index:60;display:flex;flex-direction:column;align-items:center;gap:.35rem;
+  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(201,168,76,.5);transition:opacity .5s;
+  animation:shint 2.8s ease-in-out infinite;
+}
+@keyframes shint{0%,100%{opacity:.4;transform:translateX(-50%) translateY(0);}50%{opacity:.85;transform:translateX(-50%) translateY(-5px);}}
+#scroll-hint.hidden-hint{opacity:0!important;}
+
+/* Enter button */
+#btn-enter{
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(.82rem,1.9vw,.98rem);letter-spacing:.18em;
+  padding:.88rem 2.6rem;
+  background:linear-gradient(135deg,var(--maroon-d),var(--maroon));
+  border:1px solid var(--gold-d);color:var(--gold-l);
+  cursor:pointer;position:relative;overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
+  opacity:0;transform:translateY(18px);
+  transition:opacity 1.1s ease .55s,transform 1.1s ease .55s,background .3s,box-shadow .3s;
+}
+#btn-enter::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,168,76,.18);pointer-events:none;}
+#btn-enter.show-btn{opacity:1;transform:translateY(0);}
+#btn-enter:hover{background:linear-gradient(135deg,var(--maroon),var(--maroon-l));box-shadow:0 8px 32px rgba(0,0,0,.65),0 0 22px rgba(201,168,76,.22);border-color:var(--gold);}
+
+/* Skip button */
+#btn-skip{
+  position:fixed;top:1.3rem;right:1.3rem;z-index:70;
+  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;
+  color:rgba(201,168,76,.42);background:transparent;
+  border:1px solid rgba(201,168,76,.16);padding:.38rem .95rem;cursor:pointer;
+  transition:all .3s;
+}
+#btn-skip:hover{color:var(--gold);border-color:var(--gold);}
+
+/* ─────────────────────────────────────────
+   SCREEN 2: MEJA KERJA (MAIN MENU)
+───────────────────────────────────────── */
+#sc-meja{flex-direction:column;padding:1.2rem 1rem;z-index:20;}
+
+.menu-logo{
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(2rem,6vw,3.8rem);
+  color:var(--gold);
+  text-shadow:0 0 55px rgba(201,168,76,.5),0 4px 14px rgba(0,0,0,.8);
+  letter-spacing:.1em;line-height:1;
+  animation:pglow 2.5s ease-in-out infinite;
+}
+@keyframes pglow{0%,100%{text-shadow:0 0 30px rgba(201,168,76,.35);}50%{text-shadow:0 0 55px rgba(201,168,76,.7),0 0 80px rgba(201,168,76,.25);}}
+.menu-sub{font-family:'Cinzel',serif;font-size:clamp(.58rem,1.3vw,.78rem);color:var(--gold-d);letter-spacing:.42em;text-transform:uppercase;margin-top:.4rem;}
+.divorn{display:flex;align-items:center;gap:1rem;color:var(--gold-d);font-size:1rem;margin:.55rem 0;}
+.divorn::before,.divorn::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold-d),transparent);}
+
+/* Journal grid */
+.jgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem;max-width:730px;width:100%;}
+@media(max-width:540px){.jgrid{grid-template-columns:1fr;gap:.7rem;}}
+
+.jcard{position:relative;cursor:pointer;transition:transform .3s ease;}
+.jcard:hover:not(.jlocked){transform:translateY(-5px) rotate(-.35deg);}
+.jcard.jlocked{cursor:not-allowed;opacity:.55;}
+
+.jinner{
+  background:linear-gradient(138deg,#8b2525 0%,#6b1a1a 42%,#4a0f0f 100%);
+  border:2px solid var(--gold-d);border-radius:var(--r);
+  padding:1.1rem 1rem 1rem;
+  box-shadow:4px 5px 0 rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.5),
+             inset 0 1px 0 rgba(255,255,255,.09),inset -3px 0 0 rgba(0,0,0,.2);
+  position:relative;overflow:hidden;min-height:130px;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.jinner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:11px;background:linear-gradient(to right,rgba(0,0,0,.3),transparent);border-right:1px solid rgba(201,168,76,.1);}
+.jinner::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 18px,rgba(255,255,255,.016) 18px,rgba(255,255,255,.016) 19px);pointer-events:none;}
+.jyr{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold-d);}
+.jtitle{font-family:'Cinzel Decorative',cursive;font-size:clamp(.86rem,1.85vw,1.08rem);color:var(--gold-l);text-shadow:0 1px 4px rgba(0,0,0,.5);margin:.25rem 0;}
+.jdesc{font-family:'IM Fell English',serif;font-size:.72rem;color:rgba(240,230,200,.62);font-style:italic;}
+.jmeta{display:flex;justify-content:space-between;align-items:center;margin-top:.65rem;padding-top:.42rem;border-top:1px solid rgba(201,168,76,.16);}
+.jcnt{font-family:'Cinzel',serif;font-size:.6rem;color:var(--gold-d);letter-spacing:.07em;}
+.pbar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-top:.32rem;}
+.pfill{height:100%;background:linear-gradient(to right,var(--gold-d),var(--gold-l));transition:width .5s ease;border-radius:2px;}
+.jlock-icon{position:absolute;top:.65rem;right:.65rem;font-size:.95rem;opacity:.65;}
+.jorn{position:absolute;bottom:.42rem;right:.7rem;font-size:1.35rem;opacity:.11;color:var(--gold-l);}
+
+/* Seal effect on locked */
+.jcard.jlocked .jinner::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,transparent 0,transparent 8px,rgba(0,0,0,.04) 8px,rgba(0,0,0,.04) 10px);
+  z-index:3;pointer-events:none;
+}
+
+/* Bottom menu buttons */
+.mbtm{display:flex;gap:.85rem;margin-top:1rem;justify-content:center;}
+.btn-c{
+  font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+  padding:.52rem 1.35rem;border:1px solid var(--gold-d);background:transparent;color:var(--gold);
+  cursor:pointer;transition:all .3s;position:relative;
+}
+.btn-c::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,168,76,.16);pointer-events:none;}
+.btn-c:hover{background:rgba(201,168,76,.1);border-color:var(--gold);box-shadow:0 0 14px rgba(201,168,76,.18);}
+
+/* ─────────────────────────────────────────
+   SCREEN 3: BUKU TERBUKA (GAME)
+───────────────────────────────────────── */
+#sc-game{flex-direction:column;padding:1rem;z-index:20;}
+
+.ghdr{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:800px;padding:.4rem 0;margin-bottom:.7rem;}
+.btn-back{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);background:transparent;border:1px solid rgba(201,168,76,.26);padding:.36rem .88rem;cursor:pointer;transition:all .3s;}
+.btn-back:hover{color:var(--gold);border-color:var(--gold);background:rgba(201,168,76,.07);}
+.ghud{display:flex;align-items:center;gap:1.35rem;}
+.huditem{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.1em;color:var(--gold);display:flex;align-items:center;gap:.35rem;}
+.tring{width:44px;height:44px;position:relative;flex-shrink:0;}
+.tring svg{transform:rotate(-90deg);}
+.tring circle{fill:none;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
+.tbg{stroke:rgba(201,168,76,.13);}
+.tfill{stroke:var(--gold);stroke-dasharray:113;stroke-dashoffset:0;}
+.tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold);font-weight:600;}
+
+/* Parchment card */
+.pcard{
+  background:linear-gradient(135deg,rgba(242,232,205,.97) 0%,rgba(234,220,180,.95) 50%,rgba(222,202,160,.97) 100%);
+  border:2px solid var(--gold-d);
+  box-shadow:0 0 0 1px rgba(201,168,76,.26),0 8px 32px rgba(0,0,0,.6),
+             0 2px 8px rgba(212,136,42,.16),inset 0 1px 0 rgba(255,255,255,.26),inset 0 -1px 0 rgba(0,0,0,.07);
+  position:relative;overflow:hidden;
+}
+.pcard::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 18% 18%,rgba(215,198,158,.38) 0%,transparent 50%),radial-gradient(ellipse at 82% 82%,rgba(180,155,100,.26) 0%,transparent 40%);pointer-events:none;}
+.oborder::after{content:'';position:absolute;inset:3px;border:1px solid rgba(201,168,76,.32);pointer-events:none;}
+.corn::before,.corn::after{content:'❧';position:absolute;color:var(--gold);font-size:1.05rem;opacity:.52;}
+.corn::before{top:7px;left:10px;transform:rotate(-45deg);}
+.corn::after{bottom:7px;right:10px;transform:rotate(135deg);}
+
+/* Open book effect */
+.book-card{
+  width:100%;max-width:800px;
+  display:flex;position:relative;
+}
+/* left page */
+.page-left{
+  flex:1;padding:1.6rem 1.4rem 1.6rem 1.8rem;
+  border-right:2px solid rgba(107,26,26,.18);
+  position:relative;
+}
+/* right page */
+.page-right{
+  flex:1;padding:1.6rem 1.8rem 1.6rem 1.4rem;
+}
+/* spine shadow */
+.book-card::after{
+  content:'';position:absolute;left:50%;top:0;bottom:0;width:6px;
+  transform:translateX(-50%);
+  background:linear-gradient(to right,rgba(0,0,0,.12),rgba(0,0,0,.04),rgba(0,0,0,.12));
+  pointer-events:none;z-index:2;
+}
+
+.badge{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.32em;text-transform:uppercase;color:var(--maroon);background:linear-gradient(135deg,var(--gold),var(--gold-d));padding:.2rem .65rem;display:inline-block;margin-bottom:.6rem;}
+.pno{font-family:'Cinzel',serif;font-size:.65rem;color:var(--maroon-l);letter-spacing:.2em;margin-bottom:.28rem;}
+.pauthor{font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);letter-spacing:.13em;margin-bottom:.85rem;padding-bottom:.6rem;border-bottom:1px solid rgba(107,26,26,.16);font-style:italic;}
+
+.puisi-txt{
+  font-family:'IM Fell English',serif;font-size:clamp(.95rem,2.4vw,1.32rem);
+  color:var(--ink);line-height:1.95;text-align:center;font-style:italic;
+  min-height:65px;display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:.26em;
+}
+.blank{
+  display:inline-block;border-bottom:2px solid var(--maroon);
+  min-width:72px;height:1.5rem;background:rgba(107,26,26,.07);
+  vertical-align:middle;margin:0 .16em;position:relative;
+}
+.blank::after{content:'?';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--maroon);font-size:.85rem;font-style:normal;font-family:'Cinzel',serif;}
+
+/* Decorative right page element */
+.page-deco{
+  display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;gap:.9rem;
+}
+.page-ornament{opacity:.18;color:var(--gold);}
+
+/* Options */
+.optgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-top:.95rem;width:100%;max-width:800px;}
+@media(max-width:480px){.optgrid{grid-template-columns:1fr;}}
+.optbtn{
+  font-family:'IM Fell English',serif;font-size:clamp(.86rem,1.85vw,1.04rem);font-style:italic;
+  color:var(--ink);background:linear-gradient(135deg,rgba(240,230,200,.97) 0%,rgba(220,200,155,.97) 100%);
+  border:1px solid var(--gold-d);padding:.8rem .9rem;cursor:pointer;
+  transition:all .22s ease;text-align:center;line-height:1.4;
+}
+.optbtn:hover:not(:disabled){background:linear-gradient(135deg,rgba(201,168,76,.24),rgba(201,168,76,.13));border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.17);color:var(--maroon-d);}
+.optbtn.correct{background:linear-gradient(135deg,rgba(34,100,50,.28),rgba(20,70,35,.38));border-color:#4a8c5a;color:#1a4a2a;font-weight:700;}
+.optbtn.wrong{background:linear-gradient(135deg,rgba(107,26,26,.28),rgba(74,15,15,.38));border-color:var(--maroon);color:var(--maroon-d);text-decoration:line-through;}
+.optbtn:disabled{cursor:not-allowed;}
+
+#feedback{height:1.4rem;margin-top:.42rem;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.14em;text-align:center;}
+
+/* Feedback popup overlay */
+.feedback-popup{
+  position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.fp-inner{
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(1.2rem,4vw,2.2rem);
+  padding:1rem 2.5rem;
+  border:1px solid var(--gold-d);
+  backdrop-filter:blur(4px);
+  animation:fpAnim .8s ease forwards;
+  pointer-events:none;
+}
+.fp-benar{background:rgba(20,60,30,.85);color:var(--gold-l);border-color:#4a8c5a;text-shadow:0 0 20px rgba(201,168,76,.5);}
+.fp-salah{background:rgba(50,10,10,.85);color:var(--maroon-l);border-color:var(--maroon);}
+@keyframes fpAnim{0%{opacity:0;transform:scale(.8);}30%{opacity:1;transform:scale(1.05);}60%{transform:scale(1);}100%{opacity:0;transform:translateY(-30px) scale(.9);}}
+
+/* ─────────────────────────────────────────
+   SCREEN 4: HASIL (RESULT)
+───────────────────────────────────────── */
+#sc-result{flex-direction:column;z-index:20;}
+.rcard{padding:2.2rem 2.8rem;text-align:center;max-width:480px;width:90%;}
+.rsring{width:110px;height:110px;border-radius:50%;border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:1rem auto;background:rgba(107,26,26,.1);box-shadow:0 0 30px rgba(201,168,76,.18);}
+.rsnum{font-family:'Cinzel Decorative',cursive;font-size:2rem;color:var(--gold);line-height:1;}
+.rslbl{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.2em;color:var(--maroon);text-transform:uppercase;}
+.rtitle{font-family:'Cinzel Decorative',cursive;font-size:1.45rem;color:var(--maroon);margin:.65rem 0 .25rem;}
+.rdesc{font-family:'IM Fell English',serif;font-size:.9rem;color:var(--maroon-l);font-style:italic;margin-bottom:1.3rem;}
+.rstars{font-size:1.65rem;letter-spacing:.26rem;margin:.4rem 0;}
+.unlockbanner{display:flex;align-items:center;gap:.42rem;font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.13em;color:var(--gold);background:rgba(107,26,26,.45);border:1px solid rgba(201,168,76,.26);padding:.36rem .88rem;margin-top:.42rem;}
+
+/* ─────────────────────────────────────────
+   SCREEN 5: TUTORIAL / KREATOR
+───────────────────────────────────────── */
+#sc-tutorial,#sc-kreator{flex-direction:column;padding:1.4rem;z-index:20;}
+.tcard{padding:1.75rem 2.1rem;max-width:590px;width:100%;}
+
+/* ─────────────────────────────────────────
+   NOTIFICATION TOAST
+───────────────────────────────────────── */
+#toast{
+  position:fixed;top:1.3rem;left:50%;transform:translateX(-50%);z-index:999;
+  font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:.52rem 1.35rem;background:linear-gradient(135deg,var(--maroon-d),var(--maroon));
+  border:1px solid var(--gold-d);color:var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.5);
+  opacity:0;transition:opacity .35s;pointer-events:none;white-space:nowrap;
+}
+#toast.on{opacity:1;}
+
+/* ─────────────────────────────────────────
+   PARTICLES & COMBOS
+───────────────────────────────────────── */
+.spark{position:fixed;pointer-events:none;z-index:300;font-size:1rem;animation:sparkfall 1.5s ease-out forwards;}
+@keyframes sparkfall{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-80px) scale(.3);}}
+.combo{position:fixed;z-index:300;font-family:'Cinzel Decorative',cursive;font-size:1.4rem;color:var(--gold);text-shadow:0 0 20px rgba(201,168,76,.8);animation:combofloat 1.2s ease-out forwards;pointer-events:none;}
+@keyframes combofloat{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}50%{transform:translateX(-50%) translateY(-30px) scale(1.3);}100%{opacity:0;transform:translateX(-50%) translateY(-60px) scale(.8);}}
+
+/* ─────────────────────────────────────────
+   UTILITY
+───────────────────────────────────────── */
+.fadein{animation:fdin .6s ease forwards;}
+@keyframes fdin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.hidden{display:none!important;}
+</style>
 </head>
 <body>
 
-    <div class="ambient-bg"></div>
-    <div class="window-light"></div>
+<!-- Persistent atmosphere layers -->
+<div id="layer-wood"></div>
+<div id="layer-grain"></div>
+<div id="layer-light"></div>
+<div id="toast"></div>
+<div id="prolog-bar"></div>
 
-    <!-- STORY OPENING -->
-    <div id="story-overlay" class="overlay text-center">
-        <div class="max-w-2xl">
-            <h2 class="font-magic text-gold text-3xl mb-8 tracking-widest">DI SEBUAH MALAM DI HOGWARTS...</h2>
-            <p class="text-stone-300 italic text-lg leading-loose mb-12">
-                "Debu menyelimuti rak-rak tua di sudut perpustakaan terlarang. Di sana, tersimpan empat jurnal kuno milik para penyair besar yang mantranya telah pudar. Hanya mereka yang memiliki jiwa puitis sejati yang bisa mengisi kembali tinta yang hilang dan membuka segel kutukan ini..."
-            </p>
-            <button onclick="showTutorial()" class="btn-nav">MASUKI ARSIP</button>
-        </div>
+<!-- ═══════════════════════════════════════════════
+     SCREEN 1 — PROLOG (Cinematic Scroll)
+═══════════════════════════════════════════════ -->
+<div class="screen" id="sc-prolog">
+  <div id="prolog-scroll">
+
+    <!-- SCENE A: Judul Besar -->
+    <section class="cscene" id="csa">
+      <div class="para-bg" id="csa-bg"
+        style="background:radial-gradient(ellipse 80% 70% at 50% 55%,#150606 0%,#000 100%);">
+      </div>
+      <!-- Star field -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" id="stars-svg"></svg>
+      <!-- Keris + lotus SVG -->
+      <svg class="cscene-art" style="width:min(300px,65vw);top:48%;left:50%;transform:translate(-50%,-54%);" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+        <!-- glow ring -->
+        <circle cx="150" cy="130" r="108" stroke="rgba(201,168,76,.14)" stroke-width="1" fill="none"/>
+        <circle cx="150" cy="130" r="98" stroke="rgba(201,168,76,.08)" stroke-width=".5" fill="none"/>
+        <!-- lotus petals -->
+        <g opacity=".38">
+          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.35)" transform="rotate(0 150 130)"/>
+          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.28)" transform="rotate(45 150 130)"/>
+          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.35)" transform="rotate(90 150 130)"/>
+          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.28)" transform="rotate(135 150 130)"/>
+          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.35)" transform="rotate(180 150 130)"/>
+          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.28)" transform="rotate(225 150 130)"/>
+          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.35)" transform="rotate(270 150 130)"/>
+          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.28)" transform="rotate(315 150 130)"/>
+        </g>
+        <!-- keris blade -->
+        <path d="M150 32 L145 55 Q148 68 143 82 Q138 96 145 108 Q152 120 145 132 Q138 144 146 158 Q154 172 148 192 L150 228 L152 192 Q146 172 154 158 Q162 144 155 132 Q148 120 155 108 Q162 96 157 82 Q152 68 155 55 Z" fill="rgba(201,168,76,.2)" stroke="rgba(201,168,76,.48)" stroke-width=".8"/>
+        <!-- hilt -->
+        <ellipse cx="150" cy="224" rx="17" ry="5.5" fill="rgba(201,168,76,.32)" stroke="rgba(201,168,76,.55)" stroke-width="1"/>
+        <ellipse cx="150" cy="224" rx="9" ry="3" fill="rgba(201,168,76,.5)"/>
+        <!-- center -->
+        <circle cx="150" cy="130" r="4" fill="rgba(201,168,76,.55)"/>
+        <circle cx="150" cy="130" r="2" fill="rgba(232,201,106,.9)"/>
+      </svg>
+      <!-- Fireflies -->
+      <div id="ffa"></div>
+      <!-- Ink dots -->
+      <div id="ida"></div>
+      <div class="cscene-text" style="padding-top:64vh;">
+        <div class="rv cap d1">Sebuah Perjalanan Sastra</div>
+        <div class="rv big d2" style="font-size:clamp(2.4rem,7.5vw,5rem);">PUJANGGAKU</div>
+        <div class="rv hdiv d3"></div>
+        <div class="rv gold-line d4" style="font-size:clamp(.8rem,1.7vw,1rem);">Mencari Tinta Nusantara yang Hilang</div>
+      </div>
+    </section>
+
+    <!-- SCENE B: Hutan Bambu -->
+    <section class="cscene" id="csb">
+      <div class="para-bg" id="csb-bg"
+        style="background:linear-gradient(168deg,#060310 0%,#0c0508 45%,#140a03 80%,#080502 100%);">
+      </div>
+      <div id="ffb"></div>
+      <!-- Bamboo + moon SVG -->
+      <svg class="cscene-art" style="bottom:0;left:0;width:100%;height:62%;" viewBox="0 0 900 380" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="gfx"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <!-- moon -->
+        <circle cx="450" cy="75" r="50" fill="rgba(240,225,185,.055)"/>
+        <circle cx="450" cy="75" r="42" fill="rgba(240,225,185,.04)"/>
+        <!-- bamboo L -->
+        <g opacity=".9">
+          <rect x="18" y="0" width="10" height="380" rx="4" fill="#060d04"/>
+          <rect x="34" y="45" width="8" height="335" rx="3" fill="#080f05"/>
+          <rect x="52" y="0" width="11" height="380" rx="4" fill="#060c04"/>
+          <rect x="70" y="65" width="9" height="315" rx="3" fill="#070e05"/>
+          <rect x="88" y="0" width="12" height="380" rx="5" fill="#050b03"/>
+          <rect x="107" y="38" width="8" height="342" rx="3" fill="#070d04"/>
+          <rect x="122" y="0" width="10" height="380" rx="4" fill="#060c04"/>
+          <!-- nodes -->
+          <rect x="18" y="88" width="10" height="3" rx="1" fill="#0d1808"/>
+          <rect x="18" y="188" width="10" height="3" rx="1" fill="#0d1808"/>
+          <rect x="52" y="105" width="11" height="3" rx="1" fill="#0d1808"/>
+          <rect x="52" y="225" width="11" height="3" rx="1" fill="#0d1808"/>
+          <rect x="88" y="78" width="12" height="3" rx="1" fill="#0d1808"/>
+          <rect x="88" y="198" width="12" height="3" rx="1" fill="#0d1808"/>
+          <!-- leaves -->
+          <path d="M34 95 Q8 75 0 52" stroke="#0a1806" stroke-width="3" fill="none"/>
+          <path d="M52 108 Q26 88 14 62" stroke="#0a1806" stroke-width="2.5" fill="none"/>
+          <path d="M88 88 Q62 66 50 44" stroke="#0a1806" stroke-width="3" fill="none"/>
+          <path d="M122 72 Q98 52 86 28" stroke="#0a1806" stroke-width="2.5" fill="none"/>
+        </g>
+        <!-- bamboo R -->
+        <g opacity=".9">
+          <rect x="762" y="0" width="10" height="380" rx="4" fill="#060d04"/>
+          <rect x="778" y="48" width="11" height="332" rx="4" fill="#080f05"/>
+          <rect x="795" y="0" width="9" height="380" rx="3" fill="#060c04"/>
+          <rect x="812" y="22" width="12" height="358" rx="5" fill="#050b03"/>
+          <rect x="830" y="55" width="9" height="325" rx="4" fill="#070d04"/>
+          <rect x="846" y="0" width="10" height="380" rx="4" fill="#060c04"/>
+          <rect x="862" y="32" width="8" height="348" rx="3" fill="#080f05"/>
+          <rect x="876" y="0" width="13" height="380" rx="5" fill="#050b03"/>
+          <!-- nodes -->
+          <rect x="778" y="115" width="11" height="3" rx="1" fill="#0d1808"/>
+          <rect x="812" y="88" width="12" height="3" rx="1" fill="#0d1808"/>
+          <rect x="846" y="95" width="9" height="3" rx="1" fill="#0d1808"/>
+          <!-- leaves -->
+          <path d="M876 82 Q902 60 912 38" stroke="#0a1806" stroke-width="3" fill="none"/>
+          <path d="M846 90 Q874 70 888 46" stroke="#0a1806" stroke-width="2.5" fill="none"/>
+          <path d="M812 98 Q838 76 852 54" stroke="#0a1806" stroke-width="2.5" fill="none"/>
+        </g>
+        <!-- fireflies -->
+        <circle cx="220" cy="195" r="2.2" fill="rgba(232,201,106,.7)" filter="url(#gfx)"/>
+        <circle cx="360" cy="265" r="1.8" fill="rgba(232,201,106,.55)" filter="url(#gfx)"/>
+        <circle cx="610" cy="210" r="2.2" fill="rgba(232,201,106,.65)" filter="url(#gfx)"/>
+        <circle cx="700" cy="298" r="1.8" fill="rgba(232,201,106,.5)" filter="url(#gfx)"/>
+        <!-- ground mist -->
+        <ellipse cx="450" cy="380" rx="490" ry="60" fill="rgba(4,8,3,.9)"/>
+        <!-- dashed path -->
+        <path d="M395 380 Q408 330 425 285 Q438 250 448 218" stroke="rgba(201,168,76,.1)" stroke-width="1.5" fill="none" stroke-dasharray="5 7"/>
+        <!-- birds -->
+        <path d="M305 128 Q310 122 315 128" stroke="rgba(201,168,76,.28)" stroke-width="1.4" fill="none"/>
+        <path d="M326 116 Q332 110 338 116" stroke="rgba(201,168,76,.22)" stroke-width="1.4" fill="none"/>
+      </svg>
+      <div class="cscene-text">
+        <div class="rv cap d1">Di antara reruntuhan dan pakis</div>
+        <div class="rv big d2">Puri yang Terlupakan</div>
+        <div class="rv bod d3">Di antara reruntuhan puri tua yang ditumbuhi pakis dan lumut, tersimpan sebuah rahasia yang terlupakan oleh zaman...</div>
+      </div>
+    </section>
+
+    <!-- SCENE C: Gunung + Tinta -->
+    <section class="cscene" id="csc">
+      <div class="para-bg" id="csc-bg"
+        style="background:linear-gradient(148deg,#060408 0%,#0c0804 50%,#120a03 100%);">
+      </div>
+      <div id="ffc"></div>
+      <!-- Mountain SVG -->
+      <svg class="cscene-art" style="bottom:0;left:0;width:100%;height:58%;" viewBox="0 0 900 360" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+        <!-- stars -->
+        <circle cx="100" cy="55" r="1.1" fill="rgba(240,225,185,.4)"/>
+        <circle cx="255" cy="28" r=".9" fill="rgba(240,225,185,.3)"/>
+        <circle cx="455" cy="18" r="1.4" fill="rgba(240,225,185,.5)"/>
+        <circle cx="660" cy="38" r="1" fill="rgba(240,225,185,.38)"/>
+        <circle cx="790" cy="24" r="1.1" fill="rgba(240,225,185,.32)"/>
+        <!-- far silhouette -->
+        <path d="M0 265 L120 95 L240 190 L375 55 L498 175 L618 75 L740 175 L900 115 L900 360 L0 360Z" fill="#040706"/>
+        <!-- main mountain -->
+        <path d="M248 360 L428 55 L608 360Z" fill="#07090a"/>
+        <!-- snow glow -->
+        <path d="M410 75 L428 55 L448 78 Q432 98 410 75Z" fill="rgba(201,168,76,.14)"/>
+        <!-- ink trail from peak -->
+        <path d="M428 65 Q422 118 418 165 Q413 215 422 252 Q432 292 420 330 L438 330 Q428 292 438 252 Q448 215 440 165 Q430 118 434 65Z" fill="rgba(201,168,76,.07)"/>
+        <!-- ink drops -->
+        <ellipse cx="388" cy="138" rx="7" ry="4.5" fill="rgba(201,168,76,.18)" transform="rotate(-22 388 138)"/>
+        <ellipse cx="468" cy="158" rx="5.5" ry="3.5" fill="rgba(201,168,76,.14)" transform="rotate(16 468 158)"/>
+        <!-- scroll on ground -->
+        <rect x="352" y="310" width="152" height="38" rx="3" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.22)" stroke-width="1"/>
+        <line x1="352" y1="310" x2="352" y2="348" stroke="rgba(201,168,76,.28)" stroke-width="2"/>
+        <line x1="504" y1="310" x2="504" y2="348" stroke="rgba(201,168,76,.28)" stroke-width="2"/>
+        <line x1="368" y1="323" x2="488" y2="323" stroke="rgba(201,168,76,.18)" stroke-width=".7"/>
+        <line x1="368" y1="334" x2="488" y2="334" stroke="rgba(201,168,76,.18)" stroke-width=".7"/>
+        <!-- ground -->
+        <ellipse cx="450" cy="360" rx="470" ry="52" fill="rgba(5,8,5,.92)"/>
+      </svg>
+      <div class="cscene-text">
+        <div class="rv cap d1">Tinta yang Istimewa</div>
+        <div class="rv big d2">Tinta Jiwa Nusantara</div>
+        <div class="rv bod d3">Para pujangga Nusantara pernah menulis dengan tinta yang istimewa — tinta yang mengalir dari puncak Mahameru hingga ke dalam jiwa setiap bait sajak.</div>
+        <div class="rv hdiv d3"></div>
+        <div class="rv gold-line d4">Tinta Jiwa · Tinta Nusantara</div>
+      </div>
+    </section>
+
+    <!-- SCENE D: Kata Hilang -->
+    <section class="cscene" id="csd">
+      <div class="para-bg" id="csd-bg"
+        style="background:radial-gradient(ellipse 100% 80% at 50% 50%,#0a0202 0%,#050101 100%);">
+      </div>
+      <div id="ffd"></div>
+      <!-- Scattered words SVG -->
+      <svg class="cscene-art" style="inset:0;width:100%;height:100%;opacity:.52;" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+        <text x="78" y="118" font-family="serif" font-size="22" fill="rgba(201,168,76,.24)" transform="rotate(-8 78 118)">...cinta...</text>
+        <text x="648" y="88" font-family="serif" font-size="18" fill="rgba(201,168,76,.18)" transform="rotate(6 648 88)">...rindu...</text>
+        <text x="198" y="448" font-family="serif" font-size="16" fill="rgba(201,168,76,.2)" transform="rotate(-5 198 448)">...jiwa...</text>
+        <text x="578" y="478" font-family="serif" font-size="20" fill="rgba(201,168,76,.22)" transform="rotate(4 578 478)">...sunyi...</text>
+        <text x="118" y="318" font-family="serif" font-size="14" fill="rgba(201,168,76,.15)" transform="rotate(-12 118 318)">...aku...</text>
+        <text x="718" y="338" font-family="serif" font-size="18" fill="rgba(201,168,76,.17)" transform="rotate(9 718 338)">...abadi...</text>
+        <text x="398" y="138" font-family="serif" font-size="15" fill="rgba(201,168,76,.14)" transform="rotate(-3 398 138)">...merdeka...</text>
+        <text x="318" y="508" font-family="serif" font-size="17" fill="rgba(201,168,76,.18)" transform="rotate(7 318 508)">...tabah...</text>
+        <!-- empty parchment -->
+        <rect x="328" y="245" width="244" height="122" rx="4" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.18)" stroke-width="1" stroke-dasharray="4 5"/>
+        <line x1="352" y1="274" x2="548" y2="274" stroke="rgba(201,168,76,.11)" stroke-width="1"/>
+        <line x1="352" y1="294" x2="548" y2="294" stroke="rgba(201,168,76,.11)" stroke-width="1"/>
+        <line x1="352" y1="314" x2="548" y2="314" stroke="rgba(201,168,76,.11)" stroke-width="1"/>
+        <line x1="352" y1="334" x2="528" y2="334" stroke="rgba(201,168,76,.11)" stroke-width="1"/>
+        <text x="450" y="306" font-family="serif" font-size="28" fill="rgba(201,168,76,.28)" text-anchor="middle">?</text>
+        <!-- broken link -->
+        <g stroke="rgba(201,168,76,.18)" stroke-width="1.4" fill="none">
+          <ellipse cx="448" cy="198" rx="14" ry="7.5" transform="rotate(-28 448 198)"/>
+          <ellipse cx="468" cy="208" rx="14" ry="7.5" transform="rotate(-28 468 208)"/>
+          <path d="M463 193 L473 203" stroke-dasharray="3 3"/>
+        </g>
+      </svg>
+      <div class="cscene-text">
+        <div class="rv cap d1">Kisah yang Tercerai-berai</div>
+        <div class="rv big d2">Kata yang Lenyap</div>
+        <div class="rv bod d3">Namun suatu hari, tinta itu lenyap. Kata-kata tercerai-berai, bait-bait puisi menjadi tidak sempurna — menunggu seorang pujangga baru untuk melengkapinya kembali.</div>
+      </div>
+    </section>
+
+    <!-- SCENE E: Panggilan — Gerbang Candi -->
+    <section class="cscene" id="cse">
+      <div class="para-bg" id="cse-bg"
+        style="background:radial-gradient(ellipse 90% 85% at 50% 50%,#0e0404 0%,#060202 100%);">
+      </div>
+      <div id="ffe"></div>
+      <!-- Candi gate SVG -->
+      <svg class="cscene-art" style="bottom:0;left:0;width:100%;height:68%;" viewBox="0 0 900 420" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="mg" cx="50%" cy="0%" r="65%">
+            <stop offset="0%" stop-color="rgba(201,168,76,.11)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="900" height="420" fill="url(#mg)"/>
+        <!-- far mountains -->
+        <path d="M0 370 L78 258 L178 318 L278 198 L385 288 L450 238 L514 288 L618 198 L718 298 L828 258 L900 308 L900 370Z" fill="rgba(5,8,5,.88)"/>
+        <!-- ground -->
+        <rect x="0" y="370" width="900" height="50" fill="#020504"/>
+        <!-- left tower -->
+        <path d="M278 370 L278 198 L294 178 L294 158 L304 138 L310 118 L316 103 L322 88 L319 78 L316 68 L322 73 L328 63 L334 52 L340 63 L346 73 L352 78 L349 88 L355 103 L361 118 L367 138 L377 158 L377 178 L393 198 L393 370Z"
+              fill="rgba(7,5,3,.96)" stroke="rgba(201,168,76,.18)" stroke-width=".8"/>
+        <rect x="282" y="198" width="108" height="12" rx="1" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.18)" stroke-width=".6"/>
+        <rect x="288" y="184" width="96" height="10" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.15)" stroke-width=".6"/>
+        <rect x="296" y="164" width="80" height="12" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.13)" stroke-width=".6"/>
+        <!-- right tower -->
+        <path d="M507 370 L507 198 L523 178 L523 158 L533 138 L539 118 L545 103 L551 88 L548 78 L545 68 L551 73 L557 63 L563 52 L569 63 L575 73 L581 78 L578 88 L584 103 L590 118 L596 138 L606 158 L606 178 L622 198 L622 370Z"
+              fill="rgba(7,5,3,.96)" stroke="rgba(201,168,76,.18)" stroke-width=".8"/>
+        <rect x="511" y="198" width="107" height="12" rx="1" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.18)" stroke-width=".6"/>
+        <rect x="517" y="184" width="95" height="10" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.15)" stroke-width=".6"/>
+        <rect x="523" y="164" width="82" height="12" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.13)" stroke-width=".6"/>
+        <!-- gate glow -->
+        <ellipse cx="450" cy="370" rx="62" ry="18" fill="rgba(201,168,76,.11)" filter="blur(7px)"/>
+        <!-- stairs -->
+        <rect x="422" y="350" width="56" height="8" rx="1" fill="rgba(201,168,76,.11)"/>
+        <rect x="416" y="358" width="68" height="7" rx="1" fill="rgba(201,168,76,.07)"/>
+        <rect x="410" y="365" width="80" height="6" rx="1" fill="rgba(201,168,76,.05)"/>
+        <!-- torches -->
+        <ellipse cx="292" cy="368" rx="4" ry="8" fill="rgba(212,136,42,.3)" filter="blur(2px)"/>
+        <ellipse cx="608" cy="368" rx="4" ry="8" fill="rgba(212,136,42,.3)" filter="blur(2px)"/>
+        <!-- pujangga silhouette -->
+        <ellipse cx="450" cy="351" rx="6.5" ry="7.5" fill="rgba(201,168,76,.16)"/>
+        <rect x="444" y="358" width="12" height="18" rx="3" fill="rgba(201,168,76,.14)"/>
+        <path d="M455 366 L468 352 L470 349 L467 353Z" fill="rgba(201,168,76,.32)"/>
+        <!-- petals -->
+        <ellipse cx="348" cy="278" rx="5" ry="2" fill="rgba(201,168,76,.18)" transform="rotate(-22 348 278)"/>
+        <ellipse cx="552" cy="298" rx="4" ry="2" fill="rgba(201,168,76,.16)" transform="rotate(14 552 298)"/>
+        <ellipse cx="398" cy="238" rx="3.5" ry="1.5" fill="rgba(201,168,76,.14)" transform="rotate(-8 398 238)"/>
+      </svg>
+      <div class="cscene-text">
+        <div class="rv cap d1">Saatnya engkau menjawab panggilan</div>
+        <div class="rv big d2" style="font-size:clamp(1.4rem,4.2vw,2.6rem);">Mampukah Engkau Menjadi<br>Pujangga Sejati?</div>
+        <div class="rv bod d3">Ambil penamu. Buka jurnalmu. Lengkapi bait-bait yang tertinggal, dan kembalikan Tinta Nusantara ke tempatnya semula.</div>
+        <div class="rv hdiv d3"></div>
+        <button id="btn-enter" class="rv d4" onclick="enterMeja()">✒ Masuki Arsip</button>
+      </div>
+    </section>
+
+  </div><!-- end prolog-scroll -->
+
+  <div id="scroll-hint">
+    <span style="font-size:.58rem;">Gulir ke bawah</span>
+    <span style="font-size:1rem;">↓</span>
+  </div>
+</div><!-- end sc-prolog -->
+
+<button id="btn-skip" onclick="enterMeja()">Lewati ⟶</button>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 2 — MEJA KERJA (MAIN MENU)
+═══════════════════════════════════════════════ -->
+<div class="screen off" id="sc-meja">
+  <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:750px;">
+    <div style="text-align:center;margin-bottom:1.6rem;" class="fadein">
+      <div class="menu-logo">PUJANGGAKU</div>
+      <div class="menu-sub">Meja Penulis Nusantara</div>
+      <div class="divorn">❧</div>
     </div>
-
-    <!-- TUTORIAL OVERLAY -->
-    <div id="tutorial-overlay" class="overlay hidden">
-        <div class="bg-stone-900 border border-amber-900 p-10 max-w-lg text-center shadow-2xl">
-            <h2 class="font-magic text-gold text-2xl mb-6">PANDUAN PENJAGA TINTA</h2>
-            <ul class="text-stone-400 text-left space-y-4 mb-8 italic">
-                <li>1. Pilih salah satu Tahun (Buku) yang telah terbuka segelnya.</li>
-                <li>2. Lengkapi bait puisi yang hilang dalam waktu 30 detik.</li>
-                <li>3. Setiap jawaban benar akan mengembalikan sihir pada jurnal.</li>
-                <li>4. Selesaikan semua halaman untuk membuka Tahun berikutnya.</li>
-            </ul>
-            <button onclick="closeOverlay()" class="btn-nav">SAYA MENGERTI</button>
-        </div>
+    <div class="jgrid fadein" id="jgrid"></div>
+    <div class="mbtm fadein">
+      <button class="btn-c" onclick="showScreen('sc-tutorial')">📜 Tutorial</button>
+      <button class="btn-c" onclick="showScreen('sc-kreator')">✒️ Kreator</button>
     </div>
+  </div>
+</div>
 
-    <!-- MENU UTAMA (SELECTION) -->
-    <div id="main-menu" class="relative z-10 flex flex-col items-center justify-center h-screen hidden">
-        <h1 class="font-magic text-gold text-5xl mb-20 tracking-[0.5em] drop-shadow-lg">PUJANGGAKU</h1>
-        <div class="flex gap-10">
-            <div class="book-card" onclick="startLevel(1)">
-                <span class="font-magic text-white text-xl">TAHUN I</span>
-                <p class="text-gold text-[10px] mt-4">SANG PEMULA</p>
-            </div>
-            <div id="book-2" class="book-card locked" onclick="startLevel(2)">
-                <span class="font-magic text-white text-xl">TAHUN II</span>
-                <p class="text-gold text-[10px] mt-4">TERSEGEL</p>
-            </div>
-            <!-- Level 3 & 4 bisa ditambah di sini -->
-        </div>
-        <button onclick="showTutorial()" class="mt-20 text-stone-500 hover:text-gold text-xs tracking-widest">BACA PANDUAN LAGI</button>
+<!-- ═══════════════════════════════════════════════
+     SCREEN 3 — BUKU TERBUKA (GAME)
+═══════════════════════════════════════════════ -->
+<div class="screen off" id="sc-game">
+  <!-- Header -->
+  <div class="ghdr">
+    <button class="btn-back" onclick="backToMeja()">← Kembali ke Meja</button>
+    <div class="ghud">
+      <div class="huditem">✨ <span id="g-score">0</span></div>
+      <div class="huditem" style="font-size:.58rem;opacity:.75;">Halaman <span id="g-page">1/8</span></div>
+      <div class="tring">
+        <svg viewBox="0 0 40 40" width="44" height="44">
+          <circle class="tbg" cx="20" cy="20" r="18"/>
+          <circle class="tfill" id="tc" cx="20" cy="20" r="18"/>
+        </svg>
+        <div class="tnum" id="tn">30</div>
+      </div>
     </div>
+  </div>
 
-    <!-- GAMEPLAY (Buku Terbuka) -->
-    <div id="game-ui" class="relative z-10 flex items-center justify-center h-screen hidden">
-        <div class="book-container">
-            <!-- Halaman Kiri: Info & Navigasi -->
-            <div class="page-left border-r border-stone-300">
-                <button onclick="exitToMenu()" class="text-[10px] font-magic text-red-900 mb-12 hover:tracking-widest transition-all">« KEMBALI KE MEJA UTAMA</button>
-                <div class="mt-20">
-                    <h3 class="font-magic text-xs text-stone-500 mb-2">PENYAIR:</h3>
-                    <p id="author-name" class="text-2xl font-bold italic mb-8"></p>
-                    <div class="border-t border-stone-400 pt-4">
-                        <p class="text-xs font-magic">SKOR ARCHIVE: <span id="score" class="text-amber-800">0</span></p>
-                        <p class="text-xs font-magic">TINGKAT: <span id="level-label">TAHUN I</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="spine"></div>
-
-            <!-- Halaman Kanan: Pertanyaan -->
-            <div class="page-right">
-                <div class="flex justify-between items-center mb-12">
-                    <span class="text-[10px] font-magic text-stone-400">HALAMAN <span id="page-num">1</span>/8</span>
-                    <span id="timer" class="font-magic text-xl text-red-700">30s</span>
-                </div>
-
-                <div id="quest-area">
-                    <p id="poem-text" class="text-2xl leading-relaxed italic text-stone-800 mb-10 text-center"></p>
-                    <div id="options" class="grid grid-cols-1 gap-4"></div>
-                </div>
-
-                <div id="result-area" class="hidden text-center py-10">
-                    <h2 id="result-title" class="font-magic text-3xl mb-4"></h2>
-                    <p id="result-desc" class="italic text-stone-600 mb-10"></p>
-                    <button onclick="nextStep()" class="btn-nav w-full">BALIK HALAMAN »</button>
-                </div>
-            </div>
-        </div>
+  <!-- Open book -->
+  <div class="pcard oborder corn book-card fadein" id="bookcard">
+    <!-- Left page: poem -->
+    <div class="page-left">
+      <div class="badge" id="g-badge">Tahun I</div>
+      <div class="pno" id="g-pno">Halaman 1 dari 8</div>
+      <div class="pauthor" id="g-author">— Sapardi Djoko Damono</div>
+      <div class="puisi-txt" id="g-puisi"></div>
     </div>
+    <!-- Right page: decorative -->
+    <div class="page-right">
+      <div class="page-deco">
+        <svg class="page-ornament" width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="36" stroke="rgba(107,26,26,.35)" stroke-width="1" fill="none"/>
+          <circle cx="40" cy="40" r="28" stroke="rgba(107,26,26,.22)" stroke-width=".7" fill="none"/>
+          <path d="M40 12 L38 22 L28 22 L36 28 L33 38 L40 32 L47 38 L44 28 L52 22 L42 22Z" fill="rgba(107,26,26,.28)"/>
+          <path d="M40 68 Q40 55 40 40" stroke="rgba(107,26,26,.18)" stroke-width="1" fill="none"/>
+          <line x1="16" y1="40" x2="64" y2="40" stroke="rgba(107,26,26,.15)" stroke-width=".8"/>
+        </svg>
+        <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(107,26,26,.5);text-align:center;">Pilih Kata<br>yang Tepat</div>
+        <!-- fake ruled lines -->
+        <div style="width:100%;display:flex;flex-direction:column;gap:.55rem;margin-top:.5rem;">
+          <div style="height:1px;background:rgba(107,26,26,.1);width:100%;"></div>
+          <div style="height:1px;background:rgba(107,26,26,.1);width:90%;"></div>
+          <div style="height:1px;background:rgba(107,26,26,.08);width:95%;"></div>
+          <div style="height:1px;background:rgba(107,26,26,.08);width:85%;"></div>
+          <div style="height:1px;background:rgba(107,26,26,.06);width:92%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        // Database 32 Puisi (Disingkat untuk contoh, kamu bisa tambah penuh)
-        const database = {
-            1: [
-                { t: "Aku ingin mencintaimu dengan [sederhana]", p: "Sapardi Djoko Damono", k: "sederhana", o: ["sederhana", "hebat", "abadi"], e: "Puisi ini adalah bukti bahwa cinta tak butuh kata-kata rumit." },
-                { t: "Tak ada yang lebih [tabah] dari hujan bulan Juni", p: "Sapardi", k: "tabah", o: ["tabah", "dingin", "sunyi"], e: "Ketabahan adalah menahan rindu yang tak tersampaikan." },
-                // ... tambahkan sampai 8 soal per level
-            ],
-            2: [
-                { t: "Aku ini [binatang] jalang", p: "Chairil Anwar", k: "binatang", o: ["binatang", "jiwa", "pengembara"], e: "Semangat kebebasan dari sang 'Binatang Jalang'." }
-            ]
-        };
+  <!-- Options -->
+  <div class="optgrid" id="optgrid"></div>
+  <div id="feedback" style="color:var(--gold);"></div>
+</div>
 
-        let currentLevel = 1;
-        let currentIndex = 0;
-        let score = 0;
-        let timer;
-        let unlockedLevels = [1];
+<!-- ═══════════════════════════════════════════════
+     SCREEN 4 — HASIL (RESULT)
+═══════════════════════════════════════════════ -->
+<div class="screen off" id="sc-result">
+  <div class="pcard oborder rcard">
+    <div class="badge" id="r-badge" style="margin-bottom:.85rem;">Tahun I Selesai</div>
+    <div class="rstars" id="r-stars">★★★</div>
+    <div class="rsring">
+      <div class="rsnum" id="r-score">0</div>
+      <div class="rslbl">poin</div>
+    </div>
+    <div class="rtitle" id="r-title">Pujangga Agung</div>
+    <div class="rdesc" id="r-desc">Tinta Nusantara telah meresap dalam jiwamu.</div>
+    <div id="r-unlock" class="unlockbanner hidden">🔓 <span id="r-unlock-txt">Jurnal baru terbuka!</span></div>
+    <div style="display:flex;gap:.7rem;justify-content:center;margin-top:1.3rem;">
+      <button class="btn-c" onclick="retryLevel()" style="font-size:.62rem;">↻ Ulangi</button>
+      <button class="btn-c" onclick="showScreen('sc-meja');renderJournals();" style="font-size:.62rem;">⌂ Meja Utama</button>
+    </div>
+  </div>
+</div>
 
-        function showTutorial() {
-            document.getElementById('story-overlay').classList.add('hidden');
-            document.getElementById('tutorial-overlay').classList.remove('hidden');
-        }
+<!-- ═══════════════════════════════════════════════
+     SCREEN 5 — TUTORIAL
+═══════════════════════════════════════════════ -->
+<div class="screen off" id="sc-tutorial">
+  <div class="pcard oborder corn tcard">
+    <div style="text-align:center;margin-bottom:1rem;">
+      <div class="badge">Panduan Penjaga Tinta</div>
+      <div class="rtitle" style="font-size:1.3rem;margin-top:.65rem;">Cara Bermain</div>
+      <div class="divorn" style="padding:0 1rem;">⚜</div>
+    </div>
+    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.84rem;line-height:1.82;display:flex;flex-direction:column;gap:.82rem;">
+      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">1.</span><span>Setiap puisi ditampilkan di halaman buku dengan <strong>satu kata yang hilang</strong>. Tugasmu menemukan kata yang tepat.</span></div>
+      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">2.</span><span>Pilih dari <strong>3 pilihan jawaban</strong>. Hanya satu yang benar.</span></div>
+      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">3.</span><span><strong>Timer 30 detik</strong> per soal. Jawab cepat untuk bonus poin (+1 sd +5).</span></div>
+      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">4.</span><span>Jawaban <span style="color:#1a4a2a;font-weight:600;">benar</span> = <strong>+10 poin</strong> + bonus. Muncul pesan <em>"Sihir Dipulihkan"</em>. Jawaban <span style="color:var(--maroon);font-weight:600;">salah</span> = Muncul pesan <em>"Tinta Tercecer"</em>.</span></div>
+      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">5.</span><span>Selesaikan <strong>8 halaman</strong> satu buku untuk membuka segel buku berikutnya.</span></div>
+    </div>
+    <div style="text-align:center;margin-top:1.3rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
+  </div>
+</div>
 
-        function closeOverlay() {
-            document.getElementById('tutorial-overlay').classList.add('hidden');
-            document.getElementById('main-menu').classList.remove('hidden');
-        }
+<!-- ═══════════════════════════════════════════════
+     SCREEN 6 — KREATOR
+═══════════════════════════════════════════════ -->
+<div class="screen off" id="sc-kreator">
+  <div class="pcard oborder corn tcard" style="max-width:530px;">
+    <div style="text-align:center;margin-bottom:1rem;">
+      <div class="badge">Profil Kreator</div>
+      <div class="rtitle" style="font-size:1.3rem;margin-top:.65rem;">Para Pujangga</div>
+      <div class="divorn" style="padding:0 1rem;">❦</div>
+    </div>
+    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.82rem;line-height:1.88;display:flex;flex-direction:column;gap:.88rem;">
+      <p>PUJANGGAKU terinspirasi dari kekayaan sastra Indonesia yang tak ternilai. Puisi-puisi dalam permainan ini diambil dari karya para maestro sastra Nusantara:</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;">
+        <div style="padding:.65rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);">
+          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);font-weight:600;">Sapardi Djoko Damono</div>
+          <div style="font-size:.74rem;color:#555;margin-top:.15rem;font-style:italic;">"Aku Ingin", "Hujan Bulan Juni"</div>
+        </div>
+        <div style="padding:.65rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);">
+          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);font-weight:600;">Chairil Anwar</div>
+          <div style="font-size:.74rem;color:#555;margin-top:.15rem;font-style:italic;">"Aku", "Diponegoro"</div>
+        </div>
+        <div style="padding:.65rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);">
+          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);font-weight:600;">W.S. Rendra</div>
+          <div style="font-size:.74rem;color:#555;margin-top:.15rem;font-style:italic;">"Nyanyian Angsa", sajak-sajak sosial</div>
+        </div>
+        <div style="padding:.65rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);">
+          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);font-weight:600;">Amir Hamzah</div>
+          <div style="font-size:.74rem;color:#555;margin-top:.15rem;font-style:italic;">"Nyanyi Sunyi", "Buah Rindu"</div>
+        </div>
+      </div>
+      <p style="font-style:italic;color:#666;font-size:.78rem;text-align:center;">Dibuat sebagai bentuk apresiasi terhadap warisan sastra Indonesia yang agung.</p>
+    </div>
+    <div style="text-align:center;margin-top:1.3rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
+  </div>
+</div>
 
-        function startLevel(lvl) {
-            if (!unlockedLevels.includes(lvl)) return;
-            currentLevel = lvl;
-            currentIndex = 0;
-            score = 0;
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('game-ui').classList.remove('hidden');
-            loadQuest();
-        }
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
+<script>
+/* ─── INIT PROLOG VISUALS ─── */
+(function(){
+  // Stars in scene A
+  const svg = document.getElementById('stars-svg');
+  for(let i=0;i<130;i++){
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',Math.random()*900);
+    c.setAttribute('cy',Math.random()*350);
+    const r=Math.random()*1.5+.25;
+    c.setAttribute('r',r);
+    c.setAttribute('fill',`rgba(240,225,185,${.18+Math.random()*.65})`);
+    c.style.animation=`idrift ${4+Math.random()*7}s ease-in-out infinite`;
+    c.style.animationDelay=`${Math.random()*6}s`;
+    svg.appendChild(c);
+  }
+  // Fireflies + ink dots per scene
+  const scenes=['a','b','c','d','e'];
+  scenes.forEach(s=>{
+    const ff=document.getElementById('ff'+s);
+    const id=document.getElementById('id'+s);
+    if(ff){
+      for(let i=0;i<8;i++){
+        const f=document.createElement('div');f.className='ff';
+        f.style.setProperty('--d',(5+Math.random()*8)+'s');
+        f.style.setProperty('--dl',(Math.random()*5)+'s');
+        f.style.setProperty('--x1',(Math.random()*70-35)+'px');
+        f.style.setProperty('--y1',(-18-Math.random()*48)+'px');
+        f.style.setProperty('--x2',(Math.random()*70-35)+'px');
+        f.style.setProperty('--y2',(-8-Math.random()*38)+'px');
+        f.style.setProperty('--x3',(Math.random()*55-28)+'px');
+        f.style.setProperty('--y3',(-28-Math.random()*58)+'px');
+        f.style.left=(5+Math.random()*90)+'%';
+        f.style.top=(8+Math.random()*82)+'%';
+        ff.appendChild(f);
+      }
+    }
+    if(id){
+      for(let i=0;i<12;i++){
+        const d=document.createElement('div');d.className='idot';
+        d.style.setProperty('--d',(7+Math.random()*8)+'s');
+        d.style.setProperty('--dl',(Math.random()*6)+'s');
+        d.style.left=(Math.random()*90+5)+'%';
+        d.style.top=(Math.random()*80+8)+'%';
+        id.appendChild(d);
+      }
+    }
+  });
+})();
 
-        function exitToMenu() {
-            if(confirm("Tinggalkan jurnal? Progres halaman ini akan hilang.")) {
-                document.getElementById('game-ui').classList.add('hidden');
-                document.getElementById('main-menu').classList.remove('hidden');
-                clearInterval(timer);
-            }
-        }
+/* ─── SCROLL ENGINE ─── */
+const pScroll=document.getElementById('prolog-scroll');
+const pBar=document.getElementById('prolog-bar');
+const sHint=document.getElementById('scroll-hint');
+const cscenes=document.querySelectorAll('.cscene');
+let prologDone=false;
 
-        function loadQuest() {
-            const data = database[currentLevel][currentIndex] || database[1][0];
-            document.getElementById('page-num').innerText = currentIndex + 1;
-            document.getElementById('author-name').innerText = data.p;
-            document.getElementById('poem-text').innerText = data.t.replace("[sederhana]", "_______").replace("[tabah]", "_______").replace("[binatang]", "_______");
-            
-            document.getElementById('quest-area').classList.remove('hidden');
-            document.getElementById('result-area').classList.add('hidden');
+function onPrologScroll(){
+  if(prologDone)return;
+  const st=pScroll.scrollTop, th=pScroll.scrollHeight-pScroll.clientHeight;
+  pBar.style.transform=`scaleX(${th>0?st/th:0})`;
+  if(st>70)sHint.classList.add('hidden-hint');
+  else sHint.classList.remove('hidden-hint');
+  const vH=window.innerHeight;
+  cscenes.forEach((sc,i)=>{
+    const r=sc.getBoundingClientRect();
+    // parallax
+    const pbg=sc.querySelector('.para-bg');
+    if(pbg) pbg.style.transform=`translateY(${(r.top/vH)*32}px)`;
+    // reveal
+    if(r.top<vH*.74&&r.bottom>vH*.18) sc.classList.add('seen');
+    // enter button
+    if(i===cscenes.length-1&&sc.classList.contains('seen')){
+      document.getElementById('btn-enter').classList.add('show-btn');
+    }
+  });
+}
+pScroll.addEventListener('scroll',onPrologScroll,{passive:true});
+setTimeout(()=>{ if(cscenes[0]) cscenes[0].classList.add('seen'); },350);
 
-            const optDiv = document.getElementById('options');
-            optDiv.innerHTML = '';
-            data.o.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "btn-nav";
-                btn.innerText = opt;
-                btn.onclick = () => check(opt, data.k);
-                optDiv.appendChild(btn);
-            });
-            startTimer();
-        }
+// Auto-nudge if idle
+let nudgeT, userScrolled=false;
+pScroll.addEventListener('scroll',()=>{userScrolled=true;clearTimeout(nudgeT);},{once:true});
+function nudge(){
+  if(!userScrolled&&!prologDone) pScroll.scrollBy({top:window.innerHeight*.16,behavior:'smooth'});
+  nudgeT=setTimeout(nudge,9500);
+}
+nudgeT=setTimeout(nudge,5500);
 
-        function startTimer() {
-            let left = 30;
-            document.getElementById('timer').innerText = left + "s";
-            clearInterval(timer);
-            timer = setInterval(() => {
-                left--;
-                document.getElementById('timer').innerText = left + "s";
-                if(left <= 0) check(null, "timeout");
-            }, 1000);
-        }
+function enterMeja(){
+  if(prologDone)return; prologDone=true;
+  clearTimeout(nudgeT);
+  const sc=document.getElementById('sc-prolog');
+  const sk=document.getElementById('btn-skip');
+  sc.style.transition='opacity 1s ease';sc.style.opacity='0';
+  sk.style.opacity='0';
+  setTimeout(()=>{ loadState(); showScreen('sc-meja'); renderJournals(); },1050);
+}
 
-        function check(ans, correct) {
-            clearInterval(timer);
-            const isCorrect = ans === correct;
-            if(isCorrect) score += 100;
-            document.getElementById('score').innerText = score;
-            document.getElementById('quest-area').classList.add('hidden');
-            document.getElementById('result-area').classList.remove('hidden');
-            document.getElementById('result-title').innerText = isCorrect ? "SIHIR DIPULIHKAN" : "TINTA TERCECER";
-            document.getElementById('result-desc').innerText = database[currentLevel][currentIndex]?.e || "";
-        }
+/* ─── PUISI DATA ─── */
+const PUISI=[
+  // Tahun I
+  {l:0,a:"Sapardi Djoko Damono",b:["Aku ingin mencintaimu dengan","___","seperti nyanyian burung malam"],k:"sederhana",p:["sederhana","gembira","gelisah"]},
+  {l:0,a:"Chairil Anwar",b:["Aku ini binatang jalang","dari kumpulannya","___"],k:"terbuang",p:["terbuang","berlari","tertawan"]},
+  {l:0,a:"Sapardi Djoko Damono",b:["Hujan bulan Juni","tak ada yang lebih","___","dari hujan bulan Juni"],k:"tabah",p:["tabah","indah","sunyi"]},
+  {l:0,a:"Chairil Anwar",b:["Sekali berarti","___","mati"],k:"sudah itu",p:["sudah itu","setelah itu","kemudian"]},
+  {l:0,a:"Sapardi Djoko Damono",b:["Yang fana adalah waktu, kita abadi","memungut detik demi detik","merangkainya seperti","___"],k:"bunga kering",p:["bunga kering","mutiara merah","butir pasir"]},
+  {l:0,a:"Chairil Anwar",b:["Hidup hanya menunda kekalahan","tambah ___","dan kita tidak akan menang"],k:"keyakinan",p:["keyakinan","keberanian","kelelahan"]},
+  {l:0,a:"Amir Hamzah",b:["Sunyi itu duka","sunyi itu kudus","sunyi itu ___"],k:"lupa",p:["lupa","rindu","gelap"]},
+  {l:0,a:"W.S. Rendra",b:["Orang-orang miskin di jalan","yang sering kita pandang","dengan ___"],k:"kasihan",p:["kasihan","bangga","hormat"]},
+  // Tahun II
+  {l:1,a:"Sapardi Djoko Damono",b:["Kita sungguh-sungguh berjalan","di atas bumi yang","___"],k:"bergerak",p:["bergerak","diam","melayang"]},
+  {l:1,a:"Chairil Anwar",b:["Dengan puisi aku bernyanyi","sampai senja","___","nanti"],k:"umurku",p:["umurku","hidupku","waktuku"]},
+  {l:1,a:"Amir Hamzah",b:["Naik, bukan ke langit","bukan ke bumi","ke dalam ___","sendiri"],k:"diri",p:["diri","hati","jiwa"]},
+  {l:1,a:"W.S. Rendra",b:["Aku tulis pamflet ini","karena lembaga pendapat umum","yang semestinya","___"],k:"ada",p:["ada","bersuara","jujur"]},
+  {l:1,a:"Sapardi Djoko Damono",b:["Pada suatu hari nanti","jasadku tak akan ada lagi","tapi dalam bait-bait","___"],k:"sajak ini",p:["sajak ini","puisi ini","syair ini"]},
+  {l:1,a:"Chairil Anwar",b:["Kami yang kini terbaring antara Krawang-Bekasi","tidak bisa teriak '___'"],k:"Merdeka",p:["Merdeka","Indonesia","Jaya"]},
+  {l:1,a:"Amir Hamzah",b:["Inilah aku","suara yang tiada menentu","serupa orang","___"],k:"berpenyakit",p:["berpenyakit","kesepian","merindu"]},
+  {l:1,a:"W.S. Rendra",b:["Seorang ibu menangis","di depan penjara","sebab anaknya","___"],k:"ditahan",p:["ditahan","tersiksa","bersedih"]},
+  // Tahun III
+  {l:2,a:"Sapardi Djoko Damono",b:["Kuhafal matahari tanpa","___","yang bersifat harafiah"],k:"definisi",p:["definisi","bayangan","kiasan"]},
+  {l:2,a:"Chairil Anwar",b:["Kalau sampai waktuku","kumau tak seorang kan merayu","Tidak juga kau","Tidak perlu ___","itu!"],k:"sedu sedan",p:["sedu sedan","air mata","tangis pilu"]},
+  {l:2,a:"W.S. Rendra",b:["Bersatulah pelacur-pelacur kota Jakarta","Bersatulah gelandangan-gelandangan","di bawah jembatan","___"],k:"Jatibaru",p:["Jatibaru","Kota Tua","Pasar Baru"]},
+  {l:2,a:"Amir Hamzah",b:["Buah rindu dimakan kasih","tangkai cinta dipaut harap","dahan angan-angan","___","rantas"],k:"ditebas",p:["ditebas","dipatah","diguncang"]},
+  {l:2,a:"Sapardi Djoko Damono",b:["Aku ingin mencintaimu","dengan sederhana","dengan kata yang tak sempat","___"],k:"diucapkan",p:["diucapkan","dituliskan","disampaikan"]},
+  {l:2,a:"Chairil Anwar",b:["Sebelum ajal mendekat dan","mengundang","Kita pun hanya menonton","___","menjadi abu"],k:"kayu",p:["kayu","batu","arang"]},
+  {l:2,a:"W.S. Rendra",b:["Engkau adalah ranting yang rapuh","ditumbangkan angin","namun akar hatimu","___","kuat"],k:"tetap",p:["tetap","masih","sangat"]},
+  {l:2,a:"Amir Hamzah",b:["Dalam kebun ada bunga","tiga warna","merah, putih, dan","___"],k:"ungu",p:["ungu","kuning","biru"]},
+  // Tahun IV
+  {l:3,a:"Sapardi Djoko Damono",b:["Kita bertemu di sini","kita berpisah di sini","di antara","___"],k:"kata-kata",p:["kata-kata","bayangan","angin laut"]},
+  {l:3,a:"Chairil Anwar",b:["Maju","Serbu","Serang","Terjang","___"],k:"takbir",p:["takbir","teriakan","semangat"]},
+  {l:3,a:"W.S. Rendra",b:["Aku tidak mau bersembah sujud","pada","___","yang bisu"],k:"patung-patung",p:["patung-patung","batu-batu","dewa-dewa"]},
+  {l:3,a:"Amir Hamzah",b:["Habis kikis","segala cintaku hilang terbang","pulang kembali aku pada-Mu","seperti dahulu","___"],k:"kau ketahui",p:["kau ketahui","kau kenali","kau pahami"]},
+  {l:3,a:"Sapardi Djoko Damono",b:["Betapa dinginnya air sungai","betapa dinginnya malam","betapa dinginnya tubuhnya","yang ditinggalkan","___"],k:"semangat",p:["semangat","nyawa","cahaya"]},
+  {l:3,a:"Chairil Anwar",b:["Aku masih menyebut namamu","dalam doa","dan kau masih dalam","___","tiap malam"],k:"mimpiku",p:["mimpiku","kenanganku","doaku"]},
+  {l:3,a:"W.S. Rendra",b:["Kesadaran adalah matahari","kesabaran adalah bumi","keberanian menjadi","___","dan perjuangan adalah pelaksanaan kata-kata"],k:"cakrawala",p:["cakrawala","langit biru","ufuk timur"]},
+  {l:3,a:"Amir Hamzah",b:["Jiwa yang merayu","rindu yang berseru","dalam sunyi","___"],k:"menunggu",p:["menunggu","berlalu","terharu"]}
+];
 
-        function nextStep() {
-            currentIndex++;
-            if(currentIndex < 2) { // Ganti ke 8 jika data sudah lengkap
-                loadQuest();
-            } else {
-                alert("Jurnal Tahun ini telah selesai diarsip!");
-                if(currentLevel === 1) {
-                    unlockedLevels.push(2);
-                    document.getElementById('book-2').classList.remove('locked');
-                    document.getElementById('book-2').querySelector('p').innerText = "SIAP DIBACA";
-                }
-                document.getElementById('game-ui').classList.add('hidden');
-                document.getElementById('main-menu').classList.remove('hidden');
-            }
-        }
-    </script>
+const LEVELS=[
+  {n:"Tahun I",s:"Dasar Sastra",d:"Puisi-puisi awal Nusantara",icon:"📜"},
+  {n:"Tahun II",s:"Penjaga Bait",d:"Melanjutkan warisan kata",icon:"📖"},
+  {n:"Tahun III",s:"Maestro Kata",d:"Menguasai irama sajak",icon:"🖋️"},
+  {n:"Tahun IV",s:"Pujangga Sejati",d:"Tinta Nusantara kembali",icon:"⚜️"}
+];
+
+/* ─── STATE ─── */
+let G={
+  unlocked:[true,false,false,false],
+  scores:[0,0,0,0],
+  progress:[0,0,0,0],
+  lvl:0,qIdx:0,score:0,
+  timer:null,timeLeft:30,answered:false,
+  qs:[]
+};
+
+function loadState(){
+  try{const s=localStorage.getItem('pjk3');if(s){const p=JSON.parse(s);G.unlocked=p.u||[true,false,false,false];G.scores=p.s||[0,0,0,0];G.progress=p.p||[0,0,0,0];}}catch(e){}
+}
+function saveState(){
+  try{localStorage.setItem('pjk3',JSON.stringify({u:G.unlocked,s:G.scores,p:G.progress}));}catch(e){}
+}
+
+/* ─── SCREEN MANAGER ─── */
+let cur='sc-prolog';
+function showScreen(id){
+  document.getElementById(cur).classList.add('off');
+  document.getElementById(id).classList.remove('off');
+  cur=id;
+}
+
+/* ─── JOURNAL RENDER ─── */
+function renderJournals(){
+  const grid=document.getElementById('jgrid');grid.innerHTML='';
+  LEVELS.forEach((lv,i)=>{
+    const u=G.unlocked[i],pr=G.progress[i]||0,sc=G.scores[i]||0;
+    const card=document.createElement('div');
+    card.className='jcard'+(u?'':' jlocked');
+    card.onclick=()=>{ if(!u){toast('Selesaikan level sebelumnya!');return;} startLevel(i); };
+    card.innerHTML=`<div class="jinner">
+      ${!u?`<div class="jlock-icon">🔒</div>`:`<div class="jlock-icon" style="opacity:.3">📖</div>`}
+      <div>
+        <div class="jyr">${lv.n}</div>
+        <div class="jtitle">${lv.s}</div>
+        <div class="jdesc">${lv.d}</div>
+      </div>
+      <div>
+        <div class="jmeta">
+          <div class="jcnt">8 Puisi${sc>0?' · ✨'+sc:''}</div>
+          <div style="font-family:'Cinzel',serif;font-size:.58rem;color:var(--gold-d);">${pr>0?pr+'/8':u?'Mulai':'Terkunci'}</div>
+        </div>
+        <div class="pbar"><div class="pfill" style="width:${(pr/8)*100}%"></div></div>
+      </div>
+      <div class="jorn">${lv.icon}</div>
+    </div>`;
+    grid.appendChild(card);
+  });
+}
+
+/* ─── GAME ─── */
+function startLevel(i){
+  G.lvl=i;G.qIdx=0;G.score=0;
+  G.qs=PUISI.filter(x=>x.l===i).sort(()=>Math.random()-.5).slice(0,8);
+  showScreen('sc-game');
+  renderQ();
+}
+
+function renderQ(){
+  const q=G.qs[G.qIdx];G.answered=false;
+  document.getElementById('g-score').textContent=G.score;
+  document.getElementById('g-page').textContent=`${G.qIdx+1}/8`;
+  document.getElementById('g-badge').textContent=LEVELS[G.lvl].n;
+  document.getElementById('g-pno').textContent=`Halaman ${G.qIdx+1} dari 8`;
+  document.getElementById('g-author').textContent=`— ${q.a}`;
+  document.getElementById('feedback').textContent='';
+
+  // Build puisi text
+  const pel=document.getElementById('g-puisi');
+  pel.innerHTML=q.b.map(w=>w==='___'?`<span class="blank"></span>`:w).join(' ');
+
+  // Build options
+  const og=document.getElementById('optgrid');og.innerHTML='';
+  [...q.p].sort(()=>Math.random()-.5).forEach(opt=>{
+    const b=document.createElement('button');b.className='optbtn';b.textContent=opt;
+    b.onclick=()=>pick(opt,q.k,b);og.appendChild(b);
+  });
+
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(G.timer);G.timeLeft=30;updateTimer(30);
+  G.timer=setInterval(()=>{
+    G.timeLeft--;updateTimer(G.timeLeft);
+    if(G.timeLeft<=0){clearInterval(G.timer);if(!G.answered)timesUp();}
+  },1000);
+}
+
+function updateTimer(t){
+  document.getElementById('tn').textContent=t;
+  const c=document.getElementById('tc');
+  c.style.strokeDashoffset=113*(1-t/30);
+  if(t<=10){c.style.stroke='#c0392b';document.getElementById('tn').style.color='#c0392b';}
+  else if(t<=20){c.style.stroke='#e67e22';document.getElementById('tn').style.color='var(--amber)';}
+  else{c.style.stroke='var(--gold)';document.getElementById('tn').style.color='var(--gold)';}
+}
+
+function pick(chosen,correct,btn){
+  if(G.answered)return;
+  G.answered=true;clearInterval(G.timer);
+  document.querySelectorAll('.optbtn').forEach(b=>b.disabled=true);
+
+  // Reveal blank
+  const bl=document.querySelector('.blank');
+  if(bl){bl.textContent=correct;bl.style.cssText+='background:transparent;border-bottom:none;font-style:italic;color:var(--maroon);min-width:auto;';bl.classList.remove('blank');}
+
+  if(chosen===correct){
+    btn.classList.add('correct');
+    const bonus=Math.ceil(G.timeLeft/6),pts=10+bonus;
+    G.score+=pts;
+    document.getElementById('g-score').textContent=G.score;
+    document.getElementById('feedback').textContent=`✓ Benar! +${pts} poin`;
+    document.getElementById('feedback').style.color='#2a8c4a';
+    showFeedbackPopup(true);
+    spawnSparks();spawnCombo(`+${pts}!`);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.optbtn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});
+    document.getElementById('feedback').textContent=`✗ Kata yang tepat: "${correct}"`;
+    document.getElementById('feedback').style.color='var(--maroon)';
+    showFeedbackPopup(false);
+  }
+  setTimeout(nextQ,2200);
+}
+
+function timesUp(){
+  G.answered=true;
+  const q=G.qs[G.qIdx];
+  document.querySelectorAll('.optbtn').forEach(b=>{b.disabled=true;if(b.textContent===q.k)b.classList.add('correct');});
+  const bl=document.querySelector('.blank');
+  if(bl){bl.textContent=q.k;bl.style.fontStyle='italic';bl.style.color='var(--maroon)';bl.classList.remove('blank');}
+  document.getElementById('feedback').textContent='⏰ Waktu habis!';
+  document.getElementById('feedback').style.color='var(--maroon)';
+  setTimeout(nextQ,2200);
+}
+
+function nextQ(){
+  G.qIdx++;
+  if(G.qIdx>=G.qs.length) endLevel();
+  else renderQ();
+}
+
+function endLevel(){
+  clearInterval(G.timer);
+  const i=G.lvl,sc=G.score;
+  if(sc>G.scores[i])G.scores[i]=sc;
+  G.progress[i]=8;
+  let newUnlock=false;
+  if(i<3&&!G.unlocked[i+1]){G.unlocked[i+1]=true;newUnlock=true;}
+  saveState();
+  const pct=sc/80;
+  let stars,title,desc;
+  if(pct>=.8){stars='★★★';title='Pujangga Agung';desc='Tinta Nusantara telah meresap dalam jiwamu.';}
+  else if(pct>=.5){stars='★★☆';title='Penjaga Bait';desc='Kau telah menjaga warisan para penyair.';}
+  else{stars='★☆☆';title='Pencari Tinta';desc='Perjalananmu baru saja dimulai, teruslah!';}
+  document.getElementById('r-badge').textContent=LEVELS[i].n+' Selesai';
+  document.getElementById('r-stars').textContent=stars;
+  document.getElementById('r-score').textContent=sc;
+  document.getElementById('r-title').textContent=title;
+  document.getElementById('r-desc').textContent=desc;
+  const uEl=document.getElementById('r-unlock');
+  if(newUnlock&&i<3){uEl.classList.remove('hidden');document.getElementById('r-unlock-txt').textContent=`${LEVELS[i+1].n}: ${LEVELS[i+1].s} telah terbuka!`;}
+  else uEl.classList.add('hidden');
+  showScreen('sc-result');
+}
+
+function retryLevel(){startLevel(G.lvl);}
+function backToMeja(){clearInterval(G.timer);showScreen('sc-meja');renderJournals();}
+
+/* ─── FEEDBACK POPUP ─── */
+function showFeedbackPopup(benar){
+  const d=document.createElement('div');d.className='feedback-popup';
+  const i=document.createElement('div');
+  i.className='fp-inner '+(benar?'fp-benar':'fp-salah');
+  i.textContent=benar?'✦ Sihir Dipulihkan ✦':'⟁ Tinta Tercecer ⟁';
+  d.appendChild(i);document.body.appendChild(d);
+  setTimeout(()=>d.remove(),900);
+}
+
+/* ─── PARTICLES ─── */
+function spawnSparks(){
+  ['✨','⭐','🌟','✦','❋','❇'].forEach((ch,j)=>{
+    setTimeout(()=>{
+      const s=document.createElement('div');s.className='spark';s.textContent=ch;
+      s.style.left=(28+Math.random()*44)+'vw';s.style.top=(28+Math.random()*44)+'vh';
+      document.body.appendChild(s);setTimeout(()=>s.remove(),1600);
+    },j*72);
+  });
+}
+function spawnCombo(txt){
+  const e=document.createElement('div');e.className='combo';e.textContent=txt;
+  e.style.left='50%';e.style.top='36%';
+  document.body.appendChild(e);setTimeout(()=>e.remove(),1300);
+}
+
+/* ─── TOAST ─── */
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),2600);
+}
+</script>
 </body>
 </html>
