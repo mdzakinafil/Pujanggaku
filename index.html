@@ -1,714 +1,416 @@
+cat > /mnt/user-data/outputs/pujanggaku.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PUJANGGAKU — Meja Penulis Nusantara</title>
+<title>PUJANGGAKU — Penjaga Tinta Nusantara</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
-/* ─────────────────────────────────────────
-   ROOT TOKENS
-───────────────────────────────────────── */
 :root{
-  --maroon:#6b1a1a; --maroon-d:#4a0f0f; --maroon-l:#8b2525;
-  --gold:#c9a84c;   --gold-l:#e8c96a;   --gold-d:#9a7a2e;
-  --teak:#1e0c04;   --teak-m:#3d1e0a;   --teak-l:#5c3218;
-  --parch:#f0e6c8;  --parch-d:#d4c49a;
-  --ink:#1a0a0a;    --amber:#d4882a;
-  --r:2px; /* border-radius base */
+  --m:#6b1a1a;--md:#4a0f0f;--ml:#8b2525;
+  --g:#c9a84c;--gl:#e8c96a;--gd:#9a7a2e;
+  --t:#120804;--tm:#3d1e0a;--tl:#5c3218;
+  --p:#f0e6c8;--pd:#d4c49a;
+  --ink:#0a0502;--amb:#d4882a;
+  --sky1:#0a0418;--sky2:#1a0830;--sky3:#0d1520;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;background:var(--teak);color:var(--parch);}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;background:#000;color:var(--p);}
 
-/* ─────────────────────────────────────────
-   PERSISTENT LAYERS
-───────────────────────────────────────── */
-#layer-wood{
-  position:fixed;inset:0;z-index:0;
-  background:
-    repeating-linear-gradient(93deg,transparent 0,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px),
-    repeating-linear-gradient(87deg,transparent 0,transparent 9px,rgba(255,255,255,.012) 9px,rgba(255,255,255,.012) 11px),
-    linear-gradient(155deg,#0a0301 0%,#1e0c04 18%,#3d1e0a 35%,#2d1508 50%,#4a2510 62%,#3d1e0a 75%,#1e0c04 90%,#0a0301 100%);
-}
-#layer-grain{
-  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.65;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.013 0.88' numOctaves='5' seed='9'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E");
-}
-#layer-light{
-  position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:
-    radial-gradient(ellipse 60% 80% at 90% 20%,rgba(212,136,42,.2) 0%,transparent 60%),
-    radial-gradient(ellipse 40% 55% at 8% 90%,rgba(80,25,8,.5) 0%,transparent 55%),
-    linear-gradient(to right,rgba(0,0,0,.45) 0%,transparent 32%,rgba(0,0,0,.1) 100%);
-  animation:candleFlicker 8s ease-in-out infinite;
-}
-@keyframes candleFlicker{
-  0%,100%{opacity:1;}20%{opacity:.88;}45%{opacity:1;}70%{opacity:.93;}85%{opacity:1;}
-}
+/* ── PERSISTENT WOOD LAYERS ── */
+#bg-wood{position:fixed;inset:0;z-index:0;background:linear-gradient(155deg,#060201 0%,#1a0904 20%,#3d1e0a 38%,#2a1206 54%,#4a2510 66%,#3d1e0a 78%,#180804 92%,#060201 100%);}
+#bg-grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015 0.9' numOctaves='5' seed='12'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");}
+#bg-light{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 55% 75% at 88% 22%,rgba(212,136,42,.22) 0%,transparent 58%),radial-gradient(ellipse 38% 52% at 6% 88%,rgba(70,22,6,.55) 0%,transparent 52%),linear-gradient(to right,rgba(0,0,0,.5) 0%,transparent 30%,rgba(0,0,0,.12) 100%);animation:cflicker 9s ease-in-out infinite;}
+@keyframes cflicker{0%,100%{opacity:1;}22%{opacity:.88;}48%{opacity:1.02;}72%{opacity:.93;}}
 
-/* ─────────────────────────────────────────
-   SCREEN SYSTEM
-───────────────────────────────────────── */
-.screen{
-  position:fixed;inset:0;z-index:10;
-  display:flex;align-items:center;justify-content:center;
-  transition:opacity .75s cubic-bezier(.4,0,.2,1),transform .75s cubic-bezier(.4,0,.2,1);
+/* ── SCREEN SYSTEM ── */
+.screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;transition:opacity .8s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.4,0,.2,1);}
+.screen.off{opacity:0;pointer-events:none;transform:translateY(12px);}
+
+/* ════════════════════════════════════
+   SCREEN: WAYANG PROLOG
+════════════════════════════════════ */
+#sc-prolog{z-index:50;background:#000;flex-direction:column;overflow:hidden;}
+
+/* Stage */
+#stage{position:absolute;inset:0;overflow:hidden;}
+
+/* Sky gradient that shifts per babak */
+#stage-sky{position:absolute;inset:0;transition:background 2.5s ease;}
+
+/* Ink wash ground layers */
+#stage-ground{position:absolute;bottom:0;left:0;right:0;height:35%;pointer-events:none;}
+
+/* Wayang shadow screen — the gedebog/kelir */
+#kelir{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 85%,rgba(212,136,42,.04) 0%,transparent 65%);}
+
+/* Smoke/mist particles */
+#mist-layer{position:absolute;inset:0;pointer-events:none;}
+
+/* Text overlay */
+#babak-text{
+  position:absolute;bottom:0;left:0;right:0;
+  z-index:20;padding:2rem 2rem 2.5rem;
+  text-align:center;
+  background:linear-gradient(to top,rgba(0,0,0,.75) 0%,rgba(0,0,0,.4) 55%,transparent 100%);
 }
-.screen.off{opacity:0;pointer-events:none;transform:translateY(14px);}
+#babak-caption{font-family:'Cinzel',serif;font-size:clamp(.55rem,1.2vw,.7rem);letter-spacing:.45em;text-transform:uppercase;color:var(--gd);margin-bottom:.4rem;opacity:0;transition:opacity 1.2s ease;}
+#babak-title{font-family:'Cinzel Decorative',cursive;font-size:clamp(1.4rem,4.5vw,3rem);color:var(--g);text-shadow:0 0 40px rgba(201,168,76,.6),0 4px 16px rgba(0,0,0,.9);opacity:0;transition:opacity 1.4s ease .15s;}
+#babak-body{font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(.88rem,2vw,1.15rem);color:rgba(240,230,200,.88);line-height:1.9;max-width:640px;margin:.75rem auto 0;opacity:0;transition:opacity 1.3s ease .3s;}
 
-/* ─────────────────────────────────────────
-   SCREEN 1: PROLOG — CINEMATIC SCROLL
-───────────────────────────────────────── */
-#sc-prolog{z-index:50;align-items:flex-start;overflow:hidden;}
+.babak-visible #babak-caption,
+.babak-visible #babak-title,
+.babak-visible #babak-body{opacity:1;}
 
-#prolog-scroll{
-  position:absolute;inset:0;overflow-y:scroll;
-  scroll-behavior:smooth;scrollbar-width:none;
-}
-#prolog-scroll::-webkit-scrollbar{display:none;}
+/* Progress dots */
+#babak-dots{position:absolute;bottom:.9rem;left:50%;transform:translateX(-50%);display:flex;gap:.55rem;z-index:25;}
+.bdot{width:6px;height:6px;border-radius:50%;background:rgba(201,168,76,.25);transition:all .4s ease;cursor:pointer;}
+.bdot.active{background:var(--g);box-shadow:0 0 8px rgba(201,168,76,.6);width:18px;border-radius:3px;}
 
-/* Progress bar */
-#prolog-bar{
-  position:fixed;top:0;left:0;right:0;height:2px;z-index:65;
-  background:linear-gradient(to right,var(--gold-d),var(--gold));
-  transform-origin:left;transform:scaleX(0);
-  transition:transform .1s linear;
-}
+/* Skip / Enter */
+#btn-skip-prolog{position:fixed;top:1.2rem;right:1.2rem;z-index:60;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(201,168,76,.4);background:transparent;border:1px solid rgba(201,168,76,.15);padding:.35rem .9rem;cursor:pointer;transition:all .3s;}
+#btn-skip-prolog:hover{color:var(--g);border-color:var(--g);}
+#btn-enter-prolog{display:none;font-family:'Cinzel Decorative',cursive;font-size:clamp(.82rem,1.9vw,.98rem);letter-spacing:.18em;padding:.88rem 2.8rem;background:linear-gradient(135deg,var(--md),var(--m));border:1px solid var(--gd);color:var(--gl);cursor:pointer;position:relative;box-shadow:0 6px 28px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.08);transition:all .35s;animation:enterpulse 2.5s ease-in-out infinite;}
+@keyframes enterpulse{0%,100%{box-shadow:0 6px 28px rgba(0,0,0,.65),0 0 15px rgba(201,168,76,.15);}50%{box-shadow:0 6px 28px rgba(0,0,0,.65),0 0 30px rgba(201,168,76,.35);}}
+#btn-enter-prolog::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,168,76,.18);}
+#btn-enter-prolog:hover{background:linear-gradient(135deg,var(--m),var(--ml));transform:translateY(-2px);}
 
-/* Each cinematic scene */
-.cscene{
-  position:relative;width:100%;min-height:100vh;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  overflow:hidden;
-}
+/* ── WAYANG FIGURES ── */
+.wayang{position:absolute;transform-origin:bottom center;filter:drop-shadow(0 0 8px rgba(201,168,76,.2));}
+.wayang-shadow{filter:drop-shadow(2px 0 12px rgba(0,0,0,.8)) drop-shadow(0 0 20px rgba(201,168,76,.15));}
 
-/* Parallax layer */
-.para-bg{
-  position:absolute;inset:-8% -4%;width:108%;height:116%;
-  pointer-events:none;will-change:transform;
-}
+/* Animation classes */
+@keyframes wSwayL{0%,100%{transform:rotate(-2deg) translateX(0);}50%{transform:rotate(2deg) translateX(-6px);}}
+@keyframes wSwayR{0%,100%{transform:rotate(2deg) translateX(0);}50%{transform:rotate(-2deg) translateX(6px);}}
+@keyframes wFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes wWalk{0%,100%{transform:translateX(0) scaleX(1);}25%{transform:translateX(12px) scaleX(1);}75%{transform:translateX(-5px) scaleX(1);}}
+@keyframes wFight{0%{transform:rotate(-5deg);}25%{transform:rotate(15deg) translateX(20px);}50%{transform:rotate(-10deg) translateX(-10px);}75%{transform:rotate(8deg) translateX(15px);}100%{transform:rotate(-5deg);}}
+@keyframes wFall{0%{transform:rotate(0) translateY(0);opacity:1;}100%{transform:rotate(45deg) translateY(40px);opacity:0;}}
+@keyframes wRise{0%{transform:translateY(30px) scale(.8);opacity:0;}100%{transform:translateY(0) scale(1);opacity:1;}}
+@keyframes mountParallax{0%,100%{transform:translateX(0);}50%{transform:translateX(-8px);}}
+@keyframes birdFly{0%{transform:translate(0,0);}100%{transform:translate(-120vw,-30px);}}
+@keyframes waveRoll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes inkSpread{0%{opacity:0;transform:scale(.5);}50%{opacity:.8;}100%{opacity:0;transform:scale(2.5);}}
+@keyframes starTwinkle{0%,100%{opacity:.2;}50%{opacity:1;}}
+@keyframes sunRise{0%{transform:translateY(60px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+@keyframes fireFlicker{0%,100%{transform:scaleY(1) rotate(-1deg);}33%{transform:scaleY(1.15) rotate(2deg);}66%{transform:scaleY(.88) rotate(-2deg);}}
+@keyframes smokeRise{0%{transform:translateY(0) scale(1);opacity:.6;}100%{transform:translateY(-80px) scale(2.5);opacity:0;}}
+@keyframes thunderFlash{0%,90%,100%{opacity:0;}92%,96%{opacity:1;}94%{opacity:.3;}}
+@keyframes parchmentUnroll{0%{clip-path:inset(0 100% 0 0);}100%{clip-path:inset(0 0% 0 0);}}
 
-/* SVG illustration */
-.cscene-art{
-  position:absolute;pointer-events:none;
-}
+/* ════════════════════════════════════
+   SCREEN: MEJA KERJA
+════════════════════════════════════ */
+#sc-meja{flex-direction:column;padding:1rem;z-index:20;}
+.logo-title{font-family:'Cinzel Decorative',cursive;font-size:clamp(1.9rem,5.5vw,3.6rem);color:var(--g);text-shadow:0 0 55px rgba(201,168,76,.5),0 4px 14px rgba(0,0,0,.8);letter-spacing:.1em;line-height:1;animation:pglow 2.5s ease-in-out infinite;}
+@keyframes pglow{0%,100%{text-shadow:0 0 30px rgba(201,168,76,.35);}50%{text-shadow:0 0 60px rgba(201,168,76,.75),0 0 90px rgba(201,168,76,.28);}}
+.logo-sub{font-family:'Cinzel',serif;font-size:clamp(.55rem,1.2vw,.75rem);color:var(--gd);letter-spacing:.42em;text-transform:uppercase;margin-top:.35rem;}
+.divorn{display:flex;align-items:center;gap:.9rem;color:var(--gd);font-size:.9rem;margin:.5rem 0;}
+.divorn::before,.divorn::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gd),transparent);}
 
-/* Text block */
-.cscene-text{
-  position:relative;z-index:5;
-  text-align:center;padding:2rem 1.5rem 3.5rem;
-  max-width:660px;
-  display:flex;flex-direction:column;align-items:center;gap:1.3rem;
-}
+/* Nav tabs */
+.nav-tabs{display:flex;gap:.5rem;margin-bottom:1rem;}
+.ntab{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;padding:.45rem 1.1rem;border:1px solid rgba(201,168,76,.22);background:transparent;color:rgba(201,168,76,.55);cursor:pointer;transition:all .3s;}
+.ntab.active,.ntab:hover{background:rgba(201,168,76,.1);border-color:var(--g);color:var(--g);}
 
-/* Reveal animations */
-.rv{opacity:0;transform:translateY(22px);transition:opacity 1.3s ease,transform 1.3s ease;}
-.rv.d1{transition-delay:.1s;}
-.rv.d2{transition-delay:.28s;}
-.rv.d3{transition-delay:.44s;}
-.rv.d4{transition-delay:.6s;}
-.cscene.seen .rv{opacity:1;transform:translateY(0);}
-
-.cap{font-family:'Cinzel',serif;font-size:clamp(.58rem,1.3vw,.72rem);letter-spacing:.45em;text-transform:uppercase;color:var(--gold-d);}
-.big{font-family:'Cinzel Decorative',cursive;font-size:clamp(1.6rem,5vw,3.4rem);color:var(--gold);line-height:1.1;text-shadow:0 0 60px rgba(201,168,76,.5),0 4px 18px rgba(0,0,0,.8);}
-.bod{font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(.9rem,2vw,1.2rem);color:rgba(240,230,200,.88);line-height:1.92;}
-.gold-line{font-family:'Cinzel',serif;font-style:normal;font-size:clamp(.78rem,1.6vw,.95rem);letter-spacing:.18em;color:rgba(201,168,76,.95);}
-.hdiv{width:110px;height:1px;background:linear-gradient(to right,transparent,var(--gold-d),transparent);}
-
-/* Fireflies */
-.ff{
-  position:absolute;width:3px;height:3px;border-radius:50%;
-  background:rgba(232,201,106,.75);filter:blur(1px);pointer-events:none;
-  animation:ffmove var(--d,7s) ease-in-out infinite var(--dl,0s);opacity:0;
-}
-@keyframes ffmove{
-  0%{opacity:0;transform:translate(0,0);}
-  12%{opacity:.9;}
-  50%{opacity:.5;transform:translate(var(--x1,30px),var(--y1,-45px));}
-  88%{opacity:.7;transform:translate(var(--x2,55px),var(--y2,-20px));}
-  100%{opacity:0;transform:translate(var(--x3,15px),var(--y3,-65px));}
-}
-
-/* Ink dust */
-.idot{
-  position:absolute;width:2px;height:2px;border-radius:50%;
-  background:rgba(201,168,76,.4);
-  animation:idrift var(--d,9s) ease-in-out infinite var(--dl,0s);
-}
-@keyframes idrift{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.25;}
-  33%{transform:translate(10px,-20px) scale(1.5);opacity:.7;}
-  66%{transform:translate(-12px,-8px) scale(.7);opacity:.35;}
-}
-
-/* Scroll hint */
-#scroll-hint{
-  position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%);
-  z-index:60;display:flex;flex-direction:column;align-items:center;gap:.35rem;
-  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(201,168,76,.5);transition:opacity .5s;
-  animation:shint 2.8s ease-in-out infinite;
-}
-@keyframes shint{0%,100%{opacity:.4;transform:translateX(-50%) translateY(0);}50%{opacity:.85;transform:translateX(-50%) translateY(-5px);}}
-#scroll-hint.hidden-hint{opacity:0!important;}
-
-/* Enter button */
-#btn-enter{
-  font-family:'Cinzel Decorative',cursive;
-  font-size:clamp(.82rem,1.9vw,.98rem);letter-spacing:.18em;
-  padding:.88rem 2.6rem;
-  background:linear-gradient(135deg,var(--maroon-d),var(--maroon));
-  border:1px solid var(--gold-d);color:var(--gold-l);
-  cursor:pointer;position:relative;overflow:hidden;
-  box-shadow:0 6px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
-  opacity:0;transform:translateY(18px);
-  transition:opacity 1.1s ease .55s,transform 1.1s ease .55s,background .3s,box-shadow .3s;
-}
-#btn-enter::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,168,76,.18);pointer-events:none;}
-#btn-enter.show-btn{opacity:1;transform:translateY(0);}
-#btn-enter:hover{background:linear-gradient(135deg,var(--maroon),var(--maroon-l));box-shadow:0 8px 32px rgba(0,0,0,.65),0 0 22px rgba(201,168,76,.22);border-color:var(--gold);}
-
-/* Skip button */
-#btn-skip{
-  position:fixed;top:1.3rem;right:1.3rem;z-index:70;
-  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;
-  color:rgba(201,168,76,.42);background:transparent;
-  border:1px solid rgba(201,168,76,.16);padding:.38rem .95rem;cursor:pointer;
-  transition:all .3s;
-}
-#btn-skip:hover{color:var(--gold);border-color:var(--gold);}
-
-/* ─────────────────────────────────────────
-   SCREEN 2: MEJA KERJA (MAIN MENU)
-───────────────────────────────────────── */
-#sc-meja{flex-direction:column;padding:1.2rem 1rem;z-index:20;}
-
-.menu-logo{
-  font-family:'Cinzel Decorative',cursive;
-  font-size:clamp(2rem,6vw,3.8rem);
-  color:var(--gold);
-  text-shadow:0 0 55px rgba(201,168,76,.5),0 4px 14px rgba(0,0,0,.8);
-  letter-spacing:.1em;line-height:1;
-  animation:pglow 2.5s ease-in-out infinite;
-}
-@keyframes pglow{0%,100%{text-shadow:0 0 30px rgba(201,168,76,.35);}50%{text-shadow:0 0 55px rgba(201,168,76,.7),0 0 80px rgba(201,168,76,.25);}}
-.menu-sub{font-family:'Cinzel',serif;font-size:clamp(.58rem,1.3vw,.78rem);color:var(--gold-d);letter-spacing:.42em;text-transform:uppercase;margin-top:.4rem;}
-.divorn{display:flex;align-items:center;gap:1rem;color:var(--gold-d);font-size:1rem;margin:.55rem 0;}
-.divorn::before,.divorn::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold-d),transparent);}
+/* Tab panes */
+.tab-pane{display:none;width:100%;max-width:820px;}
+.tab-pane.active{display:block;}
 
 /* Journal grid */
-.jgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem;max-width:730px;width:100%;}
-@media(max-width:540px){.jgrid{grid-template-columns:1fr;gap:.7rem;}}
+.jgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem;width:100%;}
+@media(max-width:520px){.jgrid{grid-template-columns:1fr;}}
+.jcard{cursor:pointer;transition:transform .3s ease;position:relative;}
+.jcard:hover:not(.jlocked){transform:translateY(-5px) rotate(-.4deg);}
+.jcard.jlocked{cursor:not-allowed;}
+.jinner{background:linear-gradient(138deg,#8b2525 0%,#6b1a1a 42%,#4a0f0f 100%);border:2px solid var(--gd);border-radius:2px;padding:1.05rem 1rem;box-shadow:4px 5px 0 rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08),inset -3px 0 0 rgba(0,0,0,.22);position:relative;overflow:hidden;min-height:125px;display:flex;flex-direction:column;justify-content:space-between;}
+.jinner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:10px;background:linear-gradient(to right,rgba(0,0,0,.32),transparent);border-right:1px solid rgba(201,168,76,.09);}
+.jinner::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 18px,rgba(255,255,255,.015) 18px,rgba(255,255,255,.015) 19px);pointer-events:none;}
+.jcard.jlocked .jinner{opacity:.5;filter:grayscale(.35);}
+.jyr{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);}
+.jtit{font-family:'Cinzel Decorative',cursive;font-size:clamp(.84rem,1.8vw,1.06rem);color:var(--gl);margin:.22rem 0;}
+.jdesc{font-family:'IM Fell English',serif;font-size:.7rem;color:rgba(240,230,200,.6);font-style:italic;}
+.jmeta{display:flex;justify-content:space-between;align-items:center;margin-top:.6rem;padding-top:.4rem;border-top:1px solid rgba(201,168,76,.14);}
+.jcnt{font-family:'Cinzel',serif;font-size:.58rem;color:var(--gd);}
+.pbar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-top:.3rem;}
+.pfill{height:100%;background:linear-gradient(to right,var(--gd),var(--gl));transition:width .5s;border-radius:2px;}
+.jlockicon{position:absolute;top:.6rem;right:.6rem;font-size:.9rem;opacity:.6;}
+.jorn{position:absolute;bottom:.4rem;right:.65rem;font-size:1.3rem;opacity:.1;color:var(--gl);}
 
-.jcard{position:relative;cursor:pointer;transition:transform .3s ease;}
-.jcard:hover:not(.jlocked){transform:translateY(-5px) rotate(-.35deg);}
-.jcard.jlocked{cursor:not-allowed;opacity:.55;}
+/* ── LEADERBOARD ── */
+.lb-table{width:100%;border-collapse:collapse;}
+.lb-table th{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);padding:.5rem .8rem;border-bottom:1px solid rgba(201,168,76,.2);text-align:left;}
+.lb-table td{font-family:'Lora',serif;font-size:.82rem;padding:.6rem .8rem;border-bottom:1px solid rgba(201,168,76,.07);color:var(--p);}
+.lb-table tr:hover td{background:rgba(201,168,76,.05);}
+.lb-rank{font-family:'Cinzel Decorative',cursive;font-size:1rem;color:var(--gd);}
+.lb-rank.r1{color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,.5);}
+.lb-rank.r2{color:#c0c0c0;}
+.lb-rank.r3{color:#cd7f32;}
+.lb-name{font-family:'Cinzel',serif;font-size:.78rem;color:var(--p);}
+.lb-score{font-family:'Cinzel Decorative',cursive;font-size:1rem;color:var(--g);}
+.lb-badge{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.15em;background:rgba(107,26,26,.5);border:1px solid rgba(201,168,76,.2);padding:.15rem .5rem;color:var(--gd);}
+.lb-empty{text-align:center;padding:2rem;font-family:'IM Fell English',serif;font-style:italic;color:rgba(201,168,76,.4);font-size:.9rem;}
 
-.jinner{
-  background:linear-gradient(138deg,#8b2525 0%,#6b1a1a 42%,#4a0f0f 100%);
-  border:2px solid var(--gold-d);border-radius:var(--r);
-  padding:1.1rem 1rem 1rem;
-  box-shadow:4px 5px 0 rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.5),
-             inset 0 1px 0 rgba(255,255,255,.09),inset -3px 0 0 rgba(0,0,0,.2);
-  position:relative;overflow:hidden;min-height:130px;
-  display:flex;flex-direction:column;justify-content:space-between;
-}
-.jinner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:11px;background:linear-gradient(to right,rgba(0,0,0,.3),transparent);border-right:1px solid rgba(201,168,76,.1);}
-.jinner::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 18px,rgba(255,255,255,.016) 18px,rgba(255,255,255,.016) 19px);pointer-events:none;}
-.jyr{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold-d);}
-.jtitle{font-family:'Cinzel Decorative',cursive;font-size:clamp(.86rem,1.85vw,1.08rem);color:var(--gold-l);text-shadow:0 1px 4px rgba(0,0,0,.5);margin:.25rem 0;}
-.jdesc{font-family:'IM Fell English',serif;font-size:.72rem;color:rgba(240,230,200,.62);font-style:italic;}
-.jmeta{display:flex;justify-content:space-between;align-items:center;margin-top:.65rem;padding-top:.42rem;border-top:1px solid rgba(201,168,76,.16);}
-.jcnt{font-family:'Cinzel',serif;font-size:.6rem;color:var(--gold-d);letter-spacing:.07em;}
-.pbar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-top:.32rem;}
-.pfill{height:100%;background:linear-gradient(to right,var(--gold-d),var(--gold-l));transition:width .5s ease;border-radius:2px;}
-.jlock-icon{position:absolute;top:.65rem;right:.65rem;font-size:.95rem;opacity:.65;}
-.jorn{position:absolute;bottom:.42rem;right:.7rem;font-size:1.35rem;opacity:.11;color:var(--gold-l);}
+/* ── POINT HISTORY ── */
+.ph-entry{display:flex;justify-content:space-between;align-items:center;padding:.65rem .9rem;border-bottom:1px solid rgba(201,168,76,.08);transition:background .2s;}
+.ph-entry:hover{background:rgba(201,168,76,.04);}
+.ph-left{display:flex;flex-direction:column;gap:.2rem;}
+.ph-title{font-family:'Cinzel',serif;font-size:.72rem;color:var(--p);letter-spacing:.08em;}
+.ph-date{font-family:'Lora',serif;font-size:.65rem;color:rgba(201,168,76,.45);font-style:italic;}
+.ph-pts{font-family:'Cinzel Decorative',cursive;font-size:1.1rem;color:var(--g);}
+.ph-pts.neg{color:var(--ml);}
+.ph-empty{text-align:center;padding:2rem;font-family:'IM Fell English',serif;font-style:italic;color:rgba(201,168,76,.4);font-size:.9rem;}
 
-/* Seal effect on locked */
-.jcard.jlocked .jinner::after{
-  content:'';position:absolute;inset:0;
-  background:repeating-linear-gradient(-45deg,transparent 0,transparent 8px,rgba(0,0,0,.04) 8px,rgba(0,0,0,.04) 10px);
-  z-index:3;pointer-events:none;
-}
+/* Name input modal */
+#modal-name{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+#modal-name.off{display:none;}
+.modal-inner{background:linear-gradient(135deg,rgba(42,12,8,.97),rgba(26,8,5,.97));border:1px solid var(--gd);padding:2rem 2.5rem;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.8);}
+.modal-inner::before{content:'';display:block;position:absolute;inset:2px;border:1px solid rgba(201,168,76,.12);pointer-events:none;}
+.minp{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--gd);color:var(--p);font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.18em;padding:.7rem 1rem;text-align:center;outline:none;margin:1rem 0;}
+.minp:focus{border-color:var(--g);box-shadow:0 0 12px rgba(201,168,76,.2);}
 
-/* Bottom menu buttons */
-.mbtm{display:flex;gap:.85rem;margin-top:1rem;justify-content:center;}
-.btn-c{
-  font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
-  padding:.52rem 1.35rem;border:1px solid var(--gold-d);background:transparent;color:var(--gold);
-  cursor:pointer;transition:all .3s;position:relative;
-}
-.btn-c::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,168,76,.16);pointer-events:none;}
-.btn-c:hover{background:rgba(201,168,76,.1);border-color:var(--gold);box-shadow:0 0 14px rgba(201,168,76,.18);}
+/* ── BOTTOM MENU BTNS ── */
+.mbtm{display:flex;gap:.7rem;margin-top:.85rem;justify-content:center;}
+.btn-c{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem 1.2rem;border:1px solid var(--gd);background:transparent;color:var(--g);cursor:pointer;transition:all .3s;position:relative;}
+.btn-c::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,168,76,.14);pointer-events:none;}
+.btn-c:hover{background:rgba(201,168,76,.1);border-color:var(--g);box-shadow:0 0 12px rgba(201,168,76,.16);}
 
-/* ─────────────────────────────────────────
-   SCREEN 3: BUKU TERBUKA (GAME)
-───────────────────────────────────────── */
-#sc-game{flex-direction:column;padding:1rem;z-index:20;}
-
-.ghdr{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:800px;padding:.4rem 0;margin-bottom:.7rem;}
-.btn-back{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);background:transparent;border:1px solid rgba(201,168,76,.26);padding:.36rem .88rem;cursor:pointer;transition:all .3s;}
-.btn-back:hover{color:var(--gold);border-color:var(--gold);background:rgba(201,168,76,.07);}
-.ghud{display:flex;align-items:center;gap:1.35rem;}
-.huditem{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.1em;color:var(--gold);display:flex;align-items:center;gap:.35rem;}
+/* ════════════════════════════════════
+   SCREEN: GAME (BUKU TERBUKA)
+════════════════════════════════════ */
+#sc-game{flex-direction:column;padding:.9rem;z-index:20;}
+.ghdr{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:800px;padding:.38rem 0;margin-bottom:.65rem;}
+.btn-back{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);background:transparent;border:1px solid rgba(201,168,76,.24);padding:.34rem .85rem;cursor:pointer;transition:all .3s;}
+.btn-back:hover{color:var(--g);border-color:var(--g);background:rgba(201,168,76,.07);}
+.ghud{display:flex;align-items:center;gap:1.2rem;}
+.huditem{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.1em;color:var(--g);display:flex;align-items:center;gap:.32rem;}
 .tring{width:44px;height:44px;position:relative;flex-shrink:0;}
 .tring svg{transform:rotate(-90deg);}
 .tring circle{fill:none;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
-.tbg{stroke:rgba(201,168,76,.13);}
-.tfill{stroke:var(--gold);stroke-dasharray:113;stroke-dashoffset:0;}
-.tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold);font-weight:600;}
+.tbg{stroke:rgba(201,168,76,.12);}
+.tfill{stroke:var(--g);stroke-dasharray:113;stroke-dashoffset:0;}
+.tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.76rem;color:var(--g);font-weight:600;}
 
-/* Parchment card */
-.pcard{
-  background:linear-gradient(135deg,rgba(242,232,205,.97) 0%,rgba(234,220,180,.95) 50%,rgba(222,202,160,.97) 100%);
-  border:2px solid var(--gold-d);
-  box-shadow:0 0 0 1px rgba(201,168,76,.26),0 8px 32px rgba(0,0,0,.6),
-             0 2px 8px rgba(212,136,42,.16),inset 0 1px 0 rgba(255,255,255,.26),inset 0 -1px 0 rgba(0,0,0,.07);
-  position:relative;overflow:hidden;
-}
-.pcard::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 18% 18%,rgba(215,198,158,.38) 0%,transparent 50%),radial-gradient(ellipse at 82% 82%,rgba(180,155,100,.26) 0%,transparent 40%);pointer-events:none;}
-.oborder::after{content:'';position:absolute;inset:3px;border:1px solid rgba(201,168,76,.32);pointer-events:none;}
-.corn::before,.corn::after{content:'❧';position:absolute;color:var(--gold);font-size:1.05rem;opacity:.52;}
-.corn::before{top:7px;left:10px;transform:rotate(-45deg);}
-.corn::after{bottom:7px;right:10px;transform:rotate(135deg);}
-
-/* Open book effect */
-.book-card{
-  width:100%;max-width:800px;
-  display:flex;position:relative;
-}
-/* left page */
-.page-left{
-  flex:1;padding:1.6rem 1.4rem 1.6rem 1.8rem;
-  border-right:2px solid rgba(107,26,26,.18);
-  position:relative;
-}
-/* right page */
-.page-right{
-  flex:1;padding:1.6rem 1.8rem 1.6rem 1.4rem;
-}
-/* spine shadow */
-.book-card::after{
-  content:'';position:absolute;left:50%;top:0;bottom:0;width:6px;
-  transform:translateX(-50%);
-  background:linear-gradient(to right,rgba(0,0,0,.12),rgba(0,0,0,.04),rgba(0,0,0,.12));
-  pointer-events:none;z-index:2;
-}
-
-.badge{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.32em;text-transform:uppercase;color:var(--maroon);background:linear-gradient(135deg,var(--gold),var(--gold-d));padding:.2rem .65rem;display:inline-block;margin-bottom:.6rem;}
-.pno{font-family:'Cinzel',serif;font-size:.65rem;color:var(--maroon-l);letter-spacing:.2em;margin-bottom:.28rem;}
-.pauthor{font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);letter-spacing:.13em;margin-bottom:.85rem;padding-bottom:.6rem;border-bottom:1px solid rgba(107,26,26,.16);font-style:italic;}
-
-.puisi-txt{
-  font-family:'IM Fell English',serif;font-size:clamp(.95rem,2.4vw,1.32rem);
-  color:var(--ink);line-height:1.95;text-align:center;font-style:italic;
-  min-height:65px;display:flex;align-items:center;justify-content:center;
-  flex-wrap:wrap;gap:.26em;
-}
-.blank{
-  display:inline-block;border-bottom:2px solid var(--maroon);
-  min-width:72px;height:1.5rem;background:rgba(107,26,26,.07);
-  vertical-align:middle;margin:0 .16em;position:relative;
-}
-.blank::after{content:'?';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--maroon);font-size:.85rem;font-style:normal;font-family:'Cinzel',serif;}
-
-/* Decorative right page element */
-.page-deco{
-  display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;gap:.9rem;
-}
-.page-ornament{opacity:.18;color:var(--gold);}
-
-/* Options */
-.optgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-top:.95rem;width:100%;max-width:800px;}
-@media(max-width:480px){.optgrid{grid-template-columns:1fr;}}
-.optbtn{
-  font-family:'IM Fell English',serif;font-size:clamp(.86rem,1.85vw,1.04rem);font-style:italic;
-  color:var(--ink);background:linear-gradient(135deg,rgba(240,230,200,.97) 0%,rgba(220,200,155,.97) 100%);
-  border:1px solid var(--gold-d);padding:.8rem .9rem;cursor:pointer;
-  transition:all .22s ease;text-align:center;line-height:1.4;
-}
-.optbtn:hover:not(:disabled){background:linear-gradient(135deg,rgba(201,168,76,.24),rgba(201,168,76,.13));border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.17);color:var(--maroon-d);}
+/* Book */
+.pcard{background:linear-gradient(135deg,rgba(242,232,205,.97) 0%,rgba(234,220,180,.95) 50%,rgba(222,202,160,.97) 100%);border:2px solid var(--gd);box-shadow:0 0 0 1px rgba(201,168,76,.24),0 8px 32px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(0,0,0,.06);position:relative;overflow:hidden;}
+.pcard::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 18% 18%,rgba(215,198,158,.36) 0%,transparent 48%),radial-gradient(ellipse at 82% 82%,rgba(180,155,100,.24) 0%,transparent 38%);pointer-events:none;}
+.oborder::after{content:'';position:absolute;inset:3px;border:1px solid rgba(201,168,76,.28);pointer-events:none;}
+.corn::before,.corn::after{content:'❧';position:absolute;color:var(--g);font-size:1rem;opacity:.5;}
+.corn::before{top:6px;left:9px;transform:rotate(-45deg);}
+.corn::after{bottom:6px;right:9px;transform:rotate(135deg);}
+.book-card{width:100%;max-width:800px;display:flex;position:relative;}
+.book-card::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:5px;transform:translateX(-50%);background:linear-gradient(to right,rgba(0,0,0,.12),rgba(0,0,0,.04),rgba(0,0,0,.12));pointer-events:none;z-index:2;}
+.pl{flex:1;padding:1.5rem 1.3rem 1.5rem 1.7rem;border-right:2px solid rgba(107,26,26,.16);}
+.pr{flex:1;padding:1.5rem 1.7rem 1.5rem 1.3rem;}
+.badge{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.3em;text-transform:uppercase;color:var(--m);background:linear-gradient(135deg,var(--g),var(--gd));padding:.18rem .62rem;display:inline-block;margin-bottom:.55rem;}
+.pno{font-family:'Cinzel',serif;font-size:.62rem;color:var(--ml);letter-spacing:.2em;margin-bottom:.25rem;}
+.pauth{font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);letter-spacing:.12em;margin-bottom:.8rem;padding-bottom:.58rem;border-bottom:1px solid rgba(107,26,26,.15);font-style:italic;}
+.ptxt{font-family:'IM Fell English',serif;font-size:clamp(.92rem,2.3vw,1.28rem);color:var(--ink);line-height:1.95;text-align:center;font-style:italic;min-height:60px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.24em;}
+.blank{display:inline-block;border-bottom:2px solid var(--m);min-width:68px;height:1.45rem;background:rgba(107,26,26,.07);vertical-align:middle;margin:0 .14em;position:relative;}
+.blank::after{content:'?';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--m);font-size:.82rem;font-style:normal;font-family:'Cinzel',serif;}
+.page-deco{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;gap:.85rem;}
+.ruled-lines{width:100%;display:flex;flex-direction:column;gap:.5rem;margin-top:.45rem;}
+.ruled-lines div{height:1px;background:rgba(107,26,26,.1);}
+.optgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.62rem;margin-top:.9rem;width:100%;max-width:800px;}
+@media(max-width:460px){.optgrid{grid-template-columns:1fr;}}
+.optbtn{font-family:'IM Fell English',serif;font-size:clamp(.84rem,1.8vw,1.02rem);font-style:italic;color:var(--ink);background:linear-gradient(135deg,rgba(240,230,200,.97),rgba(220,200,155,.97));border:1px solid var(--gd);padding:.75rem .85rem;cursor:pointer;transition:all .22s;text-align:center;line-height:1.4;}
+.optbtn:hover:not(:disabled){background:linear-gradient(135deg,rgba(201,168,76,.24),rgba(201,168,76,.12));border-color:var(--g);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.17);color:var(--md);}
 .optbtn.correct{background:linear-gradient(135deg,rgba(34,100,50,.28),rgba(20,70,35,.38));border-color:#4a8c5a;color:#1a4a2a;font-weight:700;}
-.optbtn.wrong{background:linear-gradient(135deg,rgba(107,26,26,.28),rgba(74,15,15,.38));border-color:var(--maroon);color:var(--maroon-d);text-decoration:line-through;}
+.optbtn.wrong{background:linear-gradient(135deg,rgba(107,26,26,.28),rgba(74,15,15,.38));border-color:var(--m);color:var(--md);text-decoration:line-through;}
 .optbtn:disabled{cursor:not-allowed;}
+#gfb{height:1.3rem;margin-top:.4rem;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.14em;text-align:center;}
 
-#feedback{height:1.4rem;margin-top:.42rem;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.14em;text-align:center;}
+/* Feedback popup */
+.fpop{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.fpop-inner{font-family:'Cinzel Decorative',cursive;font-size:clamp(1.1rem,3.5vw,2rem);padding:.9rem 2.2rem;border:1px solid var(--gd);backdrop-filter:blur(4px);animation:fpani .85s ease forwards;pointer-events:none;}
+.fp-ok{background:rgba(15,50,25,.88);color:var(--gl);border-color:#4a8c5a;text-shadow:0 0 18px rgba(201,168,76,.5);}
+.fp-no{background:rgba(45,8,8,.88);color:var(--ml);border-color:var(--m);}
+@keyframes fpani{0%{opacity:0;transform:scale(.8);}28%{opacity:1;transform:scale(1.06);}58%{transform:scale(1);}100%{opacity:0;transform:translateY(-28px) scale(.88);}}
 
-/* Feedback popup overlay */
-.feedback-popup{
-  position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
-  pointer-events:none;
-}
-.fp-inner{
-  font-family:'Cinzel Decorative',cursive;
-  font-size:clamp(1.2rem,4vw,2.2rem);
-  padding:1rem 2.5rem;
-  border:1px solid var(--gold-d);
-  backdrop-filter:blur(4px);
-  animation:fpAnim .8s ease forwards;
-  pointer-events:none;
-}
-.fp-benar{background:rgba(20,60,30,.85);color:var(--gold-l);border-color:#4a8c5a;text-shadow:0 0 20px rgba(201,168,76,.5);}
-.fp-salah{background:rgba(50,10,10,.85);color:var(--maroon-l);border-color:var(--maroon);}
-@keyframes fpAnim{0%{opacity:0;transform:scale(.8);}30%{opacity:1;transform:scale(1.05);}60%{transform:scale(1);}100%{opacity:0;transform:translateY(-30px) scale(.9);}}
-
-/* ─────────────────────────────────────────
-   SCREEN 4: HASIL (RESULT)
-───────────────────────────────────────── */
+/* ════════════════════════════════════
+   SCREEN: RESULT
+════════════════════════════════════ */
 #sc-result{flex-direction:column;z-index:20;}
-.rcard{padding:2.2rem 2.8rem;text-align:center;max-width:480px;width:90%;}
-.rsring{width:110px;height:110px;border-radius:50%;border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:1rem auto;background:rgba(107,26,26,.1);box-shadow:0 0 30px rgba(201,168,76,.18);}
-.rsnum{font-family:'Cinzel Decorative',cursive;font-size:2rem;color:var(--gold);line-height:1;}
-.rslbl{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.2em;color:var(--maroon);text-transform:uppercase;}
-.rtitle{font-family:'Cinzel Decorative',cursive;font-size:1.45rem;color:var(--maroon);margin:.65rem 0 .25rem;}
-.rdesc{font-family:'IM Fell English',serif;font-size:.9rem;color:var(--maroon-l);font-style:italic;margin-bottom:1.3rem;}
-.rstars{font-size:1.65rem;letter-spacing:.26rem;margin:.4rem 0;}
-.unlockbanner{display:flex;align-items:center;gap:.42rem;font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.13em;color:var(--gold);background:rgba(107,26,26,.45);border:1px solid rgba(201,168,76,.26);padding:.36rem .88rem;margin-top:.42rem;}
+.rcard{padding:2rem 2.6rem;text-align:center;max-width:470px;width:90%;}
+.rsring{width:108px;height:108px;border-radius:50%;border:3px solid var(--g);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:.9rem auto;background:rgba(107,26,26,.1);box-shadow:0 0 28px rgba(201,168,76,.18);}
+.rsnum{font-family:'Cinzel Decorative',cursive;font-size:1.9rem;color:var(--g);line-height:1;}
+.rslbl{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.2em;color:var(--m);text-transform:uppercase;}
+.rtit{font-family:'Cinzel Decorative',cursive;font-size:1.4rem;color:var(--m);margin:.6rem 0 .22rem;}
+.rdesc{font-family:'IM Fell English',serif;font-size:.88rem;color:var(--ml);font-style:italic;margin-bottom:1.2rem;}
+.rstars{font-size:1.6rem;letter-spacing:.24rem;margin:.38rem 0;}
+.ubanner{display:flex;align-items:center;gap:.4rem;font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.12em;color:var(--g);background:rgba(107,26,26,.42);border:1px solid rgba(201,168,76,.24);padding:.34rem .85rem;margin-top:.4rem;}
 
-/* ─────────────────────────────────────────
-   SCREEN 5: TUTORIAL / KREATOR
-───────────────────────────────────────── */
-#sc-tutorial,#sc-kreator{flex-direction:column;padding:1.4rem;z-index:20;}
-.tcard{padding:1.75rem 2.1rem;max-width:590px;width:100%;}
+/* ════════════════════════════════════
+   SCREEN: TUTORIAL / KREATOR
+════════════════════════════════════ */
+#sc-tutorial,#sc-kreator{flex-direction:column;padding:1.3rem;z-index:20;}
+.tcard{padding:1.7rem 2rem;max-width:580px;width:100%;}
 
-/* ─────────────────────────────────────────
-   NOTIFICATION TOAST
-───────────────────────────────────────── */
-#toast{
-  position:fixed;top:1.3rem;left:50%;transform:translateX(-50%);z-index:999;
-  font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
-  padding:.52rem 1.35rem;background:linear-gradient(135deg,var(--maroon-d),var(--maroon));
-  border:1px solid var(--gold-d);color:var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.5);
-  opacity:0;transition:opacity .35s;pointer-events:none;white-space:nowrap;
-}
+/* ── SHARED ── */
+#toast{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%);z-index:999;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem 1.3rem;background:linear-gradient(135deg,var(--md),var(--m));border:1px solid var(--gd);color:var(--g);box-shadow:0 4px 16px rgba(0,0,0,.55);opacity:0;transition:opacity .35s;pointer-events:none;white-space:nowrap;}
 #toast.on{opacity:1;}
-
-/* ─────────────────────────────────────────
-   PARTICLES & COMBOS
-───────────────────────────────────────── */
-.spark{position:fixed;pointer-events:none;z-index:300;font-size:1rem;animation:sparkfall 1.5s ease-out forwards;}
-@keyframes sparkfall{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-80px) scale(.3);}}
-.combo{position:fixed;z-index:300;font-family:'Cinzel Decorative',cursive;font-size:1.4rem;color:var(--gold);text-shadow:0 0 20px rgba(201,168,76,.8);animation:combofloat 1.2s ease-out forwards;pointer-events:none;}
-@keyframes combofloat{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}50%{transform:translateX(-50%) translateY(-30px) scale(1.3);}100%{opacity:0;transform:translateX(-50%) translateY(-60px) scale(.8);}}
-
-/* ─────────────────────────────────────────
-   UTILITY
-───────────────────────────────────────── */
+.spark{position:fixed;pointer-events:none;z-index:300;font-size:.95rem;animation:spfall 1.5s ease-out forwards;}
+@keyframes spfall{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-75px) scale(.28);}}
+.combo{position:fixed;z-index:300;font-family:'Cinzel Decorative',cursive;font-size:1.35rem;color:var(--g);text-shadow:0 0 20px rgba(201,168,76,.8);animation:cbfloat 1.2s ease-out forwards;pointer-events:none;}
+@keyframes cbfloat{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}50%{transform:translateX(-50%) translateY(-28px) scale(1.3);}100%{opacity:0;transform:translateX(-50%) translateY(-58px) scale(.78);}}
 .fadein{animation:fdin .6s ease forwards;}
 @keyframes fdin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 .hidden{display:none!important;}
+.scroll-box{max-height:42vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--gd) transparent;}
+.scroll-box::-webkit-scrollbar{width:3px;}
+.scroll-box::-webkit-scrollbar-thumb{background:var(--gd);}
 </style>
 </head>
 <body>
 
-<!-- Persistent atmosphere layers -->
-<div id="layer-wood"></div>
-<div id="layer-grain"></div>
-<div id="layer-light"></div>
+<div id="bg-wood"></div>
+<div id="bg-grain"></div>
+<div id="bg-light"></div>
 <div id="toast"></div>
-<div id="prolog-bar"></div>
 
-<!-- ═══════════════════════════════════════════════
-     SCREEN 1 — PROLOG (Cinematic Scroll)
-═══════════════════════════════════════════════ -->
-<div class="screen" id="sc-prolog">
-  <div id="prolog-scroll">
-
-    <!-- SCENE A: Judul Besar -->
-    <section class="cscene" id="csa">
-      <div class="para-bg" id="csa-bg"
-        style="background:radial-gradient(ellipse 80% 70% at 50% 55%,#150606 0%,#000 100%);">
-      </div>
-      <!-- Star field -->
-      <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" id="stars-svg"></svg>
-      <!-- Keris + lotus SVG -->
-      <svg class="cscene-art" style="width:min(300px,65vw);top:48%;left:50%;transform:translate(-50%,-54%);" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
-        <!-- glow ring -->
-        <circle cx="150" cy="130" r="108" stroke="rgba(201,168,76,.14)" stroke-width="1" fill="none"/>
-        <circle cx="150" cy="130" r="98" stroke="rgba(201,168,76,.08)" stroke-width=".5" fill="none"/>
-        <!-- lotus petals -->
-        <g opacity=".38">
-          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.35)" transform="rotate(0 150 130)"/>
-          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.28)" transform="rotate(45 150 130)"/>
-          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.35)" transform="rotate(90 150 130)"/>
-          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.28)" transform="rotate(135 150 130)"/>
-          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.35)" transform="rotate(180 150 130)"/>
-          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.28)" transform="rotate(225 150 130)"/>
-          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.35)" transform="rotate(270 150 130)"/>
-          <ellipse cx="150" cy="45" rx="9" ry="20" fill="rgba(201,168,76,.28)" transform="rotate(315 150 130)"/>
-        </g>
-        <!-- keris blade -->
-        <path d="M150 32 L145 55 Q148 68 143 82 Q138 96 145 108 Q152 120 145 132 Q138 144 146 158 Q154 172 148 192 L150 228 L152 192 Q146 172 154 158 Q162 144 155 132 Q148 120 155 108 Q162 96 157 82 Q152 68 155 55 Z" fill="rgba(201,168,76,.2)" stroke="rgba(201,168,76,.48)" stroke-width=".8"/>
-        <!-- hilt -->
-        <ellipse cx="150" cy="224" rx="17" ry="5.5" fill="rgba(201,168,76,.32)" stroke="rgba(201,168,76,.55)" stroke-width="1"/>
-        <ellipse cx="150" cy="224" rx="9" ry="3" fill="rgba(201,168,76,.5)"/>
-        <!-- center -->
-        <circle cx="150" cy="130" r="4" fill="rgba(201,168,76,.55)"/>
-        <circle cx="150" cy="130" r="2" fill="rgba(232,201,106,.9)"/>
-      </svg>
-      <!-- Fireflies -->
-      <div id="ffa"></div>
-      <!-- Ink dots -->
-      <div id="ida"></div>
-      <div class="cscene-text" style="padding-top:64vh;">
-        <div class="rv cap d1">Sebuah Perjalanan Sastra</div>
-        <div class="rv big d2" style="font-size:clamp(2.4rem,7.5vw,5rem);">PUJANGGAKU</div>
-        <div class="rv hdiv d3"></div>
-        <div class="rv gold-line d4" style="font-size:clamp(.8rem,1.7vw,1rem);">Mencari Tinta Nusantara yang Hilang</div>
-      </div>
-    </section>
-
-    <!-- SCENE B: Hutan Bambu -->
-    <section class="cscene" id="csb">
-      <div class="para-bg" id="csb-bg"
-        style="background:linear-gradient(168deg,#060310 0%,#0c0508 45%,#140a03 80%,#080502 100%);">
-      </div>
-      <div id="ffb"></div>
-      <!-- Bamboo + moon SVG -->
-      <svg class="cscene-art" style="bottom:0;left:0;width:100%;height:62%;" viewBox="0 0 900 380" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-        <defs><filter id="gfx"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-        <!-- moon -->
-        <circle cx="450" cy="75" r="50" fill="rgba(240,225,185,.055)"/>
-        <circle cx="450" cy="75" r="42" fill="rgba(240,225,185,.04)"/>
-        <!-- bamboo L -->
-        <g opacity=".9">
-          <rect x="18" y="0" width="10" height="380" rx="4" fill="#060d04"/>
-          <rect x="34" y="45" width="8" height="335" rx="3" fill="#080f05"/>
-          <rect x="52" y="0" width="11" height="380" rx="4" fill="#060c04"/>
-          <rect x="70" y="65" width="9" height="315" rx="3" fill="#070e05"/>
-          <rect x="88" y="0" width="12" height="380" rx="5" fill="#050b03"/>
-          <rect x="107" y="38" width="8" height="342" rx="3" fill="#070d04"/>
-          <rect x="122" y="0" width="10" height="380" rx="4" fill="#060c04"/>
-          <!-- nodes -->
-          <rect x="18" y="88" width="10" height="3" rx="1" fill="#0d1808"/>
-          <rect x="18" y="188" width="10" height="3" rx="1" fill="#0d1808"/>
-          <rect x="52" y="105" width="11" height="3" rx="1" fill="#0d1808"/>
-          <rect x="52" y="225" width="11" height="3" rx="1" fill="#0d1808"/>
-          <rect x="88" y="78" width="12" height="3" rx="1" fill="#0d1808"/>
-          <rect x="88" y="198" width="12" height="3" rx="1" fill="#0d1808"/>
-          <!-- leaves -->
-          <path d="M34 95 Q8 75 0 52" stroke="#0a1806" stroke-width="3" fill="none"/>
-          <path d="M52 108 Q26 88 14 62" stroke="#0a1806" stroke-width="2.5" fill="none"/>
-          <path d="M88 88 Q62 66 50 44" stroke="#0a1806" stroke-width="3" fill="none"/>
-          <path d="M122 72 Q98 52 86 28" stroke="#0a1806" stroke-width="2.5" fill="none"/>
-        </g>
-        <!-- bamboo R -->
-        <g opacity=".9">
-          <rect x="762" y="0" width="10" height="380" rx="4" fill="#060d04"/>
-          <rect x="778" y="48" width="11" height="332" rx="4" fill="#080f05"/>
-          <rect x="795" y="0" width="9" height="380" rx="3" fill="#060c04"/>
-          <rect x="812" y="22" width="12" height="358" rx="5" fill="#050b03"/>
-          <rect x="830" y="55" width="9" height="325" rx="4" fill="#070d04"/>
-          <rect x="846" y="0" width="10" height="380" rx="4" fill="#060c04"/>
-          <rect x="862" y="32" width="8" height="348" rx="3" fill="#080f05"/>
-          <rect x="876" y="0" width="13" height="380" rx="5" fill="#050b03"/>
-          <!-- nodes -->
-          <rect x="778" y="115" width="11" height="3" rx="1" fill="#0d1808"/>
-          <rect x="812" y="88" width="12" height="3" rx="1" fill="#0d1808"/>
-          <rect x="846" y="95" width="9" height="3" rx="1" fill="#0d1808"/>
-          <!-- leaves -->
-          <path d="M876 82 Q902 60 912 38" stroke="#0a1806" stroke-width="3" fill="none"/>
-          <path d="M846 90 Q874 70 888 46" stroke="#0a1806" stroke-width="2.5" fill="none"/>
-          <path d="M812 98 Q838 76 852 54" stroke="#0a1806" stroke-width="2.5" fill="none"/>
-        </g>
-        <!-- fireflies -->
-        <circle cx="220" cy="195" r="2.2" fill="rgba(232,201,106,.7)" filter="url(#gfx)"/>
-        <circle cx="360" cy="265" r="1.8" fill="rgba(232,201,106,.55)" filter="url(#gfx)"/>
-        <circle cx="610" cy="210" r="2.2" fill="rgba(232,201,106,.65)" filter="url(#gfx)"/>
-        <circle cx="700" cy="298" r="1.8" fill="rgba(232,201,106,.5)" filter="url(#gfx)"/>
-        <!-- ground mist -->
-        <ellipse cx="450" cy="380" rx="490" ry="60" fill="rgba(4,8,3,.9)"/>
-        <!-- dashed path -->
-        <path d="M395 380 Q408 330 425 285 Q438 250 448 218" stroke="rgba(201,168,76,.1)" stroke-width="1.5" fill="none" stroke-dasharray="5 7"/>
-        <!-- birds -->
-        <path d="M305 128 Q310 122 315 128" stroke="rgba(201,168,76,.28)" stroke-width="1.4" fill="none"/>
-        <path d="M326 116 Q332 110 338 116" stroke="rgba(201,168,76,.22)" stroke-width="1.4" fill="none"/>
-      </svg>
-      <div class="cscene-text">
-        <div class="rv cap d1">Di antara reruntuhan dan pakis</div>
-        <div class="rv big d2">Puri yang Terlupakan</div>
-        <div class="rv bod d3">Di antara reruntuhan puri tua yang ditumbuhi pakis dan lumut, tersimpan sebuah rahasia yang terlupakan oleh zaman...</div>
-      </div>
-    </section>
-
-    <!-- SCENE C: Gunung + Tinta -->
-    <section class="cscene" id="csc">
-      <div class="para-bg" id="csc-bg"
-        style="background:linear-gradient(148deg,#060408 0%,#0c0804 50%,#120a03 100%);">
-      </div>
-      <div id="ffc"></div>
-      <!-- Mountain SVG -->
-      <svg class="cscene-art" style="bottom:0;left:0;width:100%;height:58%;" viewBox="0 0 900 360" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-        <!-- stars -->
-        <circle cx="100" cy="55" r="1.1" fill="rgba(240,225,185,.4)"/>
-        <circle cx="255" cy="28" r=".9" fill="rgba(240,225,185,.3)"/>
-        <circle cx="455" cy="18" r="1.4" fill="rgba(240,225,185,.5)"/>
-        <circle cx="660" cy="38" r="1" fill="rgba(240,225,185,.38)"/>
-        <circle cx="790" cy="24" r="1.1" fill="rgba(240,225,185,.32)"/>
-        <!-- far silhouette -->
-        <path d="M0 265 L120 95 L240 190 L375 55 L498 175 L618 75 L740 175 L900 115 L900 360 L0 360Z" fill="#040706"/>
-        <!-- main mountain -->
-        <path d="M248 360 L428 55 L608 360Z" fill="#07090a"/>
-        <!-- snow glow -->
-        <path d="M410 75 L428 55 L448 78 Q432 98 410 75Z" fill="rgba(201,168,76,.14)"/>
-        <!-- ink trail from peak -->
-        <path d="M428 65 Q422 118 418 165 Q413 215 422 252 Q432 292 420 330 L438 330 Q428 292 438 252 Q448 215 440 165 Q430 118 434 65Z" fill="rgba(201,168,76,.07)"/>
-        <!-- ink drops -->
-        <ellipse cx="388" cy="138" rx="7" ry="4.5" fill="rgba(201,168,76,.18)" transform="rotate(-22 388 138)"/>
-        <ellipse cx="468" cy="158" rx="5.5" ry="3.5" fill="rgba(201,168,76,.14)" transform="rotate(16 468 158)"/>
-        <!-- scroll on ground -->
-        <rect x="352" y="310" width="152" height="38" rx="3" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.22)" stroke-width="1"/>
-        <line x1="352" y1="310" x2="352" y2="348" stroke="rgba(201,168,76,.28)" stroke-width="2"/>
-        <line x1="504" y1="310" x2="504" y2="348" stroke="rgba(201,168,76,.28)" stroke-width="2"/>
-        <line x1="368" y1="323" x2="488" y2="323" stroke="rgba(201,168,76,.18)" stroke-width=".7"/>
-        <line x1="368" y1="334" x2="488" y2="334" stroke="rgba(201,168,76,.18)" stroke-width=".7"/>
-        <!-- ground -->
-        <ellipse cx="450" cy="360" rx="470" ry="52" fill="rgba(5,8,5,.92)"/>
-      </svg>
-      <div class="cscene-text">
-        <div class="rv cap d1">Tinta yang Istimewa</div>
-        <div class="rv big d2">Tinta Jiwa Nusantara</div>
-        <div class="rv bod d3">Para pujangga Nusantara pernah menulis dengan tinta yang istimewa — tinta yang mengalir dari puncak Mahameru hingga ke dalam jiwa setiap bait sajak.</div>
-        <div class="rv hdiv d3"></div>
-        <div class="rv gold-line d4">Tinta Jiwa · Tinta Nusantara</div>
-      </div>
-    </section>
-
-    <!-- SCENE D: Kata Hilang -->
-    <section class="cscene" id="csd">
-      <div class="para-bg" id="csd-bg"
-        style="background:radial-gradient(ellipse 100% 80% at 50% 50%,#0a0202 0%,#050101 100%);">
-      </div>
-      <div id="ffd"></div>
-      <!-- Scattered words SVG -->
-      <svg class="cscene-art" style="inset:0;width:100%;height:100%;opacity:.52;" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
-        <text x="78" y="118" font-family="serif" font-size="22" fill="rgba(201,168,76,.24)" transform="rotate(-8 78 118)">...cinta...</text>
-        <text x="648" y="88" font-family="serif" font-size="18" fill="rgba(201,168,76,.18)" transform="rotate(6 648 88)">...rindu...</text>
-        <text x="198" y="448" font-family="serif" font-size="16" fill="rgba(201,168,76,.2)" transform="rotate(-5 198 448)">...jiwa...</text>
-        <text x="578" y="478" font-family="serif" font-size="20" fill="rgba(201,168,76,.22)" transform="rotate(4 578 478)">...sunyi...</text>
-        <text x="118" y="318" font-family="serif" font-size="14" fill="rgba(201,168,76,.15)" transform="rotate(-12 118 318)">...aku...</text>
-        <text x="718" y="338" font-family="serif" font-size="18" fill="rgba(201,168,76,.17)" transform="rotate(9 718 338)">...abadi...</text>
-        <text x="398" y="138" font-family="serif" font-size="15" fill="rgba(201,168,76,.14)" transform="rotate(-3 398 138)">...merdeka...</text>
-        <text x="318" y="508" font-family="serif" font-size="17" fill="rgba(201,168,76,.18)" transform="rotate(7 318 508)">...tabah...</text>
-        <!-- empty parchment -->
-        <rect x="328" y="245" width="244" height="122" rx="4" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.18)" stroke-width="1" stroke-dasharray="4 5"/>
-        <line x1="352" y1="274" x2="548" y2="274" stroke="rgba(201,168,76,.11)" stroke-width="1"/>
-        <line x1="352" y1="294" x2="548" y2="294" stroke="rgba(201,168,76,.11)" stroke-width="1"/>
-        <line x1="352" y1="314" x2="548" y2="314" stroke="rgba(201,168,76,.11)" stroke-width="1"/>
-        <line x1="352" y1="334" x2="528" y2="334" stroke="rgba(201,168,76,.11)" stroke-width="1"/>
-        <text x="450" y="306" font-family="serif" font-size="28" fill="rgba(201,168,76,.28)" text-anchor="middle">?</text>
-        <!-- broken link -->
-        <g stroke="rgba(201,168,76,.18)" stroke-width="1.4" fill="none">
-          <ellipse cx="448" cy="198" rx="14" ry="7.5" transform="rotate(-28 448 198)"/>
-          <ellipse cx="468" cy="208" rx="14" ry="7.5" transform="rotate(-28 468 208)"/>
-          <path d="M463 193 L473 203" stroke-dasharray="3 3"/>
-        </g>
-      </svg>
-      <div class="cscene-text">
-        <div class="rv cap d1">Kisah yang Tercerai-berai</div>
-        <div class="rv big d2">Kata yang Lenyap</div>
-        <div class="rv bod d3">Namun suatu hari, tinta itu lenyap. Kata-kata tercerai-berai, bait-bait puisi menjadi tidak sempurna — menunggu seorang pujangga baru untuk melengkapinya kembali.</div>
-      </div>
-    </section>
-
-    <!-- SCENE E: Panggilan — Gerbang Candi -->
-    <section class="cscene" id="cse">
-      <div class="para-bg" id="cse-bg"
-        style="background:radial-gradient(ellipse 90% 85% at 50% 50%,#0e0404 0%,#060202 100%);">
-      </div>
-      <div id="ffe"></div>
-      <!-- Candi gate SVG -->
-      <svg class="cscene-art" style="bottom:0;left:0;width:100%;height:68%;" viewBox="0 0 900 420" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="mg" cx="50%" cy="0%" r="65%">
-            <stop offset="0%" stop-color="rgba(201,168,76,.11)"/>
-            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-          </radialGradient>
-        </defs>
-        <rect x="0" y="0" width="900" height="420" fill="url(#mg)"/>
-        <!-- far mountains -->
-        <path d="M0 370 L78 258 L178 318 L278 198 L385 288 L450 238 L514 288 L618 198 L718 298 L828 258 L900 308 L900 370Z" fill="rgba(5,8,5,.88)"/>
-        <!-- ground -->
-        <rect x="0" y="370" width="900" height="50" fill="#020504"/>
-        <!-- left tower -->
-        <path d="M278 370 L278 198 L294 178 L294 158 L304 138 L310 118 L316 103 L322 88 L319 78 L316 68 L322 73 L328 63 L334 52 L340 63 L346 73 L352 78 L349 88 L355 103 L361 118 L367 138 L377 158 L377 178 L393 198 L393 370Z"
-              fill="rgba(7,5,3,.96)" stroke="rgba(201,168,76,.18)" stroke-width=".8"/>
-        <rect x="282" y="198" width="108" height="12" rx="1" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.18)" stroke-width=".6"/>
-        <rect x="288" y="184" width="96" height="10" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.15)" stroke-width=".6"/>
-        <rect x="296" y="164" width="80" height="12" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.13)" stroke-width=".6"/>
-        <!-- right tower -->
-        <path d="M507 370 L507 198 L523 178 L523 158 L533 138 L539 118 L545 103 L551 88 L548 78 L545 68 L551 73 L557 63 L563 52 L569 63 L575 73 L581 78 L578 88 L584 103 L590 118 L596 138 L606 158 L606 178 L622 198 L622 370Z"
-              fill="rgba(7,5,3,.96)" stroke="rgba(201,168,76,.18)" stroke-width=".8"/>
-        <rect x="511" y="198" width="107" height="12" rx="1" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.18)" stroke-width=".6"/>
-        <rect x="517" y="184" width="95" height="10" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.15)" stroke-width=".6"/>
-        <rect x="523" y="164" width="82" height="12" rx="1" fill="rgba(201,168,76,.05)" stroke="rgba(201,168,76,.13)" stroke-width=".6"/>
-        <!-- gate glow -->
-        <ellipse cx="450" cy="370" rx="62" ry="18" fill="rgba(201,168,76,.11)" filter="blur(7px)"/>
-        <!-- stairs -->
-        <rect x="422" y="350" width="56" height="8" rx="1" fill="rgba(201,168,76,.11)"/>
-        <rect x="416" y="358" width="68" height="7" rx="1" fill="rgba(201,168,76,.07)"/>
-        <rect x="410" y="365" width="80" height="6" rx="1" fill="rgba(201,168,76,.05)"/>
-        <!-- torches -->
-        <ellipse cx="292" cy="368" rx="4" ry="8" fill="rgba(212,136,42,.3)" filter="blur(2px)"/>
-        <ellipse cx="608" cy="368" rx="4" ry="8" fill="rgba(212,136,42,.3)" filter="blur(2px)"/>
-        <!-- pujangga silhouette -->
-        <ellipse cx="450" cy="351" rx="6.5" ry="7.5" fill="rgba(201,168,76,.16)"/>
-        <rect x="444" y="358" width="12" height="18" rx="3" fill="rgba(201,168,76,.14)"/>
-        <path d="M455 366 L468 352 L470 349 L467 353Z" fill="rgba(201,168,76,.32)"/>
-        <!-- petals -->
-        <ellipse cx="348" cy="278" rx="5" ry="2" fill="rgba(201,168,76,.18)" transform="rotate(-22 348 278)"/>
-        <ellipse cx="552" cy="298" rx="4" ry="2" fill="rgba(201,168,76,.16)" transform="rotate(14 552 298)"/>
-        <ellipse cx="398" cy="238" rx="3.5" ry="1.5" fill="rgba(201,168,76,.14)" transform="rotate(-8 398 238)"/>
-      </svg>
-      <div class="cscene-text">
-        <div class="rv cap d1">Saatnya engkau menjawab panggilan</div>
-        <div class="rv big d2" style="font-size:clamp(1.4rem,4.2vw,2.6rem);">Mampukah Engkau Menjadi<br>Pujangga Sejati?</div>
-        <div class="rv bod d3">Ambil penamu. Buka jurnalmu. Lengkapi bait-bait yang tertinggal, dan kembalikan Tinta Nusantara ke tempatnya semula.</div>
-        <div class="rv hdiv d3"></div>
-        <button id="btn-enter" class="rv d4" onclick="enterMeja()">✒ Masuki Arsip</button>
-      </div>
-    </section>
-
-  </div><!-- end prolog-scroll -->
-
-  <div id="scroll-hint">
-    <span style="font-size:.58rem;">Gulir ke bawah</span>
-    <span style="font-size:1rem;">↓</span>
+<!-- ══════════════════════════════════════════
+     MODAL: INPUT NAMA
+══════════════════════════════════════════ -->
+<div id="modal-name" class="off">
+  <div class="modal-inner" style="position:relative;">
+    <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem;">Selamat Datang</div>
+    <div style="font-family:'Cinzel Decorative',cursive;font-size:1.4rem;color:var(--g);margin-bottom:.3rem;">Siapa Namamu, Pujangga?</div>
+    <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:.82rem;color:rgba(240,230,200,.65);margin-bottom:.5rem;">Namamu akan terukir di papan keabadian.</div>
+    <input class="minp" id="name-input" type="text" maxlength="20" placeholder="Nama Pujangga…" autocomplete="off"/>
+    <button class="btn-c" style="width:100%;" onclick="submitName()">✒ Mulai Perjalanan</button>
   </div>
-</div><!-- end sc-prolog -->
+</div>
 
-<button id="btn-skip" onclick="enterMeja()">Lewati ⟶</button>
+<!-- ══════════════════════════════════════════
+     SCREEN 1: WAYANG PROLOG
+══════════════════════════════════════════ -->
+<div class="screen" id="sc-prolog">
+  <div id="stage">
+    <div id="stage-sky"></div>
+    <!-- SVG stage — all wayang drawn here -->
+    <svg id="stage-svg" style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="inkblur"><feGaussianBlur stdDeviation="2.5"/></filter>
+        <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="softglow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="inkwash"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="3" result="n"/><feColorMatrix type="saturate" values="0" in="n" result="g"/><feBlend in="SourceGraphic" in2="g" mode="multiply" result="b"/><feComposite in="b" in2="SourceGraphic" operator="in"/></filter>
+        <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(240,200,80,0.9)"/>
+          <stop offset="60%" stop-color="rgba(212,136,42,0.5)"/>
+          <stop offset="100%" stop-color="rgba(212,136,42,0)"/>
+        </radialGradient>
+        <radialGradient id="moonGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(240,225,185,0.92)"/>
+          <stop offset="70%" stop-color="rgba(200,180,140,0.4)"/>
+          <stop offset="100%" stop-color="rgba(200,180,140,0)"/>
+        </radialGradient>
+        <linearGradient id="seaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(20,60,90,0.85)"/>
+          <stop offset="100%" stop-color="rgba(5,20,35,0.95)"/>
+        </linearGradient>
+        <linearGradient id="groundGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(30,20,8,0.95)"/>
+          <stop offset="100%" stop-color="rgba(8,5,2,1)"/>
+        </linearGradient>
+        <clipPath id="stageClip"><rect x="0" y="0" width="900" height="600"/></clipPath>
+      </defs>
+      <!-- All elements controlled by JS -->
+      <g id="g-stars"></g>
+      <g id="g-celestial"></g>
+      <g id="g-clouds"></g>
+      <g id="g-mountains"></g>
+      <g id="g-sea"></g>
+      <g id="g-trees"></g>
+      <g id="g-ground"></g>
+      <g id="g-structures"></g>
+      <g id="g-fire"></g>
+      <g id="g-wayang"></g>
+      <g id="g-fx"></g>
+      <g id="g-birds"></g>
+    </svg>
+    <!-- Kelir vignette -->
+    <div id="kelir"></div>
+  </div>
 
-<!-- ═══════════════════════════════════════════════
-     SCREEN 2 — MEJA KERJA (MAIN MENU)
-═══════════════════════════════════════════════ -->
+  <!-- Babak info -->
+  <div id="babak-text">
+    <div id="babak-caption"></div>
+    <div id="babak-title"></div>
+    <div id="babak-body"></div>
+    <div style="margin-top:1.2rem;" id="enter-wrap"></div>
+  </div>
+  <div id="babak-dots"></div>
+  <button id="btn-skip-prolog" onclick="skipProlog()">Lewati ⟶</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SCREEN 2: MEJA KERJA
+══════════════════════════════════════════ -->
 <div class="screen off" id="sc-meja">
-  <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:750px;">
-    <div style="text-align:center;margin-bottom:1.6rem;" class="fadein">
-      <div class="menu-logo">PUJANGGAKU</div>
-      <div class="menu-sub">Meja Penulis Nusantara</div>
+  <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:820px;">
+    <div style="text-align:center;margin-bottom:1rem;" class="fadein">
+      <div class="logo-title">PUJANGGAKU</div>
+      <div class="logo-sub">Meja Penulis Nusantara · <span id="player-name-display" style="color:var(--g);font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.2em;"></span></div>
       <div class="divorn">❧</div>
     </div>
-    <div class="jgrid fadein" id="jgrid"></div>
-    <div class="mbtm fadein">
-      <button class="btn-c" onclick="showScreen('sc-tutorial')">📜 Tutorial</button>
-      <button class="btn-c" onclick="showScreen('sc-kreator')">✒️ Kreator</button>
+    <!-- Nav tabs -->
+    <div class="nav-tabs fadein">
+      <button class="ntab active" onclick="switchTab('tab-arsip',this)">📜 Arsip Tahun</button>
+      <button class="ntab" onclick="switchTab('tab-lb',this)">🏆 Leaderboard</button>
+      <button class="ntab" onclick="switchTab('tab-hist',this)">📋 Riwayat Poin</button>
+      <button class="ntab" onclick="switchTab('tab-menu',this)">⚙ Lainnya</button>
+    </div>
+
+    <!-- TAB: ARSIP -->
+    <div class="tab-pane active scroll-box" id="tab-arsip">
+      <div class="jgrid fadein" id="jgrid"></div>
+    </div>
+
+    <!-- TAB: LEADERBOARD -->
+    <div class="tab-pane scroll-box" id="tab-lb">
+      <div style="text-align:center;margin-bottom:.8rem;">
+        <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gd);">Papan Keabadian</div>
+        <div style="font-family:'Cinzel Decorative',cursive;font-size:1.3rem;color:var(--g);margin-top:.25rem;">Pujangga Terbaik</div>
+        <div class="divorn">⚜</div>
+      </div>
+      <table class="lb-table" id="lb-table">
+        <thead><tr><th>#</th><th>Nama Pujangga</th><th>Total Poin</th><th>Gelar</th><th>Level</th></tr></thead>
+        <tbody id="lb-body"></tbody>
+      </table>
+    </div>
+
+    <!-- TAB: RIWAYAT POIN -->
+    <div class="tab-pane scroll-box" id="tab-hist">
+      <div style="text-align:center;margin-bottom:.8rem;">
+        <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gd);">Jejak Tinta</div>
+        <div style="font-family:'Cinzel Decorative',cursive;font-size:1.3rem;color:var(--g);margin-top:.25rem;">Riwayat Poin</div>
+        <div class="divorn">❧</div>
+      </div>
+      <div id="hist-list"></div>
+    </div>
+
+    <!-- TAB: LAINNYA -->
+    <div class="tab-pane" id="tab-menu">
+      <div class="mbtm" style="flex-wrap:wrap;">
+        <button class="btn-c" onclick="showScreen('sc-tutorial')">📜 Tutorial</button>
+        <button class="btn-c" onclick="showScreen('sc-kreator')">✒️ Kreator</button>
+        <button class="btn-c" onclick="replayProlog()">🎭 Tonton Prolog</button>
+        <button class="btn-c" onclick="confirmReset()">🗑 Reset Data</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     SCREEN 3 — BUKU TERBUKA (GAME)
-═══════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════
+     SCREEN 3: GAME
+══════════════════════════════════════════ -->
 <div class="screen off" id="sc-game">
-  <!-- Header -->
   <div class="ghdr">
     <button class="btn-back" onclick="backToMeja()">← Kembali ke Meja</button>
     <div class="ghud">
       <div class="huditem">✨ <span id="g-score">0</span></div>
-      <div class="huditem" style="font-size:.58rem;opacity:.75;">Halaman <span id="g-page">1/8</span></div>
+      <div class="huditem" style="font-size:.56rem;opacity:.72;">Halaman <span id="g-page">1/8</span></div>
       <div class="tring">
         <svg viewBox="0 0 40 40" width="44" height="44">
           <circle class="tbg" cx="20" cy="20" r="18"/>
@@ -718,227 +420,722 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
       </div>
     </div>
   </div>
-
-  <!-- Open book -->
   <div class="pcard oborder corn book-card fadein" id="bookcard">
-    <!-- Left page: poem -->
-    <div class="page-left">
+    <div class="pl">
       <div class="badge" id="g-badge">Tahun I</div>
       <div class="pno" id="g-pno">Halaman 1 dari 8</div>
-      <div class="pauthor" id="g-author">— Sapardi Djoko Damono</div>
-      <div class="puisi-txt" id="g-puisi"></div>
+      <div class="pauth" id="g-auth">— Sapardi Djoko Damono</div>
+      <div class="ptxt" id="g-ptxt"></div>
     </div>
-    <!-- Right page: decorative -->
-    <div class="page-right">
+    <div class="pr">
       <div class="page-deco">
-        <svg class="page-ornament" width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="40" cy="40" r="36" stroke="rgba(107,26,26,.35)" stroke-width="1" fill="none"/>
-          <circle cx="40" cy="40" r="28" stroke="rgba(107,26,26,.22)" stroke-width=".7" fill="none"/>
-          <path d="M40 12 L38 22 L28 22 L36 28 L33 38 L40 32 L47 38 L44 28 L52 22 L42 22Z" fill="rgba(107,26,26,.28)"/>
-          <path d="M40 68 Q40 55 40 40" stroke="rgba(107,26,26,.18)" stroke-width="1" fill="none"/>
-          <line x1="16" y1="40" x2="64" y2="40" stroke="rgba(107,26,26,.15)" stroke-width=".8"/>
+        <svg width="72" height="72" viewBox="0 0 72 72" style="opacity:.18;color:var(--m);">
+          <circle cx="36" cy="36" r="32" stroke="rgba(107,26,26,.38)" stroke-width="1" fill="none"/>
+          <circle cx="36" cy="36" r="24" stroke="rgba(107,26,26,.22)" stroke-width=".6" fill="none"/>
+          <path d="M36 10 L34 20 L24 20 L32 26 L29 36 L36 30 L43 36 L40 26 L48 20 L38 20Z" fill="rgba(107,26,26,.26)"/>
         </svg>
-        <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(107,26,26,.5);text-align:center;">Pilih Kata<br>yang Tepat</div>
-        <!-- fake ruled lines -->
-        <div style="width:100%;display:flex;flex-direction:column;gap:.55rem;margin-top:.5rem;">
-          <div style="height:1px;background:rgba(107,26,26,.1);width:100%;"></div>
-          <div style="height:1px;background:rgba(107,26,26,.1);width:90%;"></div>
-          <div style="height:1px;background:rgba(107,26,26,.08);width:95%;"></div>
-          <div style="height:1px;background:rgba(107,26,26,.08);width:85%;"></div>
-          <div style="height:1px;background:rgba(107,26,26,.06);width:92%;"></div>
-        </div>
+        <div style="font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(107,26,26,.45);text-align:center;line-height:1.8;">Pilih<br>Kata Tepat</div>
+        <div class="ruled-lines"><div></div><div style="width:88%"></div><div></div><div style="width:92%"></div><div style="width:80%"></div></div>
       </div>
     </div>
   </div>
-
-  <!-- Options -->
   <div class="optgrid" id="optgrid"></div>
-  <div id="feedback" style="color:var(--gold);"></div>
+  <div id="gfb" style="color:var(--g);"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     SCREEN 4 — HASIL (RESULT)
-═══════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════
+     SCREEN 4: RESULT
+══════════════════════════════════════════ -->
 <div class="screen off" id="sc-result">
   <div class="pcard oborder rcard">
-    <div class="badge" id="r-badge" style="margin-bottom:.85rem;">Tahun I Selesai</div>
+    <div class="badge" id="r-badge" style="margin-bottom:.8rem;">Tahun I Selesai</div>
     <div class="rstars" id="r-stars">★★★</div>
-    <div class="rsring">
-      <div class="rsnum" id="r-score">0</div>
-      <div class="rslbl">poin</div>
-    </div>
-    <div class="rtitle" id="r-title">Pujangga Agung</div>
+    <div class="rsring"><div class="rsnum" id="r-score">0</div><div class="rslbl">poin</div></div>
+    <div class="rtit" id="r-tit">Pujangga Agung</div>
     <div class="rdesc" id="r-desc">Tinta Nusantara telah meresap dalam jiwamu.</div>
-    <div id="r-unlock" class="unlockbanner hidden">🔓 <span id="r-unlock-txt">Jurnal baru terbuka!</span></div>
-    <div style="display:flex;gap:.7rem;justify-content:center;margin-top:1.3rem;">
-      <button class="btn-c" onclick="retryLevel()" style="font-size:.62rem;">↻ Ulangi</button>
-      <button class="btn-c" onclick="showScreen('sc-meja');renderJournals();" style="font-size:.62rem;">⌂ Meja Utama</button>
+    <div id="r-unlock" class="ubanner hidden">🔓 <span id="r-unlock-txt">Terbuka!</span></div>
+    <div style="display:flex;gap:.65rem;justify-content:center;margin-top:1.2rem;">
+      <button class="btn-c" onclick="retryLevel()" style="font-size:.6rem;">↻ Ulangi</button>
+      <button class="btn-c" onclick="showScreen('sc-meja');renderJournals();renderLB();renderHist();" style="font-size:.6rem;">⌂ Meja Utama</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     SCREEN 5 — TUTORIAL
-═══════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════
+     SCREEN 5: TUTORIAL
+══════════════════════════════════════════ -->
 <div class="screen off" id="sc-tutorial">
   <div class="pcard oborder corn tcard">
-    <div style="text-align:center;margin-bottom:1rem;">
-      <div class="badge">Panduan Penjaga Tinta</div>
-      <div class="rtitle" style="font-size:1.3rem;margin-top:.65rem;">Cara Bermain</div>
-      <div class="divorn" style="padding:0 1rem;">⚜</div>
+    <div style="text-align:center;margin-bottom:.9rem;"><div class="badge">Panduan Penjaga Tinta</div><div class="rtit" style="font-size:1.25rem;margin-top:.6rem;">Cara Bermain</div><div class="divorn" style="padding:0 .8rem;">⚜</div></div>
+    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.82rem;line-height:1.82;display:flex;flex-direction:column;gap:.78rem;">
+      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">1.</span><span>Setiap puisi ditampilkan dengan <strong>satu kata yang hilang</strong>. Temukan kata yang tepat.</span></div>
+      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">2.</span><span>Pilih dari <strong>3 pilihan jawaban</strong>. Hanya satu yang benar.</span></div>
+      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">3.</span><span><strong>Timer 30 detik</strong> per soal. Jawab cepat untuk bonus +1 sd +5 poin.</span></div>
+      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">4.</span><span>Benar = <em>"Sihir Dipulihkan" ✦</em>. Salah = <em>"Tinta Tercecer" ⟁</em>. Semua tercatat di Riwayat Poin.</span></div>
+      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">5.</span><span>Selesaikan 8 halaman untuk buka segel jurnal berikutnya & nama masuk <strong>Papan Keabadian</strong>.</span></div>
     </div>
-    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.84rem;line-height:1.82;display:flex;flex-direction:column;gap:.82rem;">
-      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">1.</span><span>Setiap puisi ditampilkan di halaman buku dengan <strong>satu kata yang hilang</strong>. Tugasmu menemukan kata yang tepat.</span></div>
-      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">2.</span><span>Pilih dari <strong>3 pilihan jawaban</strong>. Hanya satu yang benar.</span></div>
-      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">3.</span><span><strong>Timer 30 detik</strong> per soal. Jawab cepat untuk bonus poin (+1 sd +5).</span></div>
-      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">4.</span><span>Jawaban <span style="color:#1a4a2a;font-weight:600;">benar</span> = <strong>+10 poin</strong> + bonus. Muncul pesan <em>"Sihir Dipulihkan"</em>. Jawaban <span style="color:var(--maroon);font-weight:600;">salah</span> = Muncul pesan <em>"Tinta Tercecer"</em>.</span></div>
-      <div style="display:flex;gap:.65rem;align-items:flex-start;"><span style="font-family:'Cinzel',serif;color:var(--maroon);font-weight:700;min-width:1.3rem;">5.</span><span>Selesaikan <strong>8 halaman</strong> satu buku untuk membuka segel buku berikutnya.</span></div>
-    </div>
-    <div style="text-align:center;margin-top:1.3rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
+    <div style="text-align:center;margin-top:1.2rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
-     SCREEN 6 — KREATOR
-═══════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════
+     SCREEN 6: KREATOR
+══════════════════════════════════════════ -->
 <div class="screen off" id="sc-kreator">
-  <div class="pcard oborder corn tcard" style="max-width:530px;">
-    <div style="text-align:center;margin-bottom:1rem;">
-      <div class="badge">Profil Kreator</div>
-      <div class="rtitle" style="font-size:1.3rem;margin-top:.65rem;">Para Pujangga</div>
-      <div class="divorn" style="padding:0 1rem;">❦</div>
-    </div>
-    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.82rem;line-height:1.88;display:flex;flex-direction:column;gap:.88rem;">
-      <p>PUJANGGAKU terinspirasi dari kekayaan sastra Indonesia yang tak ternilai. Puisi-puisi dalam permainan ini diambil dari karya para maestro sastra Nusantara:</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;">
-        <div style="padding:.65rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);">
-          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);font-weight:600;">Sapardi Djoko Damono</div>
-          <div style="font-size:.74rem;color:#555;margin-top:.15rem;font-style:italic;">"Aku Ingin", "Hujan Bulan Juni"</div>
-        </div>
-        <div style="padding:.65rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);">
-          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);font-weight:600;">Chairil Anwar</div>
-          <div style="font-size:.74rem;color:#555;margin-top:.15rem;font-style:italic;">"Aku", "Diponegoro"</div>
-        </div>
-        <div style="padding:.65rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);">
-          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);font-weight:600;">W.S. Rendra</div>
-          <div style="font-size:.74rem;color:#555;margin-top:.15rem;font-style:italic;">"Nyanyian Angsa", sajak-sajak sosial</div>
-        </div>
-        <div style="padding:.65rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);">
-          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--maroon);font-weight:600;">Amir Hamzah</div>
-          <div style="font-size:.74rem;color:#555;margin-top:.15rem;font-style:italic;">"Nyanyi Sunyi", "Buah Rindu"</div>
-        </div>
+  <div class="pcard oborder corn tcard" style="max-width:520px;">
+    <div style="text-align:center;margin-bottom:.9rem;"><div class="badge">Profil Kreator</div><div class="rtit" style="font-size:1.25rem;margin-top:.6rem;">Para Pujangga</div><div class="divorn" style="padding:0 .8rem;">❦</div></div>
+    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.8rem;line-height:1.88;display:flex;flex-direction:column;gap:.82rem;">
+      <p>PUJANGGAKU terinspirasi dari kekayaan sastra Indonesia yang tak ternilai.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;">
+        <div style="padding:.6rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);"><div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);font-weight:600;">Sapardi Djoko Damono</div><div style="font-size:.72rem;color:#555;margin-top:.12rem;font-style:italic;">"Aku Ingin", "Hujan Bulan Juni"</div></div>
+        <div style="padding:.6rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);"><div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);font-weight:600;">Chairil Anwar</div><div style="font-size:.72rem;color:#555;margin-top:.12rem;font-style:italic;">"Aku", "Diponegoro"</div></div>
+        <div style="padding:.6rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);"><div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);font-weight:600;">W.S. Rendra</div><div style="font-size:.72rem;color:#555;margin-top:.12rem;font-style:italic;">"Nyanyian Angsa"</div></div>
+        <div style="padding:.6rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);"><div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);font-weight:600;">Amir Hamzah</div><div style="font-size:.72rem;color:#555;margin-top:.12rem;font-style:italic;">"Nyanyi Sunyi", "Buah Rindu"</div></div>
       </div>
-      <p style="font-style:italic;color:#666;font-size:.78rem;text-align:center;">Dibuat sebagai bentuk apresiasi terhadap warisan sastra Indonesia yang agung.</p>
+      <p style="font-style:italic;color:#666;font-size:.76rem;text-align:center;">Dibuat sebagai bentuk apresiasi terhadap warisan sastra Indonesia.</p>
     </div>
-    <div style="text-align:center;margin-top:1.3rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
+    <div style="text-align:center;margin-top:1.2rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      JAVASCRIPT
-═══════════════════════════════════════════════ -->
+══════════════════════════════════════════ -->
 <script>
-/* ─── INIT PROLOG VISUALS ─── */
-(function(){
-  // Stars in scene A
-  const svg = document.getElementById('stars-svg');
-  for(let i=0;i<130;i++){
-    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    c.setAttribute('cx',Math.random()*900);
-    c.setAttribute('cy',Math.random()*350);
-    const r=Math.random()*1.5+.25;
-    c.setAttribute('r',r);
-    c.setAttribute('fill',`rgba(240,225,185,${.18+Math.random()*.65})`);
-    c.style.animation=`idrift ${4+Math.random()*7}s ease-in-out infinite`;
-    c.style.animationDelay=`${Math.random()*6}s`;
-    svg.appendChild(c);
+/* ════════════════════════════
+   SVG HELPERS
+════════════════════════════ */
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs={},parent=null){
+  const e=document.createElementNS(NS,tag);
+  for(const[k,v] of Object.entries(attrs)) e.setAttribute(k,v);
+  if(parent) parent.appendChild(e);
+  return e;
+}
+function g(id){return document.getElementById(id);}
+function clr(id){const e=g(id);if(e)e.innerHTML='';}
+
+/* ════════════════════════════
+   WAYANG SHAPES LIBRARY
+════════════════════════════ */
+const W = {
+  /* Mountains — ink wash style */
+  mountain(x,y,w,h,fill='rgba(15,12,8,0.95)',stroke='rgba(201,168,76,0.06)'){
+    const pts=[];
+    const steps=12;
+    for(let i=0;i<=steps;i++){
+      const t=i/steps;
+      const bx=x+t*w;
+      const wave=Math.sin(t*Math.PI)*h + Math.sin(t*Math.PI*3)*(h*.15) + Math.sin(t*Math.PI*7)*(h*.05);
+      pts.push(`${bx},${y-wave}`);
+    }
+    pts.push(`${x+w},${y}`);pts.push(`${x},${y}`);
+    return `<path d="M${pts.join('L')}Z" fill="${fill}" stroke="${stroke}" stroke-width="0.5"/>`;
+  },
+
+  /* Water waves */
+  wave(y,w,color='rgba(30,65,100,0.7)',offset=0){
+    return `<path d="M${-offset},${y} Q${w*.12},${y-8} ${w*.25},${y} Q${w*.38},${y+8} ${w*.5},${y} Q${w*.62},${y-8} ${w*.75},${y} Q${w*.88},${y+8} ${w},${y} L${w},${y+30} L${-offset},${y+30}Z" fill="${color}"/>`;
+  },
+
+  /* Tree — wayang batik style */
+  tree(x,y,h,color='rgba(10,18,6,0.92)'){
+    const w=h*.35;
+    return `<g>
+      <rect x="${x-3}" y="${y-h}" width="6" height="${h}" fill="${color}"/>
+      <ellipse cx="${x}" cy="${y-h}" rx="${w}" ry="${h*.55}" fill="${color}"/>
+      <ellipse cx="${x}" cy="${y-h*.72}" rx="${w*.78}" ry="${h*.38}" fill="${color}"/>
+      <ellipse cx="${x}" cy="${y-h*.9}" rx="${w*.55}" ry="${h*.28}" fill="${color}"/>
+    </g>`;
+  },
+
+  /* Bamboo */
+  bamboo(x,y,h,color='rgba(8,16,5,0.95)'){
+    let s=`<rect x="${x-4}" y="${y-h}" width="8" height="${h}" rx="3" fill="${color}"/>`;
+    for(let i=0;i<h;i+=30) s+=`<rect x="${x-4}" y="${y-i}" width="8" height="3" rx="1" fill="rgba(20,35,12,0.9)"/>`;
+    s+=`<path d="${x},${y-h*0.7} Q${x+25},${y-h*0.8} ${x+40},${y-h*0.95}" stroke="${color}" stroke-width="3" fill="none"/>`;
+    s+=`<path d="${x},${y-h*0.5} Q${x-28},${y-h*0.6} ${x-42},${y-h*0.78}" stroke="${color}" stroke-width="2.5" fill="none"/>`;
+    return s;
+  },
+
+  /* WAYANG FIGURES */
+  /* Rakyat/Villager */
+  villager(x,y,size=1,facing=1,color='rgba(8,4,2,0.95)'){
+    const s=size*40;
+    const fx=facing>0?1:-1;
+    return `<g transform="translate(${x},${y}) scale(${fx*size},${size})">
+      <!-- body -->
+      <ellipse cx="0" cy="-${s*.6}" rx="${s*.18}" ry="${s*.28}" fill="${color}"/>
+      <!-- head -->
+      <circle cx="0" cy="-${s*.95}" r="${s*.15}" fill="${color}"/>
+      <!-- traditional headgear -->
+      <path d="M-${s*.18},-${s*.95} Q0,-${s*1.15} ${s*.18},-${s*.95} L${s*.12},-${s*.88} L-${s*.12},-${s*.88}Z" fill="${color}"/>
+      <!-- arms -->
+      <path d="M-${s*.18},-${s*.7} Q-${s*.38},-${s*.6} -${s*.32},-${s*.42}" stroke="${color}" stroke-width="${s*.06}" fill="none" stroke-linecap="round"/>
+      <path d="M${s*.18},-${s*.7} Q${s*.35},-${s*.55} ${s*.28},-${s*.38}" stroke="${color}" stroke-width="${s*.06}" fill="none" stroke-linecap="round"/>
+      <!-- legs -->
+      <path d="M-${s*.08},-${s*.32} L-${s*.12},0" stroke="${color}" stroke-width="${s*.07}" fill="none" stroke-linecap="round"/>
+      <path d="M${s*.08},-${s*.32} L${s*.12},0" stroke="${color}" stroke-width="${s*.07}" fill="none" stroke-linecap="round"/>
+      <!-- batik detail -->
+      <path d="M-${s*.14},-${s*.75} Q0,-${s*.6} ${s*.14},-${s*.75}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
+    </g>`;
+  },
+
+  /* Warrior — Prajurit -->
+  warrior(x,y,size=1,facing=1,pose='stand'){
+    const s=size*50;const fx=facing>0?1:-1;
+    const armAngle=pose==='fight'?-30:0;
+    return `<g transform="translate(${x},${y}) scale(${fx},1)">
+      <!-- body armored -->
+      <path d="M-${s*.22},-${s*.7} L-${s*.26},-${s*.35} L${s*.26},-${s*.35} L${s*.22},-${s*.7}Z" fill="rgba(8,4,2,0.96)"/>
+      <!-- shoulder guards -->
+      <path d="M-${s*.22},-${s*.7} Q-${s*.38},-${s*.72} -${s*.3},-${s*.58}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
+      <path d="M${s*.22},-${s*.7} Q${s*.38},-${s*.72} ${s*.3},-${s*.58}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
+      <!-- head with crown/helmet -->
+      <circle cx="0" cy="-${s*.92}" r="${s*.16}" fill="rgba(8,4,2,0.96)"/>
+      <path d="M-${s*.2},-${s*.92} Q-${s*.12},-${s*1.18} 0,-${s*1.2} Q${s*.12},-${s*1.18} ${s*.2},-${s*.92}" fill="rgba(8,4,2,0.96)" stroke="rgba(201,168,76,0.5)" stroke-width="0.8"/>
+      <!-- spear / weapon arm -->
+      <line x1="${s*.26}" y1="-${s*.65}" x2="${s*.5+armAngle}" y2="-${s*1.4}" stroke="rgba(8,4,2,0.9)" stroke-width="${s*.055}"/>
+      <path d="M${s*.48+armAngle},-${s*1.42} L${s*.52+armAngle},-${s*1.5} L${s*.44+armAngle},-${s*1.42}Z" fill="rgba(201,168,76,0.7)"/>
+      <!-- shield arm -->
+      <ellipse cx="-${s*.35}" cy="-${s*.58}" rx="${s*.14}" ry="${s*.2}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8" transform="rotate(-15,-${s*.35},-${s*.58})"/>
+      <!-- legs -->
+      <path d="M-${s*.1},-${s*.35} L-${s*.14},0" stroke="rgba(8,4,2,0.95)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
+      <path d="M${s*.1},-${s*.35} L${s*.14},0" stroke="rgba(8,4,2,0.95)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
+      <!-- armor details -->
+      <path d="M-${s*.2},-${s*.62} Q0,-${s*.55} ${s*.2},-${s*.62}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
+      <path d="M-${s*.18},-${s*.5} Q0,-${s*.44} ${s*.18},-${s*.5}" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" fill="none"/>
+    </g>`;
+  },
+
+  /* Raja/King */
+  raja(x,y,size=1,facing=1){
+    const s=size*55;const fx=facing>0?1:-1;
+    return `<g transform="translate(${x},${y}) scale(${fx},1)">
+      <!-- robe -->
+      <path d="M-${s*.28},-${s*.8} L-${s*.35},-${s*.1} L${s*.35},-${s*.1} L${s*.28},-${s*.8}Z" fill="rgba(8,4,2,0.97)" stroke="rgba(201,168,76,0.35)" stroke-width="0.8"/>
+      <!-- ornate shoulder -->
+      <path d="M-${s*.28},-${s*.8} Q-${s*.5},-${s*.78} -${s*.45},-${s*.6}" fill="rgba(8,4,2,0.94)" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
+      <path d="M${s*.28},-${s*.8} Q${s*.5},-${s*.78} ${s*.45},-${s*.6}" fill="rgba(8,4,2,0.94)" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
+      <!-- head -->
+      <circle cx="0" cy="-${s*.98}" r="${s*.17}" fill="rgba(8,4,2,0.97)"/>
+      <!-- mahkota crown -->
+      <path d="M-${s*.22},-${s*.98} L-${s*.18},-${s*1.28} L-${s*.08},-${s*1.12} L0,-${s*1.32} L${s*.08},-${s*1.12} L${s*.18},-${s*1.28} L${s*.22},-${s*.98}Z" fill="rgba(8,4,2,0.97)" stroke="rgba(201,168,76,0.7)" stroke-width="0.9"/>
+      <!-- crown gems -->
+      <circle cx="0" cy="-${s*1.28}" r="${s*.04}" fill="rgba(201,168,76,0.8)"/>
+      <circle cx="-${s*.15}" cy="-${s*1.22}" r="${s*.03}" fill="rgba(201,168,76,0.6)"/>
+      <circle cx="${s*.15}" cy="-${s*1.22}" r="${s*.03}" fill="rgba(201,168,76,0.6)"/>
+      <!-- scepter -->
+      <line x1="${s*.3}" y1="-${s*.75}" x2="${s*.42}" y2="-${s*1.25}" stroke="rgba(8,4,2,0.9)" stroke-width="${s*.055}"/>
+      <circle cx="${s*.44}" cy="-${s*1.28}" r="${s*.06}" fill="rgba(201,168,76,0.6)"/>
+      <!-- robe details / batik -->
+      <path d="M-${s*.25},-${s*.72} Q0,-${s*.65} ${s*.25},-${s*.72}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
+      <path d="M-${s*.28},-${s*.55} Q0,-${s*.48} ${s*.28},-${s*.55}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
+      <path d="M-${s*.3},-${s*.38} Q0,-${s*.32} ${s*.3},-${s*.38}" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" fill="none"/>
+      <!-- legs -->
+      <path d="M-${s*.1},-${s*.1} L-${s*.12},0" stroke="rgba(8,4,2,0.96)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
+      <path d="M${s*.1},-${s*.1} L${s*.12},0" stroke="rgba(8,4,2,0.96)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
+    </g>`;
+  },
+
+  /* Pujangga — The Hero */
+  pujangga(x,y,size=1,facing=1,aura=false){
+    const s=size*60;const fx=facing>0?1:-1;
+    let auraEl='';
+    if(aura){
+      auraEl=`<circle cx="0" cy="-${s*.7}" r="${s*.9}" fill="rgba(201,168,76,0.06)" filter="url(#softglow)"/>
+               <circle cx="0" cy="-${s*.7}" r="${s*.65}" fill="rgba(201,168,76,0.04)" filter="url(#softglow)"/>`;
+    }
+    return `<g transform="translate(${x},${y}) scale(${fx},1)">
+      ${auraEl}
+      <!-- flowing robe -->
+      <path d="M-${s*.24},-${s*.85} Q-${s*.38},-${s*.5} -${s*.32},-${s*.05} Q-${s*.18},-${s*.02} 0,0 Q${s*.18},-${s*.02} ${s*.32},-${s*.05} Q${s*.38},-${s*.5} ${s*.24},-${s*.85}Z" fill="rgba(6,3,1,0.97)" stroke="rgba(201,168,76,0.18)" stroke-width="0.8"/>
+      <!-- wide sleeves -->
+      <path d="M-${s*.24},-${s*.72} Q-${s*.58},-${s*.65} -${s*.52},-${s*.45} Q-${s*.38},-${s*.4} -${s*.28},-${s*.52}" fill="rgba(6,3,1,0.95)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
+      <path d="M${s*.24},-${s*.72} Q${s*.58},-${s*.65} ${s*.52},-${s*.45} Q${s*.38},-${s*.4} ${s*.28},-${s*.52}" fill="rgba(6,3,1,0.95)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
+      <!-- head -->
+      <circle cx="0" cy="-${s*1.02}" r="${s*.18}" fill="rgba(6,3,1,0.97)"/>
+      <!-- udeng / headwrap -->
+      <path d="M-${s*.22},-${s*1.02} Q-${s*.1},-${s*1.26} 0,-${s*1.28} Q${s*.1},-${s*1.26} ${s*.22},-${s*1.02}" fill="rgba(6,3,1,0.96)" stroke="rgba(201,168,76,0.45)" stroke-width="0.9"/>
+      <path d="M-${s*.02},-${s*1.28} Q0,-${s*1.35} ${s*.08},-${s*1.3}" stroke="rgba(201,168,76,0.5)" stroke-width="1.2" fill="none"/>
+      <!-- face subtle features -->
+      <path d="M-${s*.06},-${s*1.04} Q-${s*.03},-${s*1.0} 0,-${s*1.04}" stroke="rgba(201,168,76,0.15)" stroke-width="0.6" fill="none"/>
+      <!-- quill pen held -->
+      <path d="M${s*.46},-${s*.48} Q${s*.35},-${s*.72} ${s*.22},-${s*.68}" stroke="rgba(8,4,2,0.88)" stroke-width="${s*.05}" fill="none"/>
+      <path d="M${s*.48},-${s*.46} Q${s*.55},-${s*.35} ${s*.5},-${s*.28}" stroke="rgba(201,168,76,0.7)" stroke-width="1.5" fill="none"/>
+      <!-- ink scroll in other hand -->
+      <rect x="-${s*.5}" y="-${s*.62}" width="${s*.18}" height="${s*.28}" rx="2" fill="rgba(240,230,200,0.15)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
+      <line x1="-${s*.5}" y1="-${s*.62}" x2="-${s*.5}" y2="-${s*.34}" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
+      <line x1="-${s*.32}" y1="-${s*.62}" x2="-${s*.32}" y2="-${s*.34}" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
+      <!-- lines on scroll -->
+      <line x1="-${s*.47}" y1="-${s*.56}" x2="-${s*.35}" y2="-${s*.56}" stroke="rgba(201,168,76,0.25)" stroke-width="0.6"/>
+      <line x1="-${s*.47}" y1="-${s*.5}" x2="-${s*.35}" y2="-${s*.5}" stroke="rgba(201,168,76,0.25)" stroke-width="0.6"/>
+      <line x1="-${s*.47}" y1="-${s*.44}" x2="-${s*.38}" y2="-${s*.44}" stroke="rgba(201,168,76,0.2)" stroke-width="0.6"/>
+      <!-- robe batik detail -->
+      <path d="M-${s*.2},-${s*.78} Q0,-${s*.72} ${s*.2},-${s*.78}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
+      <path d="M-${s*.25},-${s*.62} Q0,-${s*.55} ${s*.25},-${s*.62}" stroke="rgba(201,168,76,0.24)" stroke-width="0.7" fill="none"/>
+      <path d="M-${s*.28},-${s*.46} Q0,-${s*.4} ${s*.28},-${s*.46}" stroke="rgba(201,168,76,0.18)" stroke-width="0.7" fill="none"/>
+    </g>`;
+  },
+
+  /* Candi / Temple structure */
+  candi(x,y,scale=1){
+    const s=scale*80;
+    return `<g transform="translate(${x},${y})">
+      <!-- base tiers -->
+      <rect x="-${s*.8}" y="-${s*.15}" width="${s*1.6}" height="${s*.15}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.2)" stroke-width="0.7"/>
+      <rect x="-${s*.65}" y="-${s*.32}" width="${s*1.3}" height="${s*.18}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
+      <rect x="-${s*.52}" y="-${s*.5}" width="${s*1.04}" height="${s*.2}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.25)" stroke-width="0.7"/>
+      <rect x="-${s*.38}" y="-${s*.7}" width="${s*.76}" height="${s*.22}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.28)" stroke-width="0.8"/>
+      <!-- tower body -->
+      <rect x="-${s*.25}" y="-${s*1.2}" width="${s*.5}" height="${s*.52}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
+      <!-- tower tiers up -->
+      <rect x="-${s*.22}" y="-${s*1.38}" width="${s*.44}" height="${s*.2}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.32)" stroke-width="0.7"/>
+      <rect x="-${s*.18}" y="-${s*1.58}" width="${s*.36}" height="${s*.22}" fill="rgba(8,5,2,0.94)" stroke="rgba(201,168,76,0.35)" stroke-width="0.7"/>
+      <rect x="-${s*.13}" y="-${s*1.78}" width="${s*.26}" height="${s*.22}" fill="rgba(8,5,2,0.93)" stroke="rgba(201,168,76,0.38)" stroke-width="0.7"/>
+      <!-- finial -->
+      <path d="M-${s*.08},-${s*1.78} Q0,-${s*2.05} ${s*.08},-${s*1.78}" fill="rgba(8,5,2,0.92)" stroke="rgba(201,168,76,0.5)" stroke-width="0.9"/>
+      <circle cx="0" cy="-${s*2.05}" r="${s*.04}" fill="rgba(201,168,76,0.7)"/>
+      <!-- window -->
+      <rect x="-${s*.1}" y="-${s*1.08}" width="${s*.2}" height="${s*.28}" rx="2" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
+      <!-- arch -->
+      <path d="M-${s*.1},-${s*.8} Q0,-${s*.88} ${s*.1},-${s*.8}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
+    </g>`;
+  },
+
+  /* Fire element */
+  fire(x,y,size=1){
+    const s=size*30;
+    return `<g transform="translate(${x},${y})" style="animation:fireFlicker 0.4s ease-in-out infinite">
+      <path d="M0,0 Q-${s*.3},-${s*.5} 0,-${s} Q${s*.3},-${s*.5} 0,0Z" fill="rgba(220,80,20,0.8)"/>
+      <path d="M0,0 Q-${s*.2},-${s*.35} 0,-${s*.7} Q${s*.2},-${s*.35} 0,0Z" fill="rgba(240,150,30,0.85)"/>
+      <path d="M0,0 Q-${s*.1},-${s*.2} 0,-${s*.4} Q${s*.1},-${s*.2} 0,0Z" fill="rgba(255,220,80,0.9)"/>
+      <ellipse cx="0" cy="${s*.05}" rx="${s*.4}" ry="${s*.1}" fill="rgba(80,30,10,0.5)" filter="url(#inkblur)"/>
+    </g>`;
+  },
+
+  /* Bird silhouette */
+  bird(x,y,s=1){
+    return `<path d="M${x},${y} Q${x+s*8},${y-s*5} ${x+s*16},${y} Q${x+s*8},${y-s*2} ${x},${y}Z M${x+s*16},${y} Q${x+s*24},${y-s*5} ${x+s*32},${y}" stroke="rgba(8,4,2,0.7)" stroke-width="${s*1.2}" fill="none"/>`;
+  },
+
+  /* Stars */
+  stars(count=80){
+    let s='';
+    for(let i=0;i<count;i++){
+      const x=Math.random()*900,y=Math.random()*350;
+      const r=Math.random()*1.4+.2;
+      const op=.15+Math.random()*.75;
+      const dur=3+Math.random()*6;
+      s+=`<circle cx="${x}" cy="${y}" r="${r}" fill="rgba(240,225,185,${op})" style="animation:starTwinkle ${dur}s ease-in-out infinite;animation-delay:${Math.random()*5}s"/>`;
+    }
+    return s;
+  },
+
+  /* Ink splash FX */
+  inkSplash(x,y,size=1){
+    return `<circle cx="${x}" cy="${y}" r="${size*20}" fill="rgba(201,168,76,0.15)" style="animation:inkSpread 1.5s ease-out forwards" filter="url(#softglow)"/>`;
   }
-  // Fireflies + ink dots per scene
-  const scenes=['a','b','c','d','e'];
-  scenes.forEach(s=>{
-    const ff=document.getElementById('ff'+s);
-    const id=document.getElementById('id'+s);
-    if(ff){
-      for(let i=0;i<8;i++){
-        const f=document.createElement('div');f.className='ff';
-        f.style.setProperty('--d',(5+Math.random()*8)+'s');
-        f.style.setProperty('--dl',(Math.random()*5)+'s');
-        f.style.setProperty('--x1',(Math.random()*70-35)+'px');
-        f.style.setProperty('--y1',(-18-Math.random()*48)+'px');
-        f.style.setProperty('--x2',(Math.random()*70-35)+'px');
-        f.style.setProperty('--y2',(-8-Math.random()*38)+'px');
-        f.style.setProperty('--x3',(Math.random()*55-28)+'px');
-        f.style.setProperty('--y3',(-28-Math.random()*58)+'px');
-        f.style.left=(5+Math.random()*90)+'%';
-        f.style.top=(8+Math.random()*82)+'%';
-        ff.appendChild(f);
-      }
-    }
-    if(id){
-      for(let i=0;i<12;i++){
-        const d=document.createElement('div');d.className='idot';
-        d.style.setProperty('--d',(7+Math.random()*8)+'s');
-        d.style.setProperty('--dl',(Math.random()*6)+'s');
-        d.style.left=(Math.random()*90+5)+'%';
-        d.style.top=(Math.random()*80+8)+'%';
-        id.appendChild(d);
-      }
-    }
+};
+
+/* ════════════════════════════
+   BABAK (CHAPTERS) DATA
+════════════════════════════ */
+const BABAK=[
+  {
+    id:0,
+    cap:'Babak Pertama',
+    title:'Awal Mula Dunia',
+    body:'Di fajar pertama semesta, langit, laut, dan pegunungan tercipta dalam keindahan yang belum pernah terlihat. Nusantara lahir dari mimpi para dewa.',
+    sky:'linear-gradient(180deg,#050218 0%,#0a0835 30%,#180d45 60%,#0d0825 100%)',
+    render:'babak_kosmos'
+  },
+  {
+    id:1,
+    cap:'Babak Kedua',
+    title:'Keindahan yang Sempurna',
+    body:'Hutan bambu yang berbisik, gunung yang menjulang ke awan, laut yang bernyanyi dengan ombaknya — semesta Nusantara hidup dalam harmoni abadi.',
+    sky:'linear-gradient(180deg,#080520 0%,#120c38 40%,#1a1548 70%,#0e0a28 100%)',
+    render:'babak_alam'
+  },
+  {
+    id:2,
+    cap:'Babak Ketiga',
+    title:'Lahirnya Peradaban',
+    body:'Dari tanah subur yang diberkati, manusia membangun kerajaan. Candi-candi menjulang, lagu-lagu pujangga menggema, dan tinta mengalir deras menuliskan sejarah.',
+    sky:'linear-gradient(180deg,#0a0520 0%,#1a0d35 35%,#250e18 65%,#150808 100%)',
+    render:'babak_peradaban'
+  },
+  {
+    id:3,
+    cap:'Babak Keempat',
+    title:'Api Perang Membara',
+    body:'Namun ambisi memecah persatuan. Kerajaan bertempur satu sama lain, langit memerah dengan kobaran api, dan tinta para pujangga menetes jatuh bersama airmata.',
+    sky:'linear-gradient(180deg,#180508 0%,#2d0808 35%,#420a0a 60%,#1a0505 100%)',
+    render:'babak_perang'
+  },
+  {
+    id:4,
+    cap:'Babak Kelima',
+    title:'Tinta yang Tercecer',
+    body:'Setelah api padam, kesunyian turun. Kata-kata bijak lenyap, bait-bait puisi tercerai-berai. Tinta Nusantara yang sakral menghilang dari peredaran.',
+    sky:'linear-gradient(180deg,#0a0808 0%,#120a0a 40%,#0e0c0a 70%,#080808 100%)',
+    render:'babak_kehancuran'
+  },
+  {
+    id:5,
+    cap:'Babak Keenam · Takdir',
+    title:'Sang Pujangga Penjaga',
+    body:'Namun takdir berkata lain. Dari kabut dan keheningan, muncul seorang penjaga — Sang Pujangga — yang dipilih semesta untuk mengumpulkan kembali kata-kata yang hilang dan memulihkan sihir tinta Nusantara.',
+    sky:'linear-gradient(180deg,#080510 0%,#120930 40%,#1a0c28 65%,#0a0612 100%)',
+    render:'babak_pujangga',
+    isLast:true
+  }
+];
+
+/* ════════════════════════════
+   PROLOG ENGINE
+════════════════════════════ */
+let babakIdx=0,babakTimer=null,prologRunning=true;
+
+function renderBabak(b){
+  const sky=g('stage-sky');
+  sky.style.background=b.sky;
+
+  // Clear layers
+  ['g-stars','g-celestial','g-clouds','g-mountains','g-sea','g-trees','g-ground','g-structures','g-fire','g-wayang','g-fx','g-birds'].forEach(clr);
+
+  // Render scene
+  const fn=SCENES[b.render];
+  if(fn) fn();
+
+  // Update text
+  const bt=g('babak-text');
+  bt.classList.remove('babak-visible');
+  g('babak-caption').textContent=b.cap;
+  g('babak-title').textContent=b.title;
+  g('babak-body').textContent=b.body;
+
+  // Enter button on last babak
+  const ew=g('enter-wrap');
+  ew.innerHTML='';
+  if(b.isLast){
+    const btn=document.createElement('button');
+    btn.id='btn-enter-prolog';
+    btn.innerHTML='✒ Masuki Arsip';
+    btn.onclick=enterMeja;
+    ew.appendChild(btn);
+    setTimeout(()=>btn.style.display='inline-block',500);
+  }
+
+  setTimeout(()=>bt.classList.add('babak-visible'),200);
+
+  // Dots
+  renderDots();
+}
+
+function renderDots(){
+  const d=g('babak-dots');d.innerHTML='';
+  BABAK.forEach((b,i)=>{
+    const dot=document.createElement('div');
+    dot.className='bdot'+(i===babakIdx?' active':'');
+    dot.onclick=()=>jumpBabak(i);
+    d.appendChild(dot);
   });
-})();
+}
 
-/* ─── SCROLL ENGINE ─── */
-const pScroll=document.getElementById('prolog-scroll');
-const pBar=document.getElementById('prolog-bar');
-const sHint=document.getElementById('scroll-hint');
-const cscenes=document.querySelectorAll('.cscene');
-let prologDone=false;
+function jumpBabak(i){
+  babakIdx=i;
+  clearTimeout(babakTimer);
+  renderBabak(BABAK[i]);
+  if(!BABAK[i].isLast) scheduleBabak();
+}
 
-function onPrologScroll(){
-  if(prologDone)return;
-  const st=pScroll.scrollTop, th=pScroll.scrollHeight-pScroll.clientHeight;
-  pBar.style.transform=`scaleX(${th>0?st/th:0})`;
-  if(st>70)sHint.classList.add('hidden-hint');
-  else sHint.classList.remove('hidden-hint');
-  const vH=window.innerHeight;
-  cscenes.forEach((sc,i)=>{
-    const r=sc.getBoundingClientRect();
-    // parallax
-    const pbg=sc.querySelector('.para-bg');
-    if(pbg) pbg.style.transform=`translateY(${(r.top/vH)*32}px)`;
-    // reveal
-    if(r.top<vH*.74&&r.bottom>vH*.18) sc.classList.add('seen');
-    // enter button
-    if(i===cscenes.length-1&&sc.classList.contains('seen')){
-      document.getElementById('btn-enter').classList.add('show-btn');
+function scheduleBabak(){
+  clearTimeout(babakTimer);
+  babakTimer=setTimeout(()=>{
+    if(!prologRunning)return;
+    if(babakIdx<BABAK.length-1){
+      babakIdx++;
+      renderBabak(BABAK[babakIdx]);
+      if(!BABAK[babakIdx].isLast) scheduleBabak();
     }
-  });
-}
-pScroll.addEventListener('scroll',onPrologScroll,{passive:true});
-setTimeout(()=>{ if(cscenes[0]) cscenes[0].classList.add('seen'); },350);
-
-// Auto-nudge if idle
-let nudgeT, userScrolled=false;
-pScroll.addEventListener('scroll',()=>{userScrolled=true;clearTimeout(nudgeT);},{once:true});
-function nudge(){
-  if(!userScrolled&&!prologDone) pScroll.scrollBy({top:window.innerHeight*.16,behavior:'smooth'});
-  nudgeT=setTimeout(nudge,9500);
-}
-nudgeT=setTimeout(nudge,5500);
-
-function enterMeja(){
-  if(prologDone)return; prologDone=true;
-  clearTimeout(nudgeT);
-  const sc=document.getElementById('sc-prolog');
-  const sk=document.getElementById('btn-skip');
-  sc.style.transition='opacity 1s ease';sc.style.opacity='0';
-  sk.style.opacity='0';
-  setTimeout(()=>{ loadState(); showScreen('sc-meja'); renderJournals(); },1050);
+  },6500);
 }
 
-/* ─── PUISI DATA ─── */
+function skipProlog(){
+  prologRunning=false;
+  clearTimeout(babakTimer);
+  checkNameAndEnter();
+}
+
+function replayProlog(){
+  showScreen('sc-prolog');
+  prologRunning=true;
+  babakIdx=0;
+  renderBabak(BABAK[0]);
+  scheduleBabak();
+}
+
+/* ════════════════════════════
+   SCENE RENDERERS
+════════════════════════════ */
+function ins(layerId,html){const e=g(layerId);if(e)e.innerHTML+=html;}
+
+const SCENES={
+  babak_kosmos(){
+    // Stars + cosmos
+    ins('g-stars',W.stars(150));
+    // Cosmic swirl
+    ins('g-celestial',`
+      <circle cx="450" cy="200" r="180" fill="none" stroke="rgba(201,168,76,0.05)" stroke-width="60" filter="url(#softglow)"/>
+      <circle cx="450" cy="200" r="80" fill="rgba(201,168,76,0.03)" filter="url(#softglow)"/>
+      <circle cx="450" cy="200" r="30" fill="rgba(201,168,76,0.06)" filter="url(#softglow)"/>
+      <circle cx="450" cy="200" r="8" fill="rgba(240,225,185,0.8)" filter="url(#glow)"/>
+    `);
+    // Nebula wisps
+    ins('g-clouds',`
+      <ellipse cx="200" cy="150" rx="180" ry="60" fill="rgba(40,20,80,0.25)" filter="url(#inkblur)"/>
+      <ellipse cx="700" cy="120" rx="160" ry="50" fill="rgba(20,40,80,0.2)" filter="url(#inkblur)"/>
+      <ellipse cx="450" cy="350" rx="300" ry="80" fill="rgba(60,15,15,0.15)" filter="url(#inkblur)"/>
+    `);
+    // Mountains silhouette far
+    ins('g-mountains',W.mountain(0,600,900,220,'rgba(8,5,3,0.9)'));
+    ins('g-mountains',W.mountain(0,600,900,120,'rgba(10,7,4,0.95)'));
+    // Ground
+    ins('g-ground',`<rect x="0" y="550" width="900" height="50" fill="rgba(5,3,1,0.98)"/>`);
+    // Floating light particles
+    for(let i=0;i<20;i++){
+      const x=Math.random()*900,y=100+Math.random()*350;
+      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${.8+Math.random()*2}" fill="rgba(201,168,76,${.1+Math.random()*.5})" filter="url(#glow)" style="animation:starTwinkle ${2+Math.random()*4}s ease-in-out infinite;animation-delay:${Math.random()*3}s"/>`);
+    }
+    // A lone wayang figure emerging from light
+    ins('g-wayang',`<g style="animation:wRise 2s ease forwards;opacity:0;" transform="translate(450,520)">${W.pujangga(0,0,0.8,1,true).replace('translate(450,520)','')}</g>`);
+    ins('g-wayang',W.pujangga(450,540,0.85,1,true));
+  },
+
+  babak_alam(){
+    ins('g-stars',W.stars(60));
+    // Moon
+    ins('g-celestial',`
+      <circle cx="680" cy="100" r="65" fill="url(#moonGrad)" filter="url(#softglow)"/>
+      <circle cx="680" cy="100" r="48" fill="rgba(240,225,185,0.06)"/>
+    `);
+    // Ink wash mountains — layered parallax
+    ins('g-mountains',W.mountain(0,580,900,260,'rgba(6,10,5,0.88)','rgba(201,168,76,0.04)'));
+    ins('g-mountains',W.mountain(-50,580,1000,180,'rgba(8,12,6,0.92)','rgba(201,168,76,0.05)'));
+    ins('g-mountains',W.mountain(100,580,700,130,'rgba(10,14,8,0.96)','rgba(201,168,76,0.06)'));
+    // Sea
+    ins('g-sea',`<rect x="0" y="420" width="900" height="180" fill="url(#seaGrad)"/>`);
+    for(let i=0;i<4;i++){
+      ins('g-sea',W.wave(420+i*12,900,`rgba(${20+i*5},${50+i*8},${80+i*5},${0.5+i*.1})`,i*100));
+    }
+    // Bamboo grove
+    for(let i=0;i<8;i++){
+      ins('g-trees',W.bamboo(60+i*18,600,120+Math.random()*60,'rgba(6,12,4,0.94)'));
+    }
+    for(let i=0;i<6;i++){
+      ins('g-trees',W.bamboo(800+i*15,600,100+Math.random()*50,'rgba(6,12,4,0.92)'));
+    }
+    // Trees
+    ins('g-trees',W.tree(180,580,80));ins('g-trees',W.tree(220,590,65));
+    ins('g-trees',W.tree(700,580,90));ins('g-trees',W.tree(750,585,70));
+    // Ground
+    ins('g-ground',`<rect x="0" y="570" width="900" height="30" fill="rgba(5,8,3,0.98)"/>`);
+    // Birds
+    let birds='';
+    for(let i=0;i<6;i++) birds+=W.bird(120+i*60,80+i*8,0.9);
+    ins('g-birds',`<g style="animation:birdFly 18s linear infinite;">${birds}</g>`);
+    // Fireflies
+    for(let i=0;i<15;i++){
+      const x=200+Math.random()*500,y=350+Math.random()*150;
+      ins('g-fx',`<circle cx="${x}" cy="${y}" r="1.8" fill="rgba(232,201,106,0.75)" filter="url(#glow)" style="animation:starTwinkle ${2+Math.random()*3}s ease-in-out infinite;animation-delay:${Math.random()*4}s"/>`);
+    }
+    // Villagers in distance
+    for(let i=0;i<5;i++){
+      ins('g-wayang',W.villager(200+i*80,570,0.6,i%2?1:-1));
+    }
+  },
+
+  babak_peradaban(){
+    ins('g-stars',W.stars(30));
+    // Sun setting/rising golden
+    ins('g-celestial',`
+      <circle cx="150" cy="200" r="75" fill="url(#sunGrad)" filter="url(#softglow)"/>
+      <circle cx="150" cy="200" r="48" fill="rgba(212,136,42,0.25)"/>
+    `);
+    // Clouds
+    ins('g-clouds',`
+      <ellipse cx="400" cy="120" rx="200" ry="45" fill="rgba(30,20,10,0.35)" filter="url(#inkblur)"/>
+      <ellipse cx="650" cy="90" rx="160" ry="38" fill="rgba(35,22,10,0.3)" filter="url(#inkblur)"/>
+    `);
+    // Mountains
+    ins('g-mountains',W.mountain(0,580,900,200,'rgba(8,6,3,0.9)'));
+    ins('g-mountains',W.mountain(200,580,500,140,'rgba(10,8,4,0.95)'));
+    // Candi complex
+    ins('g-structures',W.candi(220,560,1.2));
+    ins('g-structures',W.candi(450,560,1.5));
+    ins('g-structures',W.candi(680,555,1.1));
+    // Trees flanking
+    ins('g-trees',W.tree(100,570,70));ins('g-trees',W.tree(140,575,55));
+    ins('g-trees',W.tree(760,570,70));ins('g-trees',W.tree(800,575,60));
+    // Ground
+    ins('g-ground',`<rect x="0" y="560" width="900" height="40" fill="rgba(6,4,2,0.98)"/>`);
+    // Path
+    ins('g-ground',`<path d="M420,600 Q430,570 450,555 Q470,540 490,560" stroke="rgba(201,168,76,0.12)" stroke-width="6" fill="none"/>`);
+    // Wayang figures — raja + rakyat procession
+    ins('g-wayang',W.raja(330,560,0.9,1));
+    ins('g-wayang',W.raja(560,558,0.85,-1));
+    for(let i=0;i<4;i++) ins('g-wayang',W.villager(120+i*55,560,0.55,1));
+    for(let i=0;i<4;i++) ins('g-wayang',W.villager(680+i*45,560,0.55,-1));
+    ins('g-wayang',W.warrior(240,558,0.7,1,'stand'));
+    ins('g-wayang',W.warrior(650,558,0.7,-1,'stand'));
+    // Torch fires at candi
+    ins('g-fire',W.fire(200,553,0.8));
+    ins('g-fire',W.fire(440,545,1));
+    ins('g-fire',W.fire(460,545,1));
+    ins('g-fire',W.fire(670,550,0.8));
+    // Gold particles — prosperity
+    for(let i=0;i<18;i++){
+      const x=100+Math.random()*700,y=250+Math.random()*250;
+      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${.5+Math.random()*1.5}" fill="rgba(201,168,76,${.2+Math.random()*.6})" filter="url(#glow)" style="animation:starTwinkle ${1.5+Math.random()*3}s ease-in-out infinite;animation-delay:${Math.random()*3}s"/>`);
+    }
+  },
+
+  babak_perang(){
+    // Dark red sky done via CSS
+    ins('g-celestial',`
+      <ellipse cx="450" cy="80" rx="350" ry="120" fill="rgba(180,20,10,0.15)" filter="url(#softglow)"/>
+    `);
+    // Thunder lightning
+    ins('g-fx',`<g style="animation:thunderFlash 3s ease-in-out infinite;">
+      <path d="M380,50 L355,150 L375,150 L348,280" stroke="rgba(255,255,200,0.8)" stroke-width="2" fill="none"/>
+      <path d="M580,30 L558,120 L578,120 L550,240" stroke="rgba(255,255,200,0.6)" stroke-width="1.5" fill="none"/>
+    </g>`);
+    // Smoke
+    for(let i=0;i<8;i++){
+      ins('g-clouds',`<ellipse cx="${150+i*85}" cy="${300+Math.random()*80}" rx="${40+Math.random()*50}" ry="${20+Math.random()*30}" fill="rgba(25,15,8,${.4+Math.random()*.4})" filter="url(#inkblur)" style="animation:smokeRise ${3+Math.random()*4}s ease-out infinite;animation-delay:${Math.random()*3}s"/>`);
+    }
+    // Mountains
+    ins('g-mountains',W.mountain(0,580,900,200,'rgba(10,5,3,0.95)'));
+    // Ruins of candi — broken
+    ins('g-structures',`
+      <g opacity="0.7">
+        <rect x="180" y="480" width="80" height="80" fill="rgba(8,4,2,0.95)" stroke="rgba(180,20,10,0.2)" stroke-width="0.8"/>
+        <path d="M180,480 L210,440 L240,480" fill="rgba(8,4,2,0.9)"/>
+        <rect x="380" y="460" width="120" height="100" fill="rgba(8,4,2,0.96)" stroke="rgba(180,20,10,0.25)" stroke-width="0.8"/>
+        <path d="M380,460 L420,400 L460,460" fill="rgba(8,4,2,0.92)"/>
+        <path d="M460,460 L490,420" stroke="rgba(180,20,10,0.3)" stroke-width="2" fill="none"/><!-- broken part -->
+        <rect x="650" y="470" width="90" height="90" fill="rgba(8,4,2,0.94)"/>
+      </g>
+    `);
+    // Ground with scattered debris
+    ins('g-ground',`<rect x="0" y="560" width="900" height="40" fill="rgba(6,3,2,0.98)"/>`);
+    // Fires of destruction
+    for(let i=0;i<8;i++) ins('g-fire',W.fire(80+i*110,560,1+Math.random()*.8));
+    // Warriors fighting
+    ins('g-wayang',`<g style="animation:wFight 1.8s ease-in-out infinite;">${W.warrior(300,558,0.85,1,'fight')}</g>`);
+    ins('g-wayang',`<g style="animation:wFight 1.8s ease-in-out infinite;animation-delay:0.3s;">${W.warrior(480,558,0.85,-1,'fight')}</g>`);
+    ins('g-wayang',`<g style="animation:wFight 2s ease-in-out infinite;animation-delay:0.6s;">${W.warrior(180,558,0.7,1,'fight')}</g>`);
+    ins('g-wayang',`<g style="animation:wFight 2s ease-in-out infinite;animation-delay:0.9s;">${W.warrior(660,558,0.7,-1,'fight')}</g>`);
+    // Fallen warrior
+    ins('g-wayang',`<g style="animation:wFall 3s ease forwards;opacity:1;">${W.warrior(420,558,0.65,1)}</g>`);
+    // Red particles — blood/embers
+    for(let i=0;i<25;i++){
+      const x=Math.random()*900,y=100+Math.random()*400;
+      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${.4+Math.random()*1.8}" fill="rgba(${180+Math.random()*60},${Math.random()*30},${Math.random()*10},${.3+Math.random()*.6})" filter="url(#glow)" style="animation:starTwinkle ${.8+Math.random()*2}s ease-in-out infinite;animation-delay:${Math.random()*2}s"/>`);
+    }
+  },
+
+  babak_kehancuran(){
+    ins('g-stars',W.stars(20));
+    // Mist / emptiness
+    ins('g-clouds',`
+      <rect x="0" y="0" width="900" height="600" fill="rgba(5,4,3,0.3)"/>
+      <ellipse cx="450" cy="300" rx="450" ry="200" fill="rgba(10,8,6,0.4)" filter="url(#inkblur)"/>
+    `);
+    // Ruins silhouette
+    ins('g-mountains',W.mountain(0,580,900,160,'rgba(8,6,3,0.92)'));
+    ins('g-structures',`
+      <g opacity="0.5">
+        <rect x="100" y="490" width="60" height="70" fill="rgba(8,5,3,0.88)"/>
+        <path d="M100,490 L125,445" stroke="rgba(40,25,15,0.5)" stroke-width="2" fill="none"/>
+        <rect x="280" y="470" width="90" height="90" fill="rgba(8,5,3,0.9)"/>
+        <rect x="520" y="480" width="70" height="80" fill="rgba(8,5,3,0.88)"/>
+        <rect x="720" y="495" width="55" height="65" fill="rgba(8,5,3,0.86)"/>
+      </g>
+    `);
+    ins('g-ground',`<rect x="0" y="558" width="900" height="42" fill="rgba(5,3,2,0.98)"/>`);
+    // Scattered quill / scroll fragments
+    ins('g-fx',`
+      <g opacity="0.35">
+        <path d="M300,520 Q310,510 325,520 Q315,525 300,520Z" fill="rgba(240,230,200,0.4)"/>
+        <path d="M420,535 Q435,520 448,530" stroke="rgba(201,168,76,0.3)" stroke-width="1.5" fill="none"/>
+        <rect x="560" y="525" width="40" height="22" rx="2" fill="rgba(240,230,200,0.08)" stroke="rgba(201,168,76,0.25)" stroke-width="0.8"/>
+        <path d="M200,510 Q215,498 228,508" stroke="rgba(201,168,76,0.25)" stroke-width="1.5" fill="none"/>
+      </g>
+    `);
+    // Lone villager figure — mourning
+    ins('g-wayang',`<g style="animation:wSwayL 4s ease-in-out infinite;">${W.villager(450,560,0.7,1)}</g>`);
+    // Fading words floating away
+    const words=['...cinta...','...rindu...','...tabah...','...merdeka...','...sunyi...'];
+    words.forEach((w,i)=>{
+      ins('g-fx',`<text x="${100+i*160}" y="${250+Math.sin(i)*80}" font-family="serif" font-size="14" fill="rgba(201,168,76,${.1+i*.04})" transform="rotate(${-8+i*4})" style="animation:smokeRise ${4+i}s ease-out infinite;animation-delay:${i*.8}s">${w}</text>`);
+    });
+    // Dim particles
+    for(let i=0;i<8;i++){
+      const x=Math.random()*900,y=100+Math.random()*350;
+      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${.5+Math.random()}" fill="rgba(201,168,76,${.08+Math.random()*.15})" style="animation:starTwinkle ${4+Math.random()*6}s ease-in-out infinite;animation-delay:${Math.random()*5}s"/>`);
+    }
+  },
+
+  babak_pujangga(){
+    ins('g-stars',W.stars(100));
+    // Mystic moon
+    ins('g-celestial',`
+      <circle cx="450" cy="130" r="90" fill="url(#moonGrad)" filter="url(#softglow)"/>
+      <circle cx="450" cy="130" r="68" fill="rgba(240,225,185,0.05)"/>
+      <circle cx="450" cy="130" r="42" fill="rgba(240,225,185,0.04)"/>
+    `);
+    // Misty mountains
+    ins('g-mountains',W.mountain(0,580,900,240,'rgba(6,8,5,0.85)','rgba(201,168,76,0.04)'));
+    ins('g-mountains',W.mountain(100,580,700,160,'rgba(8,10,6,0.9)','rgba(201,168,76,0.05)'));
+    // Soft trees
+    for(let i=0;i<4;i++) ins('g-trees',W.tree(50+i*60,570,65+i*10));
+    for(let i=0;i<4;i++) ins('g-trees',W.tree(720+i*40,568,60+i*8));
+    // Ground
+    ins('g-ground',`<rect x="0" y="560" width="900" height="40" fill="rgba(4,6,3,0.98)"/>`);
+    // Candi in background — restored, glowing
+    ins('g-structures',`<g opacity="0.65" filter="url(#softglow)">${W.candi(450,560,1.6).replace('fill="rgba(8,5,2,0','fill="rgba(10,6,3,0')}</g>`);
+    // Fireflies / spirits
+    for(let i=0;i<25;i++){
+      const x=150+Math.random()*600,y=200+Math.random()*280;
+      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${1+Math.random()*2}" fill="rgba(201,168,76,${.3+Math.random()*.65})" filter="url(#glow)" style="animation:starTwinkle ${1.2+Math.random()*3}s ease-in-out infinite;animation-delay:${Math.random()*4}s"/>`);
+    }
+    // Words returning / floating up
+    const ww=['Aku','Cinta','Tabah','Merdeka','Jiwa','Rindu'];
+    ww.forEach((w,i)=>{
+      ins('g-fx',`<text x="${150+i*105}" y="${380-i*15}" font-family="'IM Fell English',serif" font-size="${12+i*2}" fill="rgba(201,168,76,${.2+i*.05})" font-style="italic" style="animation:smokeRise ${5+i*1.2}s ease-in-out infinite;animation-delay:${i*.6}s">${w}</text>`);
+    });
+    // THE PUJANGGA — center, large, with full aura
+    ins('g-wayang',`<g style="animation:wFloat 4s ease-in-out infinite;">${W.pujangga(450,558,1.15,1,true)}</g>`);
+    // Golden ink rays from pujangga
+    ins('g-fx',`
+      <g opacity="0.22" filter="url(#softglow)">
+        <line x1="450" y1="480" x2="200" y2="350" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
+        <line x1="450" y1="480" x2="700" y2="340" stroke="rgba(201,168,76,0.4)" stroke-width="1.2"/>
+        <line x1="450" y1="480" x2="450" y2="200" stroke="rgba(201,168,76,0.6)" stroke-width="2"/>
+        <line x1="450" y1="480" x2="150" y2="420" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <line x1="450" y1="480" x2="750" y2="420" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+      </g>
+    `);
+  }
+};
+
+/* ════════════════════════════
+   PUISI DATA
+════════════════════════════ */
 const PUISI=[
-  // Tahun I
   {l:0,a:"Sapardi Djoko Damono",b:["Aku ingin mencintaimu dengan","___","seperti nyanyian burung malam"],k:"sederhana",p:["sederhana","gembira","gelisah"]},
   {l:0,a:"Chairil Anwar",b:["Aku ini binatang jalang","dari kumpulannya","___"],k:"terbuang",p:["terbuang","berlari","tertawan"]},
   {l:0,a:"Sapardi Djoko Damono",b:["Hujan bulan Juni","tak ada yang lebih","___","dari hujan bulan Juni"],k:"tabah",p:["tabah","indah","sunyi"]},
@@ -947,7 +1144,6 @@ const PUISI=[
   {l:0,a:"Chairil Anwar",b:["Hidup hanya menunda kekalahan","tambah ___","dan kita tidak akan menang"],k:"keyakinan",p:["keyakinan","keberanian","kelelahan"]},
   {l:0,a:"Amir Hamzah",b:["Sunyi itu duka","sunyi itu kudus","sunyi itu ___"],k:"lupa",p:["lupa","rindu","gelap"]},
   {l:0,a:"W.S. Rendra",b:["Orang-orang miskin di jalan","yang sering kita pandang","dengan ___"],k:"kasihan",p:["kasihan","bangga","hormat"]},
-  // Tahun II
   {l:1,a:"Sapardi Djoko Damono",b:["Kita sungguh-sungguh berjalan","di atas bumi yang","___"],k:"bergerak",p:["bergerak","diam","melayang"]},
   {l:1,a:"Chairil Anwar",b:["Dengan puisi aku bernyanyi","sampai senja","___","nanti"],k:"umurku",p:["umurku","hidupku","waktuku"]},
   {l:1,a:"Amir Hamzah",b:["Naik, bukan ke langit","bukan ke bumi","ke dalam ___","sendiri"],k:"diri",p:["diri","hati","jiwa"]},
@@ -956,23 +1152,21 @@ const PUISI=[
   {l:1,a:"Chairil Anwar",b:["Kami yang kini terbaring antara Krawang-Bekasi","tidak bisa teriak '___'"],k:"Merdeka",p:["Merdeka","Indonesia","Jaya"]},
   {l:1,a:"Amir Hamzah",b:["Inilah aku","suara yang tiada menentu","serupa orang","___"],k:"berpenyakit",p:["berpenyakit","kesepian","merindu"]},
   {l:1,a:"W.S. Rendra",b:["Seorang ibu menangis","di depan penjara","sebab anaknya","___"],k:"ditahan",p:["ditahan","tersiksa","bersedih"]},
-  // Tahun III
   {l:2,a:"Sapardi Djoko Damono",b:["Kuhafal matahari tanpa","___","yang bersifat harafiah"],k:"definisi",p:["definisi","bayangan","kiasan"]},
-  {l:2,a:"Chairil Anwar",b:["Kalau sampai waktuku","kumau tak seorang kan merayu","Tidak juga kau","Tidak perlu ___","itu!"],k:"sedu sedan",p:["sedu sedan","air mata","tangis pilu"]},
+  {l:2,a:"Chairil Anwar",b:["Kalau sampai waktuku","kumau tak seorang kan merayu","Tidak perlu ___","itu!"],k:"sedu sedan",p:["sedu sedan","air mata","tangis pilu"]},
   {l:2,a:"W.S. Rendra",b:["Bersatulah pelacur-pelacur kota Jakarta","Bersatulah gelandangan-gelandangan","di bawah jembatan","___"],k:"Jatibaru",p:["Jatibaru","Kota Tua","Pasar Baru"]},
   {l:2,a:"Amir Hamzah",b:["Buah rindu dimakan kasih","tangkai cinta dipaut harap","dahan angan-angan","___","rantas"],k:"ditebas",p:["ditebas","dipatah","diguncang"]},
   {l:2,a:"Sapardi Djoko Damono",b:["Aku ingin mencintaimu","dengan sederhana","dengan kata yang tak sempat","___"],k:"diucapkan",p:["diucapkan","dituliskan","disampaikan"]},
   {l:2,a:"Chairil Anwar",b:["Sebelum ajal mendekat dan","mengundang","Kita pun hanya menonton","___","menjadi abu"],k:"kayu",p:["kayu","batu","arang"]},
   {l:2,a:"W.S. Rendra",b:["Engkau adalah ranting yang rapuh","ditumbangkan angin","namun akar hatimu","___","kuat"],k:"tetap",p:["tetap","masih","sangat"]},
   {l:2,a:"Amir Hamzah",b:["Dalam kebun ada bunga","tiga warna","merah, putih, dan","___"],k:"ungu",p:["ungu","kuning","biru"]},
-  // Tahun IV
   {l:3,a:"Sapardi Djoko Damono",b:["Kita bertemu di sini","kita berpisah di sini","di antara","___"],k:"kata-kata",p:["kata-kata","bayangan","angin laut"]},
   {l:3,a:"Chairil Anwar",b:["Maju","Serbu","Serang","Terjang","___"],k:"takbir",p:["takbir","teriakan","semangat"]},
   {l:3,a:"W.S. Rendra",b:["Aku tidak mau bersembah sujud","pada","___","yang bisu"],k:"patung-patung",p:["patung-patung","batu-batu","dewa-dewa"]},
   {l:3,a:"Amir Hamzah",b:["Habis kikis","segala cintaku hilang terbang","pulang kembali aku pada-Mu","seperti dahulu","___"],k:"kau ketahui",p:["kau ketahui","kau kenali","kau pahami"]},
   {l:3,a:"Sapardi Djoko Damono",b:["Betapa dinginnya air sungai","betapa dinginnya malam","betapa dinginnya tubuhnya","yang ditinggalkan","___"],k:"semangat",p:["semangat","nyawa","cahaya"]},
   {l:3,a:"Chairil Anwar",b:["Aku masih menyebut namamu","dalam doa","dan kau masih dalam","___","tiap malam"],k:"mimpiku",p:["mimpiku","kenanganku","doaku"]},
-  {l:3,a:"W.S. Rendra",b:["Kesadaran adalah matahari","kesabaran adalah bumi","keberanian menjadi","___","dan perjuangan adalah pelaksanaan kata-kata"],k:"cakrawala",p:["cakrawala","langit biru","ufuk timur"]},
+  {l:3,a:"W.S. Rendra",b:["Kesadaran adalah matahari","kesabaran adalah bumi","keberanian menjadi","___"],k:"cakrawala",p:["cakrawala","langit biru","ufuk timur"]},
   {l:3,a:"Amir Hamzah",b:["Jiwa yang merayu","rindu yang berseru","dalam sunyi","___"],k:"menunggu",p:["menunggu","berlalu","terharu"]}
 ];
 
@@ -983,24 +1177,47 @@ const LEVELS=[
   {n:"Tahun IV",s:"Pujangga Sejati",d:"Tinta Nusantara kembali",icon:"⚜️"}
 ];
 
-/* ─── STATE ─── */
+const TITLES=['Pencari Tinta','Penjaga Bait','Maestro Kata','Pujangga Agung','Pujangga Abadi'];
+
+/* ════════════════════════════
+   STATE & STORAGE
+════════════════════════════ */
 let G={
+  name:'',
   unlocked:[true,false,false,false],
   scores:[0,0,0,0],
   progress:[0,0,0,0],
+  totalPoints:0,
+  history:[],
   lvl:0,qIdx:0,score:0,
-  timer:null,timeLeft:30,answered:false,
-  qs:[]
+  timer:null,timeLeft:30,answered:false,qs:[]
 };
 
 function loadState(){
-  try{const s=localStorage.getItem('pjk3');if(s){const p=JSON.parse(s);G.unlocked=p.u||[true,false,false,false];G.scores=p.s||[0,0,0,0];G.progress=p.p||[0,0,0,0];}}catch(e){}
+  try{
+    const s=localStorage.getItem('pjk4');
+    if(s){const p=JSON.parse(s);Object.assign(G,p);G.qs=[];G.timer=null;}
+  }catch(e){}
 }
 function saveState(){
-  try{localStorage.setItem('pjk3',JSON.stringify({u:G.unlocked,s:G.scores,p:G.progress}));}catch(e){}
+  try{
+    const{qs,timer,...save}=G;
+    localStorage.setItem('pjk4',JSON.stringify(save));
+  }catch(e){}
 }
 
-/* ─── SCREEN MANAGER ─── */
+function getTitle(){
+  const t=G.totalPoints;
+  if(t>=300)return TITLES[4];
+  if(t>=200)return TITLES[3];
+  if(t>=120)return TITLES[2];
+  if(t>=60)return TITLES[1];
+  return TITLES[0];
+}
+
+/* ════════════════════════════
+   SCREEN MANAGER
+════════════════════════════ */
 let cur='sc-prolog';
 function showScreen(id){
   document.getElementById(cur).classList.add('off');
@@ -1008,25 +1225,72 @@ function showScreen(id){
   cur=id;
 }
 
-/* ─── JOURNAL RENDER ─── */
+/* ════════════════════════════
+   NAME MODAL
+════════════════════════════ */
+function checkNameAndEnter(){
+  if(!G.name){
+    document.getElementById('modal-name').classList.remove('off');
+    setTimeout(()=>document.getElementById('name-input').focus(),300);
+  } else {
+    enterMejaScreen();
+  }
+}
+function submitName(){
+  const v=document.getElementById('name-input').value.trim();
+  if(!v){toast('Masukkan namamu terlebih dahulu!');return;}
+  G.name=v;
+  document.getElementById('modal-name').classList.add('off');
+  saveState();
+  enterMejaScreen();
+}
+document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitName();});
+
+function enterMeja(){
+  prologRunning=false;clearTimeout(babakTimer);
+  const sp=document.getElementById('sc-prolog');
+  sp.style.transition='opacity 1.1s ease';sp.style.opacity='0';
+  document.getElementById('btn-skip-prolog').style.opacity='0';
+  setTimeout(()=>checkNameAndEnter(),1100);
+}
+
+function enterMejaScreen(){
+  document.getElementById('player-name-display').textContent=G.name+' · '+getTitle();
+  showScreen('sc-meja');
+  renderJournals();renderLB();renderHist();
+}
+
+/* ════════════════════════════
+   TAB SWITCHER
+════════════════════════════ */
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ════════════════════════════
+   JOURNALS
+════════════════════════════ */
 function renderJournals(){
-  const grid=document.getElementById('jgrid');grid.innerHTML='';
+  const grid=g('jgrid');grid.innerHTML='';
   LEVELS.forEach((lv,i)=>{
     const u=G.unlocked[i],pr=G.progress[i]||0,sc=G.scores[i]||0;
     const card=document.createElement('div');
     card.className='jcard'+(u?'':' jlocked');
-    card.onclick=()=>{ if(!u){toast('Selesaikan level sebelumnya!');return;} startLevel(i); };
+    card.onclick=()=>{if(!u){toast('Selesaikan level sebelumnya!');return;}startLevel(i);};
     card.innerHTML=`<div class="jinner">
-      ${!u?`<div class="jlock-icon">🔒</div>`:`<div class="jlock-icon" style="opacity:.3">📖</div>`}
+      ${!u?`<div class="jlockicon">🔒</div>`:`<div class="jlockicon" style="opacity:.28">📖</div>`}
       <div>
         <div class="jyr">${lv.n}</div>
-        <div class="jtitle">${lv.s}</div>
+        <div class="jtit">${lv.s}</div>
         <div class="jdesc">${lv.d}</div>
       </div>
       <div>
         <div class="jmeta">
           <div class="jcnt">8 Puisi${sc>0?' · ✨'+sc:''}</div>
-          <div style="font-family:'Cinzel',serif;font-size:.58rem;color:var(--gold-d);">${pr>0?pr+'/8':u?'Mulai':'Terkunci'}</div>
+          <div style="font-family:'Cinzel',serif;font-size:.56rem;color:var(--gd);">${pr>0?pr+'/8':u?'Mulai':'Terkunci'}</div>
         </div>
         <div class="pbar"><div class="pfill" style="width:${(pr/8)*100}%"></div></div>
       </div>
@@ -1036,80 +1300,133 @@ function renderJournals(){
   });
 }
 
-/* ─── GAME ─── */
+/* ════════════════════════════
+   LEADERBOARD
+════════════════════════════ */
+function renderLB(){
+  try{
+    let board=JSON.parse(localStorage.getItem('pjk4_lb')||'[]');
+    // Update current player
+    const existing=board.findIndex(x=>x.name===G.name);
+    const entry={name:G.name,pts:G.totalPoints,title:getTitle(),lvl:G.unlocked.filter(Boolean).length};
+    if(existing>=0) board[existing]=entry;
+    else board.push(entry);
+    board.sort((a,b)=>b.pts-a.pts);
+    board=board.slice(0,20);
+    localStorage.setItem('pjk4_lb',JSON.stringify(board));
+    const tbody=g('lb-body');tbody.innerHTML='';
+    if(!board.length){
+      tbody.innerHTML=`<tr><td colspan="5" class="lb-empty">Belum ada pujangga yang tercatat di sini.</td></tr>`;return;
+    }
+    board.forEach((e,i)=>{
+      const rankCls=i===0?'r1':i===1?'r2':i===2?'r3':'';
+      const rankSym=i===0?'👑':i===1?'🥈':i===2?'🥉':`${i+1}`;
+      const isMe=e.name===G.name;
+      const tr=document.createElement('tr');
+      if(isMe)tr.style.background='rgba(201,168,76,0.07)';
+      tr.innerHTML=`<td><span class="lb-rank ${rankCls}">${rankSym}</span></td>
+        <td><span class="lb-name">${e.name}${isMe?' ✦':''}</span></td>
+        <td><span class="lb-score">${e.pts}</span></td>
+        <td><span class="lb-badge">${e.title}</span></td>
+        <td style="font-family:'Cinzel',serif;font-size:.62rem;color:var(--gd);">Lvl ${e.lvl}/4</td>`;
+      tbody.appendChild(tr);
+    });
+  }catch(err){}
+}
+
+/* ════════════════════════════
+   POINT HISTORY
+════════════════════════════ */
+function addHistory(lvl,score,correct,total){
+  const ts=new Date();
+  const dateStr=ts.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})+' '+ts.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  G.history.unshift({lvl,score,correct,total,date:dateStr});
+  if(G.history.length>50)G.history=G.history.slice(0,50);
+}
+
+function renderHist(){
+  const list=g('hist-list');list.innerHTML='';
+  if(!G.history.length){
+    list.innerHTML=`<div class="ph-empty">Belum ada riwayat permainan.<br>Mulailah bermain untuk meninggalkan jejak tinta!</div>`;return;
+  }
+  // Total summary
+  list.innerHTML+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .9rem;background:rgba(201,168,76,0.06);border-bottom:1px solid rgba(201,168,76,0.15);margin-bottom:.3rem;">
+    <span style="font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);">Total Poin Terkumpul</span>
+    <span style="font-family:'Cinzel Decorative',cursive;font-size:1.2rem;color:var(--g);">${G.totalPoints} ✨</span>
+  </div>`;
+  G.history.forEach(h=>{
+    const div=document.createElement('div');div.className='ph-entry';
+    div.innerHTML=`<div class="ph-left">
+      <div class="ph-title">${LEVELS[h.lvl].n} — ${LEVELS[h.lvl].s}</div>
+      <div class="ph-date">${h.date} · ${h.correct}/${h.total} benar</div>
+    </div>
+    <div class="ph-pts">+${h.score}</div>`;
+    list.appendChild(div);
+  });
+}
+
+/* ════════════════════════════
+   GAME ENGINE
+════════════════════════════ */
 function startLevel(i){
   G.lvl=i;G.qIdx=0;G.score=0;
   G.qs=PUISI.filter(x=>x.l===i).sort(()=>Math.random()-.5).slice(0,8);
-  showScreen('sc-game');
-  renderQ();
+  G.correctCount=0;
+  showScreen('sc-game');renderQ();
 }
 
 function renderQ(){
   const q=G.qs[G.qIdx];G.answered=false;
-  document.getElementById('g-score').textContent=G.score;
-  document.getElementById('g-page').textContent=`${G.qIdx+1}/8`;
-  document.getElementById('g-badge').textContent=LEVELS[G.lvl].n;
-  document.getElementById('g-pno').textContent=`Halaman ${G.qIdx+1} dari 8`;
-  document.getElementById('g-author').textContent=`— ${q.a}`;
-  document.getElementById('feedback').textContent='';
-
-  // Build puisi text
-  const pel=document.getElementById('g-puisi');
-  pel.innerHTML=q.b.map(w=>w==='___'?`<span class="blank"></span>`:w).join(' ');
-
-  // Build options
-  const og=document.getElementById('optgrid');og.innerHTML='';
+  g('g-score').textContent=G.score;
+  g('g-page').textContent=`${G.qIdx+1}/8`;
+  g('g-badge').textContent=LEVELS[G.lvl].n;
+  g('g-pno').textContent=`Halaman ${G.qIdx+1} dari 8`;
+  g('g-auth').textContent=`— ${q.a}`;
+  g('gfb').textContent='';
+  const pe=g('g-ptxt');
+  pe.innerHTML=q.b.map(w=>w==='___'?`<span class="blank"></span>`:w).join(' ');
+  const og=g('optgrid');og.innerHTML='';
   [...q.p].sort(()=>Math.random()-.5).forEach(opt=>{
     const b=document.createElement('button');b.className='optbtn';b.textContent=opt;
     b.onclick=()=>pick(opt,q.k,b);og.appendChild(b);
   });
-
   startTimer();
 }
 
 function startTimer(){
-  clearInterval(G.timer);G.timeLeft=30;updateTimer(30);
-  G.timer=setInterval(()=>{
-    G.timeLeft--;updateTimer(G.timeLeft);
-    if(G.timeLeft<=0){clearInterval(G.timer);if(!G.answered)timesUp();}
-  },1000);
+  clearInterval(G.timer);G.timeLeft=30;updTimer(30);
+  G.timer=setInterval(()=>{G.timeLeft--;updTimer(G.timeLeft);if(G.timeLeft<=0){clearInterval(G.timer);if(!G.answered)timesUp();}},1000);
 }
 
-function updateTimer(t){
-  document.getElementById('tn').textContent=t;
-  const c=document.getElementById('tc');
+function updTimer(t){
+  g('tn').textContent=t;
+  const c=g('tc');
   c.style.strokeDashoffset=113*(1-t/30);
-  if(t<=10){c.style.stroke='#c0392b';document.getElementById('tn').style.color='#c0392b';}
-  else if(t<=20){c.style.stroke='#e67e22';document.getElementById('tn').style.color='var(--amber)';}
-  else{c.style.stroke='var(--gold)';document.getElementById('tn').style.color='var(--gold)';}
+  if(t<=10){c.style.stroke='#c0392b';g('tn').style.color='#c0392b';}
+  else if(t<=20){c.style.stroke='#e67e22';g('tn').style.color='var(--amb)';}
+  else{c.style.stroke='var(--g)';g('tn').style.color='var(--g)';}
 }
 
 function pick(chosen,correct,btn){
   if(G.answered)return;
   G.answered=true;clearInterval(G.timer);
   document.querySelectorAll('.optbtn').forEach(b=>b.disabled=true);
-
-  // Reveal blank
   const bl=document.querySelector('.blank');
-  if(bl){bl.textContent=correct;bl.style.cssText+='background:transparent;border-bottom:none;font-style:italic;color:var(--maroon);min-width:auto;';bl.classList.remove('blank');}
-
+  if(bl){bl.textContent=correct;bl.style.cssText+='background:transparent;border-bottom:none;font-style:italic;color:var(--m);min-width:auto;';bl.classList.remove('blank');}
   if(chosen===correct){
     btn.classList.add('correct');
     const bonus=Math.ceil(G.timeLeft/6),pts=10+bonus;
-    G.score+=pts;
-    document.getElementById('g-score').textContent=G.score;
-    document.getElementById('feedback').textContent=`✓ Benar! +${pts} poin`;
-    document.getElementById('feedback').style.color='#2a8c4a';
-    showFeedbackPopup(true);
-    spawnSparks();spawnCombo(`+${pts}!`);
+    G.score+=pts;G.correctCount=(G.correctCount||0)+1;
+    g('g-score').textContent=G.score;
+    g('gfb').textContent=`✓ Benar! +${pts} poin`;g('gfb').style.color='#2a8c4a';
+    showFP(true);spawnSparks();spawnCombo(`+${pts}!`);
   } else {
     btn.classList.add('wrong');
     document.querySelectorAll('.optbtn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});
-    document.getElementById('feedback').textContent=`✗ Kata yang tepat: "${correct}"`;
-    document.getElementById('feedback').style.color='var(--maroon)';
-    showFeedbackPopup(false);
+    g('gfb').textContent=`✗ Kata yang tepat: "${correct}"`;g('gfb').style.color='var(--m)';
+    showFP(false);
   }
-  setTimeout(nextQ,2200);
+  setTimeout(nextQ,2100);
 }
 
 function timesUp(){
@@ -1117,76 +1434,91 @@ function timesUp(){
   const q=G.qs[G.qIdx];
   document.querySelectorAll('.optbtn').forEach(b=>{b.disabled=true;if(b.textContent===q.k)b.classList.add('correct');});
   const bl=document.querySelector('.blank');
-  if(bl){bl.textContent=q.k;bl.style.fontStyle='italic';bl.style.color='var(--maroon)';bl.classList.remove('blank');}
-  document.getElementById('feedback').textContent='⏰ Waktu habis!';
-  document.getElementById('feedback').style.color='var(--maroon)';
-  setTimeout(nextQ,2200);
+  if(bl){bl.textContent=q.k;bl.style.fontStyle='italic';bl.style.color='var(--m)';bl.classList.remove('blank');}
+  g('gfb').textContent='⏰ Waktu habis!';g('gfb').style.color='var(--m)';
+  setTimeout(nextQ,2100);
 }
 
 function nextQ(){
   G.qIdx++;
-  if(G.qIdx>=G.qs.length) endLevel();
+  if(G.qIdx>=G.qs.length)endLevel();
   else renderQ();
 }
 
 function endLevel(){
   clearInterval(G.timer);
-  const i=G.lvl,sc=G.score;
+  const i=G.lvl,sc=G.score,cc=G.correctCount||0;
   if(sc>G.scores[i])G.scores[i]=sc;
-  G.progress[i]=8;
-  let newUnlock=false;
-  if(i<3&&!G.unlocked[i+1]){G.unlocked[i+1]=true;newUnlock=true;}
-  saveState();
+  G.progress[i]=8;G.totalPoints+=sc;
+  addHistory(i,sc,cc,8);
+  let nu=false;
+  if(i<3&&!G.unlocked[i+1]){G.unlocked[i+1]=true;nu=true;}
+  saveState();renderLB();
   const pct=sc/80;
   let stars,title,desc;
   if(pct>=.8){stars='★★★';title='Pujangga Agung';desc='Tinta Nusantara telah meresap dalam jiwamu.';}
   else if(pct>=.5){stars='★★☆';title='Penjaga Bait';desc='Kau telah menjaga warisan para penyair.';}
   else{stars='★☆☆';title='Pencari Tinta';desc='Perjalananmu baru saja dimulai, teruslah!';}
-  document.getElementById('r-badge').textContent=LEVELS[i].n+' Selesai';
-  document.getElementById('r-stars').textContent=stars;
-  document.getElementById('r-score').textContent=sc;
-  document.getElementById('r-title').textContent=title;
-  document.getElementById('r-desc').textContent=desc;
-  const uEl=document.getElementById('r-unlock');
-  if(newUnlock&&i<3){uEl.classList.remove('hidden');document.getElementById('r-unlock-txt').textContent=`${LEVELS[i+1].n}: ${LEVELS[i+1].s} telah terbuka!`;}
-  else uEl.classList.add('hidden');
+  g('r-badge').textContent=LEVELS[i].n+' Selesai';
+  g('r-stars').textContent=stars;
+  g('r-score').textContent=sc;
+  g('r-tit').textContent=title;
+  g('r-desc').textContent=desc;
+  const ue=g('r-unlock');
+  if(nu&&i<3){ue.classList.remove('hidden');g('r-unlock-txt').textContent=`${LEVELS[i+1].n}: ${LEVELS[i+1].s} telah terbuka!`;}
+  else ue.classList.add('hidden');
   showScreen('sc-result');
 }
 
 function retryLevel(){startLevel(G.lvl);}
-function backToMeja(){clearInterval(G.timer);showScreen('sc-meja');renderJournals();}
+function backToMeja(){clearInterval(G.timer);showScreen('sc-meja');renderJournals();renderLB();renderHist();}
 
-/* ─── FEEDBACK POPUP ─── */
-function showFeedbackPopup(benar){
-  const d=document.createElement('div');d.className='feedback-popup';
-  const i=document.createElement('div');
-  i.className='fp-inner '+(benar?'fp-benar':'fp-salah');
-  i.textContent=benar?'✦ Sihir Dipulihkan ✦':'⟁ Tinta Tercecer ⟁';
-  d.appendChild(i);document.body.appendChild(d);
-  setTimeout(()=>d.remove(),900);
+function confirmReset(){
+  if(confirm('Hapus semua data progres? Tindakan ini tidak bisa dibatalkan.')){
+    localStorage.removeItem('pjk4');
+    location.reload();
+  }
 }
 
-/* ─── PARTICLES ─── */
+/* ════════════════════════════
+   FX
+════════════════════════════ */
+function showFP(ok){
+  const d=document.createElement('div');d.className='fpop';
+  const i=document.createElement('div');
+  i.className='fpop-inner '+(ok?'fp-ok':'fp-no');
+  i.textContent=ok?'✦ Sihir Dipulihkan ✦':'⟁ Tinta Tercecer ⟁';
+  d.appendChild(i);document.body.appendChild(d);
+  setTimeout(()=>d.remove(),950);
+}
 function spawnSparks(){
   ['✨','⭐','🌟','✦','❋','❇'].forEach((ch,j)=>{
     setTimeout(()=>{
       const s=document.createElement('div');s.className='spark';s.textContent=ch;
-      s.style.left=(28+Math.random()*44)+'vw';s.style.top=(28+Math.random()*44)+'vh';
+      s.style.left=(25+Math.random()*50)+'vw';s.style.top=(25+Math.random()*50)+'vh';
       document.body.appendChild(s);setTimeout(()=>s.remove(),1600);
-    },j*72);
+    },j*70);
   });
 }
 function spawnCombo(txt){
   const e=document.createElement('div');e.className='combo';e.textContent=txt;
-  e.style.left='50%';e.style.top='36%';
+  e.style.left='50%';e.style.top='35%';
   document.body.appendChild(e);setTimeout(()=>e.remove(),1300);
 }
-
-/* ─── TOAST ─── */
 function toast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  const t=g('toast');t.textContent=msg;t.classList.add('on');
   setTimeout(()=>t.classList.remove('on'),2600);
 }
+
+/* ════════════════════════════
+   INIT
+════════════════════════════ */
+loadState();
+// Start prolog
+renderBabak(BABAK[0]);
+scheduleBabak();
 </script>
 </body>
 </html>
+HTMLEOF
+echo "Done: $(wc -c < /mnt/user-data/outputs/pujanggaku.html) bytes"
