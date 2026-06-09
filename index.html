@@ -1,4 +1,3 @@
-cat > /mnt/user-data/outputs/pujanggaku.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -269,9 +268,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
 <div id="bg-light"></div>
 <div id="toast"></div>
 
-<!-- ══════════════════════════════════════════
-     MODAL: INPUT NAMA
-══════════════════════════════════════════ -->
 <div id="modal-name" class="off">
   <div class="modal-inner" style="position:relative;">
     <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem;">Selamat Datang</div>
@@ -282,13 +278,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 1: WAYANG PROLOG
-══════════════════════════════════════════ -->
 <div class="screen" id="sc-prolog">
   <div id="stage">
     <div id="stage-sky"></div>
-    <!-- SVG stage — all wayang drawn here -->
     <svg id="stage-svg" style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <filter id="inkblur"><feGaussianBlur stdDeviation="2.5"/></filter>
@@ -315,7 +307,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
         </linearGradient>
         <clipPath id="stageClip"><rect x="0" y="0" width="900" height="600"/></clipPath>
       </defs>
-      <!-- All elements controlled by JS -->
       <g id="g-stars"></g>
       <g id="g-celestial"></g>
       <g id="g-clouds"></g>
@@ -329,11 +320,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
       <g id="g-fx"></g>
       <g id="g-birds"></g>
     </svg>
-    <!-- Kelir vignette -->
     <div id="kelir"></div>
   </div>
 
-  <!-- Babak info -->
   <div id="babak-text">
     <div id="babak-caption"></div>
     <div id="babak-title"></div>
@@ -344,9 +333,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
   <button id="btn-skip-prolog" onclick="skipProlog()">Lewati ⟶</button>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 2: MEJA KERJA
-══════════════════════════════════════════ -->
 <div class="screen off" id="sc-meja">
   <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:820px;">
     <div style="text-align:center;margin-bottom:1rem;" class="fadein">
@@ -354,7 +340,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
       <div class="logo-sub">Meja Penulis Nusantara · <span id="player-name-display" style="color:var(--g);font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.2em;"></span></div>
       <div class="divorn">❧</div>
     </div>
-    <!-- Nav tabs -->
     <div class="nav-tabs fadein">
       <button class="ntab active" onclick="switchTab('tab-arsip',this)">📜 Arsip Tahun</button>
       <button class="ntab" onclick="switchTab('tab-lb',this)">🏆 Leaderboard</button>
@@ -362,12 +347,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
       <button class="ntab" onclick="switchTab('tab-menu',this)">⚙ Lainnya</button>
     </div>
 
-    <!-- TAB: ARSIP -->
     <div class="tab-pane active scroll-box" id="tab-arsip">
       <div class="jgrid fadein" id="jgrid"></div>
     </div>
 
-    <!-- TAB: LEADERBOARD -->
     <div class="tab-pane scroll-box" id="tab-lb">
       <div style="text-align:center;margin-bottom:.8rem;">
         <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gd);">Papan Keabadian</div>
@@ -380,7 +363,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
       </table>
     </div>
 
-    <!-- TAB: RIWAYAT POIN -->
     <div class="tab-pane scroll-box" id="tab-hist">
       <div style="text-align:center;margin-bottom:.8rem;">
         <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gd);">Jejak Tinta</div>
@@ -390,7 +372,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
       <div id="hist-list"></div>
     </div>
 
-    <!-- TAB: LAINNYA -->
     <div class="tab-pane" id="tab-menu">
       <div class="mbtm" style="flex-wrap:wrap;">
         <button class="btn-c" onclick="showScreen('sc-tutorial')">📜 Tutorial</button>
@@ -402,9 +383,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 3: GAME
-══════════════════════════════════════════ -->
 <div class="screen off" id="sc-game">
   <div class="ghdr">
     <button class="btn-back" onclick="backToMeja()">← Kembali ke Meja</button>
@@ -443,9 +421,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
   <div id="gfb" style="color:var(--g);"></div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 4: RESULT
-══════════════════════════════════════════ -->
 <div class="screen off" id="sc-result">
   <div class="pcard oborder rcard">
     <div class="badge" id="r-badge" style="margin-bottom:.8rem;">Tahun I Selesai</div>
@@ -461,9 +436,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 5: TUTORIAL
-══════════════════════════════════════════ -->
 <div class="screen off" id="sc-tutorial">
   <div class="pcard oborder corn tcard">
     <div style="text-align:center;margin-bottom:.9rem;"><div class="badge">Panduan Penjaga Tinta</div><div class="rtit" style="font-size:1.25rem;margin-top:.6rem;">Cara Bermain</div><div class="divorn" style="padding:0 .8rem;">⚜</div></div>
@@ -478,9 +450,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SCREEN 6: KREATOR
-══════════════════════════════════════════ -->
 <div class="screen off" id="sc-kreator">
   <div class="pcard oborder corn tcard" style="max-width:520px;">
     <div style="text-align:center;margin-bottom:.9rem;"><div class="badge">Profil Kreator</div><div class="rtit" style="font-size:1.25rem;margin-top:.6rem;">Para Pujangga</div><div class="divorn" style="padding:0 .8rem;">❦</div></div>
@@ -498,9 +467,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════ -->
 <script>
 /* ════════════════════════════
    SVG HELPERS
@@ -564,19 +530,13 @@ const W = {
     const s=size*40;
     const fx=facing>0?1:-1;
     return `<g transform="translate(${x},${y}) scale(${fx*size},${size})">
-      <!-- body -->
       <ellipse cx="0" cy="-${s*.6}" rx="${s*.18}" ry="${s*.28}" fill="${color}"/>
-      <!-- head -->
       <circle cx="0" cy="-${s*.95}" r="${s*.15}" fill="${color}"/>
-      <!-- traditional headgear -->
       <path d="M-${s*.18},-${s*.95} Q0,-${s*1.15} ${s*.18},-${s*.95} L${s*.12},-${s*.88} L-${s*.12},-${s*.88}Z" fill="${color}"/>
-      <!-- arms -->
       <path d="M-${s*.18},-${s*.7} Q-${s*.38},-${s*.6} -${s*.32},-${s*.42}" stroke="${color}" stroke-width="${s*.06}" fill="none" stroke-linecap="round"/>
       <path d="M${s*.18},-${s*.7} Q${s*.35},-${s*.55} ${s*.28},-${s*.38}" stroke="${color}" stroke-width="${s*.06}" fill="none" stroke-linecap="round"/>
-      <!-- legs -->
       <path d="M-${s*.08},-${s*.32} L-${s*.12},0" stroke="${color}" stroke-width="${s*.07}" fill="none" stroke-linecap="round"/>
       <path d="M${s*.08},-${s*.32} L${s*.12},0" stroke="${color}" stroke-width="${s*.07}" fill="none" stroke-linecap="round"/>
-      <!-- batik detail -->
       <path d="M-${s*.14},-${s*.75} Q0,-${s*.6} ${s*.14},-${s*.75}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
     </g>`;
   },
@@ -586,23 +546,16 @@ const W = {
     const s=size*50;const fx=facing>0?1:-1;
     const armAngle=pose==='fight'?-30:0;
     return `<g transform="translate(${x},${y}) scale(${fx},1)">
-      <!-- body armored -->
       <path d="M-${s*.22},-${s*.7} L-${s*.26},-${s*.35} L${s*.26},-${s*.35} L${s*.22},-${s*.7}Z" fill="rgba(8,4,2,0.96)"/>
-      <!-- shoulder guards -->
       <path d="M-${s*.22},-${s*.7} Q-${s*.38},-${s*.72} -${s*.3},-${s*.58}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
       <path d="M${s*.22},-${s*.7} Q${s*.38},-${s*.72} ${s*.3},-${s*.58}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
-      <!-- head with crown/helmet -->
       <circle cx="0" cy="-${s*.92}" r="${s*.16}" fill="rgba(8,4,2,0.96)"/>
       <path d="M-${s*.2},-${s*.92} Q-${s*.12},-${s*1.18} 0,-${s*1.2} Q${s*.12},-${s*1.18} ${s*.2},-${s*.92}" fill="rgba(8,4,2,0.96)" stroke="rgba(201,168,76,0.5)" stroke-width="0.8"/>
-      <!-- spear / weapon arm -->
       <line x1="${s*.26}" y1="-${s*.65}" x2="${s*.5+armAngle}" y2="-${s*1.4}" stroke="rgba(8,4,2,0.9)" stroke-width="${s*.055}"/>
       <path d="M${s*.48+armAngle},-${s*1.42} L${s*.52+armAngle},-${s*1.5} L${s*.44+armAngle},-${s*1.42}Z" fill="rgba(201,168,76,0.7)"/>
-      <!-- shield arm -->
       <ellipse cx="-${s*.35}" cy="-${s*.58}" rx="${s*.14}" ry="${s*.2}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8" transform="rotate(-15,-${s*.35},-${s*.58})"/>
-      <!-- legs -->
       <path d="M-${s*.1},-${s*.35} L-${s*.14},0" stroke="rgba(8,4,2,0.95)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
       <path d="M${s*.1},-${s*.35} L${s*.14},0" stroke="rgba(8,4,2,0.95)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
-      <!-- armor details -->
       <path d="M-${s*.2},-${s*.62} Q0,-${s*.55} ${s*.2},-${s*.62}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
       <path d="M-${s*.18},-${s*.5} Q0,-${s*.44} ${s*.18},-${s*.5}" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" fill="none"/>
     </g>`;
@@ -612,27 +565,19 @@ const W = {
   raja(x,y,size=1,facing=1){
     const s=size*55;const fx=facing>0?1:-1;
     return `<g transform="translate(${x},${y}) scale(${fx},1)">
-      <!-- robe -->
       <path d="M-${s*.28},-${s*.8} L-${s*.35},-${s*.1} L${s*.35},-${s*.1} L${s*.28},-${s*.8}Z" fill="rgba(8,4,2,0.97)" stroke="rgba(201,168,76,0.35)" stroke-width="0.8"/>
-      <!-- ornate shoulder -->
       <path d="M-${s*.28},-${s*.8} Q-${s*.5},-${s*.78} -${s*.45},-${s*.6}" fill="rgba(8,4,2,0.94)" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
       <path d="M${s*.28},-${s*.8} Q${s*.5},-${s*.78} ${s*.45},-${s*.6}" fill="rgba(8,4,2,0.94)" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
-      <!-- head -->
       <circle cx="0" cy="-${s*.98}" r="${s*.17}" fill="rgba(8,4,2,0.97)"/>
-      <!-- mahkota crown -->
       <path d="M-${s*.22},-${s*.98} L-${s*.18},-${s*1.28} L-${s*.08},-${s*1.12} L0,-${s*1.32} L${s*.08},-${s*1.12} L${s*.18},-${s*1.28} L${s*.22},-${s*.98}Z" fill="rgba(8,4,2,0.97)" stroke="rgba(201,168,76,0.7)" stroke-width="0.9"/>
-      <!-- crown gems -->
       <circle cx="0" cy="-${s*1.28}" r="${s*.04}" fill="rgba(201,168,76,0.8)"/>
       <circle cx="-${s*.15}" cy="-${s*1.22}" r="${s*.03}" fill="rgba(201,168,76,0.6)"/>
       <circle cx="${s*.15}" cy="-${s*1.22}" r="${s*.03}" fill="rgba(201,168,76,0.6)"/>
-      <!-- scepter -->
       <line x1="${s*.3}" y1="-${s*.75}" x2="${s*.42}" y2="-${s*1.25}" stroke="rgba(8,4,2,0.9)" stroke-width="${s*.055}"/>
       <circle cx="${s*.44}" cy="-${s*1.28}" r="${s*.06}" fill="rgba(201,168,76,0.6)"/>
-      <!-- robe details / batik -->
       <path d="M-${s*.25},-${s*.72} Q0,-${s*.65} ${s*.25},-${s*.72}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
       <path d="M-${s*.28},-${s*.55} Q0,-${s*.48} ${s*.28},-${s*.55}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
       <path d="M-${s*.3},-${s*.38} Q0,-${s*.32} ${s*.3},-${s*.38}" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" fill="none"/>
-      <!-- legs -->
       <path d="M-${s*.1},-${s*.1} L-${s*.12},0" stroke="rgba(8,4,2,0.96)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
       <path d="M${s*.1},-${s*.1} L${s*.12},0" stroke="rgba(8,4,2,0.96)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
     </g>`;
@@ -648,30 +593,21 @@ const W = {
     }
     return `<g transform="translate(${x},${y}) scale(${fx},1)">
       ${auraEl}
-      <!-- flowing robe -->
       <path d="M-${s*.24},-${s*.85} Q-${s*.38},-${s*.5} -${s*.32},-${s*.05} Q-${s*.18},-${s*.02} 0,0 Q${s*.18},-${s*.02} ${s*.32},-${s*.05} Q${s*.38},-${s*.5} ${s*.24},-${s*.85}Z" fill="rgba(6,3,1,0.97)" stroke="rgba(201,168,76,0.18)" stroke-width="0.8"/>
-      <!-- wide sleeves -->
       <path d="M-${s*.24},-${s*.72} Q-${s*.58},-${s*.65} -${s*.52},-${s*.45} Q-${s*.38},-${s*.4} -${s*.28},-${s*.52}" fill="rgba(6,3,1,0.95)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
       <path d="M${s*.24},-${s*.72} Q${s*.58},-${s*.65} ${s*.52},-${s*.45} Q${s*.38},-${s*.4} ${s*.28},-${s*.52}" fill="rgba(6,3,1,0.95)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
-      <!-- head -->
       <circle cx="0" cy="-${s*1.02}" r="${s*.18}" fill="rgba(6,3,1,0.97)"/>
-      <!-- udeng / headwrap -->
       <path d="M-${s*.22},-${s*1.02} Q-${s*.1},-${s*1.26} 0,-${s*1.28} Q${s*.1},-${s*1.26} ${s*.22},-${s*1.02}" fill="rgba(6,3,1,0.96)" stroke="rgba(201,168,76,0.45)" stroke-width="0.9"/>
       <path d="M-${s*.02},-${s*1.28} Q0,-${s*1.35} ${s*.08},-${s*1.3}" stroke="rgba(201,168,76,0.5)" stroke-width="1.2" fill="none"/>
-      <!-- face subtle features -->
       <path d="M-${s*.06},-${s*1.04} Q-${s*.03},-${s*1.0} 0,-${s*1.04}" stroke="rgba(201,168,76,0.15)" stroke-width="0.6" fill="none"/>
-      <!-- quill pen held -->
       <path d="M${s*.46},-${s*.48} Q${s*.35},-${s*.72} ${s*.22},-${s*.68}" stroke="rgba(8,4,2,0.88)" stroke-width="${s*.05}" fill="none"/>
       <path d="M${s*.48},-${s*.46} Q${s*.55},-${s*.35} ${s*.5},-${s*.28}" stroke="rgba(201,168,76,0.7)" stroke-width="1.5" fill="none"/>
-      <!-- ink scroll in other hand -->
       <rect x="-${s*.5}" y="-${s*.62}" width="${s*.18}" height="${s*.28}" rx="2" fill="rgba(240,230,200,0.15)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
       <line x1="-${s*.5}" y1="-${s*.62}" x2="-${s*.5}" y2="-${s*.34}" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
       <line x1="-${s*.32}" y1="-${s*.62}" x2="-${s*.32}" y2="-${s*.34}" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
-      <!-- lines on scroll -->
       <line x1="-${s*.47}" y1="-${s*.56}" x2="-${s*.35}" y2="-${s*.56}" stroke="rgba(201,168,76,0.25)" stroke-width="0.6"/>
       <line x1="-${s*.47}" y1="-${s*.5}" x2="-${s*.35}" y2="-${s*.5}" stroke="rgba(201,168,76,0.25)" stroke-width="0.6"/>
       <line x1="-${s*.47}" y1="-${s*.44}" x2="-${s*.38}" y2="-${s*.44}" stroke="rgba(201,168,76,0.2)" stroke-width="0.6"/>
-      <!-- robe batik detail -->
       <path d="M-${s*.2},-${s*.78} Q0,-${s*.72} ${s*.2},-${s*.78}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
       <path d="M-${s*.25},-${s*.62} Q0,-${s*.55} ${s*.25},-${s*.62}" stroke="rgba(201,168,76,0.24)" stroke-width="0.7" fill="none"/>
       <path d="M-${s*.28},-${s*.46} Q0,-${s*.4} ${s*.28},-${s*.46}" stroke="rgba(201,168,76,0.18)" stroke-width="0.7" fill="none"/>
@@ -682,23 +618,17 @@ const W = {
   candi(x,y,scale=1){
     const s=scale*80;
     return `<g transform="translate(${x},${y})">
-      <!-- base tiers -->
       <rect x="-${s*.8}" y="-${s*.15}" width="${s*1.6}" height="${s*.15}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.2)" stroke-width="0.7"/>
       <rect x="-${s*.65}" y="-${s*.32}" width="${s*1.3}" height="${s*.18}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
       <rect x="-${s*.52}" y="-${s*.5}" width="${s*1.04}" height="${s*.2}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.25)" stroke-width="0.7"/>
       <rect x="-${s*.38}" y="-${s*.7}" width="${s*.76}" height="${s*.22}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.28)" stroke-width="0.8"/>
-      <!-- tower body -->
       <rect x="-${s*.25}" y="-${s*1.2}" width="${s*.5}" height="${s*.52}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
-      <!-- tower tiers up -->
       <rect x="-${s*.22}" y="-${s*1.38}" width="${s*.44}" height="${s*.2}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.32)" stroke-width="0.7"/>
       <rect x="-${s*.18}" y="-${s*1.58}" width="${s*.36}" height="${s*.22}" fill="rgba(8,5,2,0.94)" stroke="rgba(201,168,76,0.35)" stroke-width="0.7"/>
       <rect x="-${s*.13}" y="-${s*1.78}" width="${s*.26}" height="${s*.22}" fill="rgba(8,5,2,0.93)" stroke="rgba(201,168,76,0.38)" stroke-width="0.7"/>
-      <!-- finial -->
       <path d="M-${s*.08},-${s*1.78} Q0,-${s*2.05} ${s*.08},-${s*1.78}" fill="rgba(8,5,2,0.92)" stroke="rgba(201,168,76,0.5)" stroke-width="0.9"/>
       <circle cx="0" cy="-${s*2.05}" r="${s*.04}" fill="rgba(201,168,76,0.7)"/>
-      <!-- window -->
       <rect x="-${s*.1}" y="-${s*1.08}" width="${s*.2}" height="${s*.28}" rx="2" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
-      <!-- arch -->
       <path d="M-${s*.1},-${s*.8} Q0,-${s*.88} ${s*.1},-${s*.8}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
     </g>`;
   },
@@ -1025,8 +955,7 @@ const SCENES={
         <path d="M180,480 L210,440 L240,480" fill="rgba(8,4,2,0.9)"/>
         <rect x="380" y="460" width="120" height="100" fill="rgba(8,4,2,0.96)" stroke="rgba(180,20,10,0.25)" stroke-width="0.8"/>
         <path d="M380,460 L420,400 L460,460" fill="rgba(8,4,2,0.92)"/>
-        <path d="M460,460 L490,420" stroke="rgba(180,20,10,0.3)" stroke-width="2" fill="none"/><!-- broken part -->
-        <rect x="650" y="470" width="90" height="90" fill="rgba(8,4,2,0.94)"/>
+        <path d="M460,460 L490,420" stroke="rgba(180,20,10,0.3)" stroke-width="2" fill="none"/><rect x="650" y="470" width="90" height="90" fill="rgba(8,4,2,0.94)"/>
       </g>
     `);
     // Ground with scattered debris
@@ -1136,389 +1065,4 @@ const SCENES={
    PUISI DATA
 ════════════════════════════ */
 const PUISI=[
-  {l:0,a:"Sapardi Djoko Damono",b:["Aku ingin mencintaimu dengan","___","seperti nyanyian burung malam"],k:"sederhana",p:["sederhana","gembira","gelisah"]},
-  {l:0,a:"Chairil Anwar",b:["Aku ini binatang jalang","dari kumpulannya","___"],k:"terbuang",p:["terbuang","berlari","tertawan"]},
-  {l:0,a:"Sapardi Djoko Damono",b:["Hujan bulan Juni","tak ada yang lebih","___","dari hujan bulan Juni"],k:"tabah",p:["tabah","indah","sunyi"]},
-  {l:0,a:"Chairil Anwar",b:["Sekali berarti","___","mati"],k:"sudah itu",p:["sudah itu","setelah itu","kemudian"]},
-  {l:0,a:"Sapardi Djoko Damono",b:["Yang fana adalah waktu, kita abadi","memungut detik demi detik","merangkainya seperti","___"],k:"bunga kering",p:["bunga kering","mutiara merah","butir pasir"]},
-  {l:0,a:"Chairil Anwar",b:["Hidup hanya menunda kekalahan","tambah ___","dan kita tidak akan menang"],k:"keyakinan",p:["keyakinan","keberanian","kelelahan"]},
-  {l:0,a:"Amir Hamzah",b:["Sunyi itu duka","sunyi itu kudus","sunyi itu ___"],k:"lupa",p:["lupa","rindu","gelap"]},
-  {l:0,a:"W.S. Rendra",b:["Orang-orang miskin di jalan","yang sering kita pandang","dengan ___"],k:"kasihan",p:["kasihan","bangga","hormat"]},
-  {l:1,a:"Sapardi Djoko Damono",b:["Kita sungguh-sungguh berjalan","di atas bumi yang","___"],k:"bergerak",p:["bergerak","diam","melayang"]},
-  {l:1,a:"Chairil Anwar",b:["Dengan puisi aku bernyanyi","sampai senja","___","nanti"],k:"umurku",p:["umurku","hidupku","waktuku"]},
-  {l:1,a:"Amir Hamzah",b:["Naik, bukan ke langit","bukan ke bumi","ke dalam ___","sendiri"],k:"diri",p:["diri","hati","jiwa"]},
-  {l:1,a:"W.S. Rendra",b:["Aku tulis pamflet ini","karena lembaga pendapat umum","yang semestinya","___"],k:"ada",p:["ada","bersuara","jujur"]},
-  {l:1,a:"Sapardi Djoko Damono",b:["Pada suatu hari nanti","jasadku tak akan ada lagi","tapi dalam bait-bait","___"],k:"sajak ini",p:["sajak ini","puisi ini","syair ini"]},
-  {l:1,a:"Chairil Anwar",b:["Kami yang kini terbaring antara Krawang-Bekasi","tidak bisa teriak '___'"],k:"Merdeka",p:["Merdeka","Indonesia","Jaya"]},
-  {l:1,a:"Amir Hamzah",b:["Inilah aku","suara yang tiada menentu","serupa orang","___"],k:"berpenyakit",p:["berpenyakit","kesepian","merindu"]},
-  {l:1,a:"W.S. Rendra",b:["Seorang ibu menangis","di depan penjara","sebab anaknya","___"],k:"ditahan",p:["ditahan","tersiksa","bersedih"]},
-  {l:2,a:"Sapardi Djoko Damono",b:["Kuhafal matahari tanpa","___","yang bersifat harafiah"],k:"definisi",p:["definisi","bayangan","kiasan"]},
-  {l:2,a:"Chairil Anwar",b:["Kalau sampai waktuku","kumau tak seorang kan merayu","Tidak perlu ___","itu!"],k:"sedu sedan",p:["sedu sedan","air mata","tangis pilu"]},
-  {l:2,a:"W.S. Rendra",b:["Bersatulah pelacur-pelacur kota Jakarta","Bersatulah gelandangan-gelandangan","di bawah jembatan","___"],k:"Jatibaru",p:["Jatibaru","Kota Tua","Pasar Baru"]},
-  {l:2,a:"Amir Hamzah",b:["Buah rindu dimakan kasih","tangkai cinta dipaut harap","dahan angan-angan","___","rantas"],k:"ditebas",p:["ditebas","dipatah","diguncang"]},
-  {l:2,a:"Sapardi Djoko Damono",b:["Aku ingin mencintaimu","dengan sederhana","dengan kata yang tak sempat","___"],k:"diucapkan",p:["diucapkan","dituliskan","disampaikan"]},
-  {l:2,a:"Chairil Anwar",b:["Sebelum ajal mendekat dan","mengundang","Kita pun hanya menonton","___","menjadi abu"],k:"kayu",p:["kayu","batu","arang"]},
-  {l:2,a:"W.S. Rendra",b:["Engkau adalah ranting yang rapuh","ditumbangkan angin","namun akar hatimu","___","kuat"],k:"tetap",p:["tetap","masih","sangat"]},
-  {l:2,a:"Amir Hamzah",b:["Dalam kebun ada bunga","tiga warna","merah, putih, dan","___"],k:"ungu",p:["ungu","kuning","biru"]},
-  {l:3,a:"Sapardi Djoko Damono",b:["Kita bertemu di sini","kita berpisah di sini","di antara","___"],k:"kata-kata",p:["kata-kata","bayangan","angin laut"]},
-  {l:3,a:"Chairil Anwar",b:["Maju","Serbu","Serang","Terjang","___"],k:"takbir",p:["takbir","teriakan","semangat"]},
-  {l:3,a:"W.S. Rendra",b:["Aku tidak mau bersembah sujud","pada","___","yang bisu"],k:"patung-patung",p:["patung-patung","batu-batu","dewa-dewa"]},
-  {l:3,a:"Amir Hamzah",b:["Habis kikis","segala cintaku hilang terbang","pulang kembali aku pada-Mu","seperti dahulu","___"],k:"kau ketahui",p:["kau ketahui","kau kenali","kau pahami"]},
-  {l:3,a:"Sapardi Djoko Damono",b:["Betapa dinginnya air sungai","betapa dinginnya malam","betapa dinginnya tubuhnya","yang ditinggalkan","___"],k:"semangat",p:["semangat","nyawa","cahaya"]},
-  {l:3,a:"Chairil Anwar",b:["Aku masih menyebut namamu","dalam doa","dan kau masih dalam","___","tiap malam"],k:"mimpiku",p:["mimpiku","kenanganku","doaku"]},
-  {l:3,a:"W.S. Rendra",b:["Kesadaran adalah matahari","kesabaran adalah bumi","keberanian menjadi","___"],k:"cakrawala",p:["cakrawala","langit biru","ufuk timur"]},
-  {l:3,a:"Amir Hamzah",b:["Jiwa yang merayu","rindu yang berseru","dalam sunyi","___"],k:"menunggu",p:["menunggu","berlalu","terharu"]}
-];
-
-const LEVELS=[
-  {n:"Tahun I",s:"Dasar Sastra",d:"Puisi-puisi awal Nusantara",icon:"📜"},
-  {n:"Tahun II",s:"Penjaga Bait",d:"Melanjutkan warisan kata",icon:"📖"},
-  {n:"Tahun III",s:"Maestro Kata",d:"Menguasai irama sajak",icon:"🖋️"},
-  {n:"Tahun IV",s:"Pujangga Sejati",d:"Tinta Nusantara kembali",icon:"⚜️"}
-];
-
-const TITLES=['Pencari Tinta','Penjaga Bait','Maestro Kata','Pujangga Agung','Pujangga Abadi'];
-
-/* ════════════════════════════
-   STATE & STORAGE
-════════════════════════════ */
-let G={
-  name:'',
-  unlocked:[true,false,false,false],
-  scores:[0,0,0,0],
-  progress:[0,0,0,0],
-  totalPoints:0,
-  history:[],
-  lvl:0,qIdx:0,score:0,
-  timer:null,timeLeft:30,answered:false,qs:[]
-};
-
-function loadState(){
-  try{
-    const s=localStorage.getItem('pjk4');
-    if(s){const p=JSON.parse(s);Object.assign(G,p);G.qs=[];G.timer=null;}
-  }catch(e){}
-}
-function saveState(){
-  try{
-    const{qs,timer,...save}=G;
-    localStorage.setItem('pjk4',JSON.stringify(save));
-  }catch(e){}
-}
-
-function getTitle(){
-  const t=G.totalPoints;
-  if(t>=300)return TITLES[4];
-  if(t>=200)return TITLES[3];
-  if(t>=120)return TITLES[2];
-  if(t>=60)return TITLES[1];
-  return TITLES[0];
-}
-
-/* ════════════════════════════
-   SCREEN MANAGER
-════════════════════════════ */
-let cur='sc-prolog';
-function showScreen(id){
-  document.getElementById(cur).classList.add('off');
-  document.getElementById(id).classList.remove('off');
-  cur=id;
-}
-
-/* ════════════════════════════
-   NAME MODAL
-════════════════════════════ */
-function checkNameAndEnter(){
-  if(!G.name){
-    document.getElementById('modal-name').classList.remove('off');
-    setTimeout(()=>document.getElementById('name-input').focus(),300);
-  } else {
-    enterMejaScreen();
-  }
-}
-function submitName(){
-  const v=document.getElementById('name-input').value.trim();
-  if(!v){toast('Masukkan namamu terlebih dahulu!');return;}
-  G.name=v;
-  document.getElementById('modal-name').classList.add('off');
-  saveState();
-  enterMejaScreen();
-}
-document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitName();});
-
-function enterMeja(){
-  prologRunning=false;clearTimeout(babakTimer);
-  const sp=document.getElementById('sc-prolog');
-  sp.style.transition='opacity 1.1s ease';sp.style.opacity='0';
-  document.getElementById('btn-skip-prolog').style.opacity='0';
-  setTimeout(()=>checkNameAndEnter(),1100);
-}
-
-function enterMejaScreen(){
-  document.getElementById('player-name-display').textContent=G.name+' · '+getTitle();
-  showScreen('sc-meja');
-  renderJournals();renderLB();renderHist();
-}
-
-/* ════════════════════════════
-   TAB SWITCHER
-════════════════════════════ */
-function switchTab(id,btn){
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-}
-
-/* ════════════════════════════
-   JOURNALS
-════════════════════════════ */
-function renderJournals(){
-  const grid=g('jgrid');grid.innerHTML='';
-  LEVELS.forEach((lv,i)=>{
-    const u=G.unlocked[i],pr=G.progress[i]||0,sc=G.scores[i]||0;
-    const card=document.createElement('div');
-    card.className='jcard'+(u?'':' jlocked');
-    card.onclick=()=>{if(!u){toast('Selesaikan level sebelumnya!');return;}startLevel(i);};
-    card.innerHTML=`<div class="jinner">
-      ${!u?`<div class="jlockicon">🔒</div>`:`<div class="jlockicon" style="opacity:.28">📖</div>`}
-      <div>
-        <div class="jyr">${lv.n}</div>
-        <div class="jtit">${lv.s}</div>
-        <div class="jdesc">${lv.d}</div>
-      </div>
-      <div>
-        <div class="jmeta">
-          <div class="jcnt">8 Puisi${sc>0?' · ✨'+sc:''}</div>
-          <div style="font-family:'Cinzel',serif;font-size:.56rem;color:var(--gd);">${pr>0?pr+'/8':u?'Mulai':'Terkunci'}</div>
-        </div>
-        <div class="pbar"><div class="pfill" style="width:${(pr/8)*100}%"></div></div>
-      </div>
-      <div class="jorn">${lv.icon}</div>
-    </div>`;
-    grid.appendChild(card);
-  });
-}
-
-/* ════════════════════════════
-   LEADERBOARD
-════════════════════════════ */
-function renderLB(){
-  try{
-    let board=JSON.parse(localStorage.getItem('pjk4_lb')||'[]');
-    // Update current player
-    const existing=board.findIndex(x=>x.name===G.name);
-    const entry={name:G.name,pts:G.totalPoints,title:getTitle(),lvl:G.unlocked.filter(Boolean).length};
-    if(existing>=0) board[existing]=entry;
-    else board.push(entry);
-    board.sort((a,b)=>b.pts-a.pts);
-    board=board.slice(0,20);
-    localStorage.setItem('pjk4_lb',JSON.stringify(board));
-    const tbody=g('lb-body');tbody.innerHTML='';
-    if(!board.length){
-      tbody.innerHTML=`<tr><td colspan="5" class="lb-empty">Belum ada pujangga yang tercatat di sini.</td></tr>`;return;
-    }
-    board.forEach((e,i)=>{
-      const rankCls=i===0?'r1':i===1?'r2':i===2?'r3':'';
-      const rankSym=i===0?'👑':i===1?'🥈':i===2?'🥉':`${i+1}`;
-      const isMe=e.name===G.name;
-      const tr=document.createElement('tr');
-      if(isMe)tr.style.background='rgba(201,168,76,0.07)';
-      tr.innerHTML=`<td><span class="lb-rank ${rankCls}">${rankSym}</span></td>
-        <td><span class="lb-name">${e.name}${isMe?' ✦':''}</span></td>
-        <td><span class="lb-score">${e.pts}</span></td>
-        <td><span class="lb-badge">${e.title}</span></td>
-        <td style="font-family:'Cinzel',serif;font-size:.62rem;color:var(--gd);">Lvl ${e.lvl}/4</td>`;
-      tbody.appendChild(tr);
-    });
-  }catch(err){}
-}
-
-/* ════════════════════════════
-   POINT HISTORY
-════════════════════════════ */
-function addHistory(lvl,score,correct,total){
-  const ts=new Date();
-  const dateStr=ts.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})+' '+ts.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-  G.history.unshift({lvl,score,correct,total,date:dateStr});
-  if(G.history.length>50)G.history=G.history.slice(0,50);
-}
-
-function renderHist(){
-  const list=g('hist-list');list.innerHTML='';
-  if(!G.history.length){
-    list.innerHTML=`<div class="ph-empty">Belum ada riwayat permainan.<br>Mulailah bermain untuk meninggalkan jejak tinta!</div>`;return;
-  }
-  // Total summary
-  list.innerHTML+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .9rem;background:rgba(201,168,76,0.06);border-bottom:1px solid rgba(201,168,76,0.15);margin-bottom:.3rem;">
-    <span style="font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);">Total Poin Terkumpul</span>
-    <span style="font-family:'Cinzel Decorative',cursive;font-size:1.2rem;color:var(--g);">${G.totalPoints} ✨</span>
-  </div>`;
-  G.history.forEach(h=>{
-    const div=document.createElement('div');div.className='ph-entry';
-    div.innerHTML=`<div class="ph-left">
-      <div class="ph-title">${LEVELS[h.lvl].n} — ${LEVELS[h.lvl].s}</div>
-      <div class="ph-date">${h.date} · ${h.correct}/${h.total} benar</div>
-    </div>
-    <div class="ph-pts">+${h.score}</div>`;
-    list.appendChild(div);
-  });
-}
-
-/* ════════════════════════════
-   GAME ENGINE
-════════════════════════════ */
-function startLevel(i){
-  G.lvl=i;G.qIdx=0;G.score=0;
-  G.qs=PUISI.filter(x=>x.l===i).sort(()=>Math.random()-.5).slice(0,8);
-  G.correctCount=0;
-  showScreen('sc-game');renderQ();
-}
-
-function renderQ(){
-  const q=G.qs[G.qIdx];G.answered=false;
-  g('g-score').textContent=G.score;
-  g('g-page').textContent=`${G.qIdx+1}/8`;
-  g('g-badge').textContent=LEVELS[G.lvl].n;
-  g('g-pno').textContent=`Halaman ${G.qIdx+1} dari 8`;
-  g('g-auth').textContent=`— ${q.a}`;
-  g('gfb').textContent='';
-  const pe=g('g-ptxt');
-  pe.innerHTML=q.b.map(w=>w==='___'?`<span class="blank"></span>`:w).join(' ');
-  const og=g('optgrid');og.innerHTML='';
-  [...q.p].sort(()=>Math.random()-.5).forEach(opt=>{
-    const b=document.createElement('button');b.className='optbtn';b.textContent=opt;
-    b.onclick=()=>pick(opt,q.k,b);og.appendChild(b);
-  });
-  startTimer();
-}
-
-function startTimer(){
-  clearInterval(G.timer);G.timeLeft=30;updTimer(30);
-  G.timer=setInterval(()=>{G.timeLeft--;updTimer(G.timeLeft);if(G.timeLeft<=0){clearInterval(G.timer);if(!G.answered)timesUp();}},1000);
-}
-
-function updTimer(t){
-  g('tn').textContent=t;
-  const c=g('tc');
-  c.style.strokeDashoffset=113*(1-t/30);
-  if(t<=10){c.style.stroke='#c0392b';g('tn').style.color='#c0392b';}
-  else if(t<=20){c.style.stroke='#e67e22';g('tn').style.color='var(--amb)';}
-  else{c.style.stroke='var(--g)';g('tn').style.color='var(--g)';}
-}
-
-function pick(chosen,correct,btn){
-  if(G.answered)return;
-  G.answered=true;clearInterval(G.timer);
-  document.querySelectorAll('.optbtn').forEach(b=>b.disabled=true);
-  const bl=document.querySelector('.blank');
-  if(bl){bl.textContent=correct;bl.style.cssText+='background:transparent;border-bottom:none;font-style:italic;color:var(--m);min-width:auto;';bl.classList.remove('blank');}
-  if(chosen===correct){
-    btn.classList.add('correct');
-    const bonus=Math.ceil(G.timeLeft/6),pts=10+bonus;
-    G.score+=pts;G.correctCount=(G.correctCount||0)+1;
-    g('g-score').textContent=G.score;
-    g('gfb').textContent=`✓ Benar! +${pts} poin`;g('gfb').style.color='#2a8c4a';
-    showFP(true);spawnSparks();spawnCombo(`+${pts}!`);
-  } else {
-    btn.classList.add('wrong');
-    document.querySelectorAll('.optbtn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});
-    g('gfb').textContent=`✗ Kata yang tepat: "${correct}"`;g('gfb').style.color='var(--m)';
-    showFP(false);
-  }
-  setTimeout(nextQ,2100);
-}
-
-function timesUp(){
-  G.answered=true;
-  const q=G.qs[G.qIdx];
-  document.querySelectorAll('.optbtn').forEach(b=>{b.disabled=true;if(b.textContent===q.k)b.classList.add('correct');});
-  const bl=document.querySelector('.blank');
-  if(bl){bl.textContent=q.k;bl.style.fontStyle='italic';bl.style.color='var(--m)';bl.classList.remove('blank');}
-  g('gfb').textContent='⏰ Waktu habis!';g('gfb').style.color='var(--m)';
-  setTimeout(nextQ,2100);
-}
-
-function nextQ(){
-  G.qIdx++;
-  if(G.qIdx>=G.qs.length)endLevel();
-  else renderQ();
-}
-
-function endLevel(){
-  clearInterval(G.timer);
-  const i=G.lvl,sc=G.score,cc=G.correctCount||0;
-  if(sc>G.scores[i])G.scores[i]=sc;
-  G.progress[i]=8;G.totalPoints+=sc;
-  addHistory(i,sc,cc,8);
-  let nu=false;
-  if(i<3&&!G.unlocked[i+1]){G.unlocked[i+1]=true;nu=true;}
-  saveState();renderLB();
-  const pct=sc/80;
-  let stars,title,desc;
-  if(pct>=.8){stars='★★★';title='Pujangga Agung';desc='Tinta Nusantara telah meresap dalam jiwamu.';}
-  else if(pct>=.5){stars='★★☆';title='Penjaga Bait';desc='Kau telah menjaga warisan para penyair.';}
-  else{stars='★☆☆';title='Pencari Tinta';desc='Perjalananmu baru saja dimulai, teruslah!';}
-  g('r-badge').textContent=LEVELS[i].n+' Selesai';
-  g('r-stars').textContent=stars;
-  g('r-score').textContent=sc;
-  g('r-tit').textContent=title;
-  g('r-desc').textContent=desc;
-  const ue=g('r-unlock');
-  if(nu&&i<3){ue.classList.remove('hidden');g('r-unlock-txt').textContent=`${LEVELS[i+1].n}: ${LEVELS[i+1].s} telah terbuka!`;}
-  else ue.classList.add('hidden');
-  showScreen('sc-result');
-}
-
-function retryLevel(){startLevel(G.lvl);}
-function backToMeja(){clearInterval(G.timer);showScreen('sc-meja');renderJournals();renderLB();renderHist();}
-
-function confirmReset(){
-  if(confirm('Hapus semua data progres? Tindakan ini tidak bisa dibatalkan.')){
-    localStorage.removeItem('pjk4');
-    location.reload();
-  }
-}
-
-/* ════════════════════════════
-   FX
-════════════════════════════ */
-function showFP(ok){
-  const d=document.createElement('div');d.className='fpop';
-  const i=document.createElement('div');
-  i.className='fpop-inner '+(ok?'fp-ok':'fp-no');
-  i.textContent=ok?'✦ Sihir Dipulihkan ✦':'⟁ Tinta Tercecer ⟁';
-  d.appendChild(i);document.body.appendChild(d);
-  setTimeout(()=>d.remove(),950);
-}
-function spawnSparks(){
-  ['✨','⭐','🌟','✦','❋','❇'].forEach((ch,j)=>{
-    setTimeout(()=>{
-      const s=document.createElement('div');s.className='spark';s.textContent=ch;
-      s.style.left=(25+Math.random()*50)+'vw';s.style.top=(25+Math.random()*50)+'vh';
-      document.body.appendChild(s);setTimeout(()=>s.remove(),1600);
-    },j*70);
-  });
-}
-function spawnCombo(txt){
-  const e=document.createElement('div');e.className='combo';e.textContent=txt;
-  e.style.left='50%';e.style.top='35%';
-  document.body.appendChild(e);setTimeout(()=>e.remove(),1300);
-}
-function toast(msg){
-  const t=g('toast');t.textContent=msg;t.classList.add('on');
-  setTimeout(()=>t.classList.remove('on'),2600);
-}
-
-/* ════════════════════════════
-   INIT
-════════════════════════════ */
-loadState();
-// Start prolog
-renderBabak(BABAK[0]);
-scheduleBabak();
-</script>
-</body>
-</html>
-HTMLEOF
-echo "Done: $(wc -c < /mnt/user-data/outputs/pujanggaku.html) bytes"
+  {l:0,a:"Sapardi Djoko Damono",b:["Aku ingin
