@@ -1,379 +1,582 @@
+cat > /tmp/part1.html << 'EOF'
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PUJANGGAKU — Penjaga Tinta Nusantara</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
+/* =========================================
+   ROOT TOKENS — Ink Wash / Tang Palette
+========================================= */
 :root{
-  --m:#6b1a1a;--md:#4a0f0f;--ml:#8b2525;
-  --g:#c9a84c;--gl:#e8c96a;--gd:#9a7a2e;
-  --t:#120804;--tm:#3d1e0a;--tl:#5c3218;
-  --p:#f0e6c8;--pd:#d4c49a;
-  --ink:#0a0502;--amb:#d4882a;
-  --sky1:#0a0418;--sky2:#1a0830;--sky3:#0d1520;
+  --cream:#f5edd8; --cream2:#ede0c0; --cream3:#e0cfa0;
+  --gold:#c9943a;  --gold2:#e8b84b;  --gold3:#a07228;
+  --brown:#7a4218; --brown2:#5a2e0e; --brown3:#3d1e08;
+  --ink:#2a1a0a;   --ink2:#1a0e05;
+  --red:#c44a1a;   --red2:#e06030;
+  --mist:#d8cdb0;  --mist2:#c8bc98;
+  --sky:#f0e8cc;   --sky2:#e8ddb8;
+  --pagoda:#7a4218;
+  --m-red:#8b2020; --m-gold:#c9943a;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;background:#000;color:var(--p);}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;background:var(--sky);color:var(--ink);}
 
-/* ── PERSISTENT WOOD LAYERS ── */
-#bg-wood{position:fixed;inset:0;z-index:0;background:linear-gradient(155deg,#060201 0%,#1a0904 20%,#3d1e0a 38%,#2a1206 54%,#4a2510 66%,#3d1e0a 78%,#180804 92%,#060201 100%);}
-#bg-grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015 0.9' numOctaves='5' seed='12'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");}
-#bg-light{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 55% 75% at 88% 22%,rgba(212,136,42,.22) 0%,transparent 58%),radial-gradient(ellipse 38% 52% at 6% 88%,rgba(70,22,6,.55) 0%,transparent 52%),linear-gradient(to right,rgba(0,0,0,.5) 0%,transparent 30%,rgba(0,0,0,.12) 100%);animation:cflicker 9s ease-in-out infinite;}
-@keyframes cflicker{0%,100%{opacity:1;}22%{opacity:.88;}48%{opacity:1.02;}72%{opacity:.93;}}
-
-/* ── SCREEN SYSTEM ── */
-.screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;transition:opacity .8s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.4,0,.2,1);}
-.screen.off{opacity:0;pointer-events:none;transform:translateY(12px);}
-
-/* ════════════════════════════════════
-   SCREEN: WAYANG PROLOG
-════════════════════════════════════ */
-#sc-prolog{z-index:50;background:#000;flex-direction:column;overflow:hidden;}
-
-/* Stage */
-#stage{position:absolute;inset:0;overflow:hidden;}
-
-/* Sky gradient that shifts per babak */
-#stage-sky{position:absolute;inset:0;transition:background 2.5s ease;}
-
-/* Ink wash ground layers */
-#stage-ground{position:absolute;bottom:0;left:0;right:0;height:35%;pointer-events:none;}
-
-/* Wayang shadow screen — the gedebog/kelir */
-#kelir{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 85%,rgba(212,136,42,.04) 0%,transparent 65%);}
-
-/* Smoke/mist particles */
-#mist-layer{position:absolute;inset:0;pointer-events:none;}
-
-/* Text overlay */
-#babak-text{
-  position:absolute;bottom:0;left:0;right:0;
-  z-index:20;padding:2rem 2rem 2.5rem;
-  text-align:center;
-  background:linear-gradient(to top,rgba(0,0,0,.75) 0%,rgba(0,0,0,.4) 55%,transparent 100%);
+/* =========================================
+   SCREEN SYSTEM
+========================================= */
+.screen{
+  position:fixed;inset:0;z-index:10;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .85s cubic-bezier(.4,0,.2,1),transform .85s cubic-bezier(.4,0,.2,1);
 }
-#babak-caption{font-family:'Cinzel',serif;font-size:clamp(.55rem,1.2vw,.7rem);letter-spacing:.45em;text-transform:uppercase;color:var(--gd);margin-bottom:.4rem;opacity:0;transition:opacity 1.2s ease;}
-#babak-title{font-family:'Cinzel Decorative',cursive;font-size:clamp(1.4rem,4.5vw,3rem);color:var(--g);text-shadow:0 0 40px rgba(201,168,76,.6),0 4px 16px rgba(0,0,0,.9);opacity:0;transition:opacity 1.4s ease .15s;}
-#babak-body{font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(.88rem,2vw,1.15rem);color:rgba(240,230,200,.88);line-height:1.9;max-width:640px;margin:.75rem auto 0;opacity:0;transition:opacity 1.3s ease .3s;}
+.screen.off{opacity:0;pointer-events:none;transform:translateY(14px);}
 
-.babak-visible #babak-caption,
-.babak-visible #babak-title,
-.babak-visible #babak-body{opacity:1;}
+/* =========================================
+   PROLOG SCREEN
+========================================= */
+#sc-prolog{
+  z-index:50;
+  background:var(--sky);
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* Stage — the painting canvas */
+#stage{
+  position:absolute;inset:0;overflow:hidden;
+  background:linear-gradient(180deg,#f2e8c8 0%,#ede0b8 35%,#e8d8a8 65%,#e0cc98 100%);
+}
+
+/* Sky wash overlay */
+#sky-wash{
+  position:absolute;inset:0;
+  pointer-events:none;
+  transition:background 2s ease;
+}
+
+/* Main SVG canvas */
+#stage-svg{
+  position:absolute;inset:0;width:100%;height:100%;
+}
+
+/* Text overlay bottom */
+#babak-ui{
+  position:absolute;bottom:0;left:0;right:0;z-index:30;
+  padding:1.5rem 2rem 2rem;
+  background:linear-gradient(to top,rgba(240,232,200,.92) 0%,rgba(240,232,200,.6) 55%,transparent 100%);
+  text-align:center;
+  pointer-events:none;
+}
+#babak-ui .btn-wrap{pointer-events:all;}
+.bcap{
+  font-family:'Cinzel',serif;font-size:clamp(.52rem,1.1vw,.66rem);
+  letter-spacing:.42em;text-transform:uppercase;color:var(--gold3);
+  opacity:0;transition:opacity 1s ease;
+}
+.btitle{
+  font-family:'Cinzel Decorative',cursive;font-size:clamp(1.3rem,4vw,2.8rem);
+  color:var(--brown);line-height:1.1;margin:.3rem 0;
+  text-shadow:1px 1px 0 rgba(255,255,255,.6),0 2px 8px rgba(120,66,24,.2);
+  opacity:0;transition:opacity 1.2s ease .12s;
+}
+.bbody{
+  font-family:'IM Fell English',serif;font-style:italic;
+  font-size:clamp(.82rem,1.8vw,1.08rem);color:var(--brown2);line-height:1.88;
+  max-width:620px;margin:.6rem auto 0;
+  opacity:0;transition:opacity 1.1s ease .26s;
+}
+#babak-ui.bv .bcap,#babak-ui.bv .btitle,#babak-ui.bv .bbody{opacity:1;}
 
 /* Progress dots */
-#babak-dots{position:absolute;bottom:.9rem;left:50%;transform:translateX(-50%);display:flex;gap:.55rem;z-index:25;}
-.bdot{width:6px;height:6px;border-radius:50%;background:rgba(201,168,76,.25);transition:all .4s ease;cursor:pointer;}
-.bdot.active{background:var(--g);box-shadow:0 0 8px rgba(201,168,76,.6);width:18px;border-radius:3px;}
+#bdots{
+  position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);
+  display:flex;gap:.5rem;z-index:35;
+}
+.bdot{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(122,66,24,.25);border:1px solid rgba(122,66,24,.3);
+  cursor:pointer;transition:all .35s;
+}
+.bdot.on{background:var(--gold);border-color:var(--gold3);width:20px;border-radius:3px;box-shadow:0 0 6px rgba(201,148,58,.5);}
 
-/* Skip / Enter */
-#btn-skip-prolog{position:fixed;top:1.2rem;right:1.2rem;z-index:60;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(201,168,76,.4);background:transparent;border:1px solid rgba(201,168,76,.15);padding:.35rem .9rem;cursor:pointer;transition:all .3s;}
-#btn-skip-prolog:hover{color:var(--g);border-color:var(--g);}
-#btn-enter-prolog{display:none;font-family:'Cinzel Decorative',cursive;font-size:clamp(.82rem,1.9vw,.98rem);letter-spacing:.18em;padding:.88rem 2.8rem;background:linear-gradient(135deg,var(--md),var(--m));border:1px solid var(--gd);color:var(--gl);cursor:pointer;position:relative;box-shadow:0 6px 28px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.08);transition:all .35s;animation:enterpulse 2.5s ease-in-out infinite;}
-@keyframes enterpulse{0%,100%{box-shadow:0 6px 28px rgba(0,0,0,.65),0 0 15px rgba(201,168,76,.15);}50%{box-shadow:0 6px 28px rgba(0,0,0,.65),0 0 30px rgba(201,168,76,.35);}}
-#btn-enter-prolog::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,168,76,.18);}
-#btn-enter-prolog:hover{background:linear-gradient(135deg,var(--m),var(--ml));transform:translateY(-2px);}
+/* Skip */
+#btn-skip{
+  position:fixed;top:1.1rem;right:1.1rem;z-index:60;
+  font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(122,66,24,.5);background:transparent;
+  border:1px solid rgba(122,66,24,.2);padding:.32rem .85rem;cursor:pointer;transition:all .3s;
+}
+#btn-skip:hover{color:var(--brown);border-color:var(--brown);}
 
-/* ── WAYANG FIGURES ── */
-.wayang{position:absolute;transform-origin:bottom center;filter:drop-shadow(0 0 8px rgba(201,168,76,.2));}
-.wayang-shadow{filter:drop-shadow(2px 0 12px rgba(0,0,0,.8)) drop-shadow(0 0 20px rgba(201,168,76,.15));}
+/* Enter button */
+.btn-enter{
+  display:inline-block;margin-top:.8rem;
+  font-family:'Cinzel Decorative',cursive;font-size:clamp(.78rem,1.7vw,.92rem);letter-spacing:.16em;
+  padding:.8rem 2.4rem;
+  background:linear-gradient(135deg,var(--brown2),var(--brown));
+  border:1px solid var(--gold3);color:var(--cream);
+  cursor:pointer;position:relative;
+  box-shadow:0 5px 20px rgba(122,66,24,.35),inset 0 1px 0 rgba(255,255,255,.12);
+  transition:all .3s;
+}
+.btn-enter::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,148,58,.2);}
+.btn-enter:hover{background:linear-gradient(135deg,var(--brown),var(--red));transform:translateY(-2px);box-shadow:0 8px 24px rgba(122,66,24,.45);}
 
-/* Animation classes */
-@keyframes wSwayL{0%,100%{transform:rotate(-2deg) translateX(0);}50%{transform:rotate(2deg) translateX(-6px);}}
-@keyframes wSwayR{0%,100%{transform:rotate(2deg) translateX(0);}50%{transform:rotate(-2deg) translateX(6px);}}
-@keyframes wFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
-@keyframes wWalk{0%,100%{transform:translateX(0) scaleX(1);}25%{transform:translateX(12px) scaleX(1);}75%{transform:translateX(-5px) scaleX(1);}}
-@keyframes wFight{0%{transform:rotate(-5deg);}25%{transform:rotate(15deg) translateX(20px);}50%{transform:rotate(-10deg) translateX(-10px);}75%{transform:rotate(8deg) translateX(15px);}100%{transform:rotate(-5deg);}}
-@keyframes wFall{0%{transform:rotate(0) translateY(0);opacity:1;}100%{transform:rotate(45deg) translateY(40px);opacity:0;}}
-@keyframes wRise{0%{transform:translateY(30px) scale(.8);opacity:0;}100%{transform:translateY(0) scale(1);opacity:1;}}
-@keyframes mountParallax{0%,100%{transform:translateX(0);}50%{transform:translateX(-8px);}}
-@keyframes birdFly{0%{transform:translate(0,0);}100%{transform:translate(-120vw,-30px);}}
-@keyframes waveRoll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-@keyframes inkSpread{0%{opacity:0;transform:scale(.5);}50%{opacity:.8;}100%{opacity:0;transform:scale(2.5);}}
-@keyframes starTwinkle{0%,100%{opacity:.2;}50%{opacity:1;}}
-@keyframes sunRise{0%{transform:translateY(60px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
-@keyframes fireFlicker{0%,100%{transform:scaleY(1) rotate(-1deg);}33%{transform:scaleY(1.15) rotate(2deg);}66%{transform:scaleY(.88) rotate(-2deg);}}
-@keyframes smokeRise{0%{transform:translateY(0) scale(1);opacity:.6;}100%{transform:translateY(-80px) scale(2.5);opacity:0;}}
-@keyframes thunderFlash{0%,90%,100%{opacity:0;}92%,96%{opacity:1;}94%{opacity:.3;}}
-@keyframes parchmentUnroll{0%{clip-path:inset(0 100% 0 0);}100%{clip-path:inset(0 0% 0 0);}}
+/* =========================================
+   INK WASH DECORATIVE ELEMENTS
+========================================= */
+/* Floating particles */
+@keyframes petal{
+  0%{transform:translate(0,0) rotate(0deg);opacity:.8;}
+  50%{transform:translate(var(--px,15px),var(--py,-40px)) rotate(180deg);opacity:.5;}
+  100%{transform:translate(var(--px2,30px),var(--py2,-90px)) rotate(360deg);opacity:0;}
+}
+@keyframes float1{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes float2{0%,100%{transform:translateY(0) scaleX(1);}50%{transform:translateY(-6px) scaleX(-1);}}
+@keyframes sway{0%,100%{transform-origin:bottom center;transform:rotate(-3deg);}50%{transform-origin:bottom center;transform:rotate(3deg);}}
+@keyframes wavemove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes sunpulse{0%,100%{filter:drop-shadow(0 0 8px rgba(232,184,75,.4));}50%{filter:drop-shadow(0 0 20px rgba(232,184,75,.7));}}
+@keyframes birdfly{0%{transform:translateX(0);}100%{transform:translateX(-130vw);}}
+@keyframes inkwaft{0%,100%{opacity:.35;transform:translateY(0) scaleX(1);}50%{opacity:.6;transform:translateY(-5px) scaleX(1.08);}}
+@keyframes twinkle{0%,100%{opacity:.2;}50%{opacity:.9;}}
+@keyframes risingfig{0%{transform:translateY(30px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+@keyframes thunderflash{0%,88%,100%{opacity:0;}90%,94%{opacity:1;}92%{opacity:.2;}}
+@keyframes smokeup{0%{transform:translateY(0) scale(1);opacity:.5;}100%{transform:translateY(-60px) scale(2);opacity:0;}}
+@keyframes warfight{0%,100%{transform:rotate(-4deg) translateX(0);}50%{transform:rotate(6deg) translateX(10px);}}
+@keyframes fallover{0%{transform:rotate(0);opacity:1;}100%{transform:rotate(50deg) translateX(20px);opacity:0;}}
+@keyframes aurashine{0%,100%{opacity:.3;}50%{opacity:.7;}}
+@keyframes scrollunroll{0%{clip-path:inset(0 100% 0 0);}100%{clip-path:inset(0 0 0 0);}}
 
-/* ════════════════════════════════════
-   SCREEN: MEJA KERJA
-════════════════════════════════════ */
-#sc-meja{flex-direction:column;padding:1rem;z-index:20;}
-.logo-title{font-family:'Cinzel Decorative',cursive;font-size:clamp(1.9rem,5.5vw,3.6rem);color:var(--g);text-shadow:0 0 55px rgba(201,168,76,.5),0 4px 14px rgba(0,0,0,.8);letter-spacing:.1em;line-height:1;animation:pglow 2.5s ease-in-out infinite;}
-@keyframes pglow{0%,100%{text-shadow:0 0 30px rgba(201,168,76,.35);}50%{text-shadow:0 0 60px rgba(201,168,76,.75),0 0 90px rgba(201,168,76,.28);}}
-.logo-sub{font-family:'Cinzel',serif;font-size:clamp(.55rem,1.2vw,.75rem);color:var(--gd);letter-spacing:.42em;text-transform:uppercase;margin-top:.35rem;}
-.divorn{display:flex;align-items:center;gap:.9rem;color:var(--gd);font-size:.9rem;margin:.5rem 0;}
-.divorn::before,.divorn::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gd),transparent);}
-
-/* Nav tabs */
-.nav-tabs{display:flex;gap:.5rem;margin-bottom:1rem;}
-.ntab{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;padding:.45rem 1.1rem;border:1px solid rgba(201,168,76,.22);background:transparent;color:rgba(201,168,76,.55);cursor:pointer;transition:all .3s;}
-.ntab.active,.ntab:hover{background:rgba(201,168,76,.1);border-color:var(--g);color:var(--g);}
-
-/* Tab panes */
-.tab-pane{display:none;width:100%;max-width:820px;}
-.tab-pane.active{display:block;}
-
-/* Journal grid */
-.jgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem;width:100%;}
-@media(max-width:520px){.jgrid{grid-template-columns:1fr;}}
-.jcard{cursor:pointer;transition:transform .3s ease;position:relative;}
-.jcard:hover:not(.jlocked){transform:translateY(-5px) rotate(-.4deg);}
-.jcard.jlocked{cursor:not-allowed;}
-.jinner{background:linear-gradient(138deg,#8b2525 0%,#6b1a1a 42%,#4a0f0f 100%);border:2px solid var(--gd);border-radius:2px;padding:1.05rem 1rem;box-shadow:4px 5px 0 rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08),inset -3px 0 0 rgba(0,0,0,.22);position:relative;overflow:hidden;min-height:125px;display:flex;flex-direction:column;justify-content:space-between;}
-.jinner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:10px;background:linear-gradient(to right,rgba(0,0,0,.32),transparent);border-right:1px solid rgba(201,168,76,.09);}
-.jinner::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 18px,rgba(255,255,255,.015) 18px,rgba(255,255,255,.015) 19px);pointer-events:none;}
-.jcard.jlocked .jinner{opacity:.5;filter:grayscale(.35);}
-.jyr{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gd);}
-.jtit{font-family:'Cinzel Decorative',cursive;font-size:clamp(.84rem,1.8vw,1.06rem);color:var(--gl);margin:.22rem 0;}
-.jdesc{font-family:'IM Fell English',serif;font-size:.7rem;color:rgba(240,230,200,.6);font-style:italic;}
-.jmeta{display:flex;justify-content:space-between;align-items:center;margin-top:.6rem;padding-top:.4rem;border-top:1px solid rgba(201,168,76,.14);}
-.jcnt{font-family:'Cinzel',serif;font-size:.58rem;color:var(--gd);}
-.pbar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-top:.3rem;}
-.pfill{height:100%;background:linear-gradient(to right,var(--gd),var(--gl));transition:width .5s;border-radius:2px;}
-.jlockicon{position:absolute;top:.6rem;right:.6rem;font-size:.9rem;opacity:.6;}
-.jorn{position:absolute;bottom:.4rem;right:.65rem;font-size:1.3rem;opacity:.1;color:var(--gl);}
-
-/* ── LEADERBOARD ── */
-.lb-table{width:100%;border-collapse:collapse;}
-.lb-table th{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gd);padding:.5rem .8rem;border-bottom:1px solid rgba(201,168,76,.2);text-align:left;}
-.lb-table td{font-family:'Lora',serif;font-size:.82rem;padding:.6rem .8rem;border-bottom:1px solid rgba(201,168,76,.07);color:var(--p);}
-.lb-table tr:hover td{background:rgba(201,168,76,.05);}
-.lb-rank{font-family:'Cinzel Decorative',cursive;font-size:1rem;color:var(--gd);}
-.lb-rank.r1{color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,.5);}
-.lb-rank.r2{color:#c0c0c0;}
-.lb-rank.r3{color:#cd7f32;}
-.lb-name{font-family:'Cinzel',serif;font-size:.78rem;color:var(--p);}
-.lb-score{font-family:'Cinzel Decorative',cursive;font-size:1rem;color:var(--g);}
-.lb-badge{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.15em;background:rgba(107,26,26,.5);border:1px solid rgba(201,168,76,.2);padding:.15rem .5rem;color:var(--gd);}
-.lb-empty{text-align:center;padding:2rem;font-family:'IM Fell English',serif;font-style:italic;color:rgba(201,168,76,.4);font-size:.9rem;}
-
-/* ── POINT HISTORY ── */
-.ph-entry{display:flex;justify-content:space-between;align-items:center;padding:.65rem .9rem;border-bottom:1px solid rgba(201,168,76,.08);transition:background .2s;}
-.ph-entry:hover{background:rgba(201,168,76,.04);}
-.ph-left{display:flex;flex-direction:column;gap:.2rem;}
-.ph-title{font-family:'Cinzel',serif;font-size:.72rem;color:var(--p);letter-spacing:.08em;}
-.ph-date{font-family:'Lora',serif;font-size:.65rem;color:rgba(201,168,76,.45);font-style:italic;}
-.ph-pts{font-family:'Cinzel Decorative',cursive;font-size:1.1rem;color:var(--g);}
-.ph-pts.neg{color:var(--ml);}
-.ph-empty{text-align:center;padding:2rem;font-family:'IM Fell English',serif;font-style:italic;color:rgba(201,168,76,.4);font-size:.9rem;}
-
-/* Name input modal */
-#modal-name{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+/* Name modal */
+#modal-name{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(200,180,140,.75);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;
+}
 #modal-name.off{display:none;}
-.modal-inner{background:linear-gradient(135deg,rgba(42,12,8,.97),rgba(26,8,5,.97));border:1px solid var(--gd);padding:2rem 2.5rem;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.8);}
-.modal-inner::before{content:'';display:block;position:absolute;inset:2px;border:1px solid rgba(201,168,76,.12);pointer-events:none;}
-.minp{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--gd);color:var(--p);font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.18em;padding:.7rem 1rem;text-align:center;outline:none;margin:1rem 0;}
-.minp:focus{border-color:var(--g);box-shadow:0 0 12px rgba(201,168,76,.2);}
+.mbox{
+  background:linear-gradient(145deg,#f5edd8,#ede0c0);
+  border:2px solid var(--gold3);
+  padding:2rem 2.4rem;max-width:380px;width:90%;text-align:center;
+  box-shadow:0 12px 40px rgba(122,66,24,.3);
+  position:relative;
+}
+.mbox::before{content:'';position:absolute;inset:5px;border:1px solid rgba(201,148,58,.25);pointer-events:none;}
+.minp{
+  width:100%;background:rgba(255,255,255,.5);
+  border:1px solid var(--gold3);color:var(--ink);
+  font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.15em;
+  padding:.65rem 1rem;text-align:center;outline:none;margin:1rem 0;
+}
+.minp:focus{border-color:var(--gold);box-shadow:0 0 10px rgba(201,148,58,.22);}
 
-/* ── BOTTOM MENU BTNS ── */
-.mbtm{display:flex;gap:.7rem;margin-top:.85rem;justify-content:center;}
-.btn-c{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem 1.2rem;border:1px solid var(--gd);background:transparent;color:var(--g);cursor:pointer;transition:all .3s;position:relative;}
-.btn-c::before{content:'';position:absolute;inset:2px;border:1px solid rgba(201,168,76,.14);pointer-events:none;}
-.btn-c:hover{background:rgba(201,168,76,.1);border-color:var(--g);box-shadow:0 0 12px rgba(201,168,76,.16);}
+/* Toast */
+#toast{
+  position:fixed;top:1.1rem;left:50%;transform:translateX(-50%);z-index:999;
+  font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:.48rem 1.3rem;
+  background:linear-gradient(135deg,var(--brown2),var(--brown));
+  border:1px solid var(--gold3);color:var(--cream);
+  box-shadow:0 4px 14px rgba(122,66,24,.4);
+  opacity:0;transition:opacity .35s;pointer-events:none;white-space:nowrap;
+}
+#toast.on{opacity:1;}
+EOF
+wc -c /tmp/part1.html
+  cat > /tmp/part2.html << 'EOF'
 
-/* ════════════════════════════════════
-   SCREEN: GAME (BUKU TERBUKA)
-════════════════════════════════════ */
-#sc-game{flex-direction:column;padding:.9rem;z-index:20;}
-.ghdr{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:800px;padding:.38rem 0;margin-bottom:.65rem;}
-.btn-back{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gd);background:transparent;border:1px solid rgba(201,168,76,.24);padding:.34rem .85rem;cursor:pointer;transition:all .3s;}
-.btn-back:hover{color:var(--g);border-color:var(--g);background:rgba(201,168,76,.07);}
-.ghud{display:flex;align-items:center;gap:1.2rem;}
-.huditem{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.1em;color:var(--g);display:flex;align-items:center;gap:.32rem;}
-.tring{width:44px;height:44px;position:relative;flex-shrink:0;}
+/* =========================================
+   MEJA KERJA (MAIN MENU)
+========================================= */
+#sc-meja{
+  flex-direction:column;padding:1rem;z-index:20;
+  background:linear-gradient(160deg,#f5edd8 0%,#ede0c0 50%,#e5d4a8 100%);
+}
+/* top decorative ink wash band */
+#sc-meja::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(to right,transparent,var(--gold3),var(--gold),var(--gold3),transparent);
+}
+.logo-title{
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(1.8rem,5vw,3.4rem);color:var(--brown);
+  text-shadow:1px 1px 0 rgba(255,255,255,.7),0 3px 10px rgba(122,66,24,.25);
+  letter-spacing:.1em;line-height:1;
+}
+.logo-sub{
+  font-family:'Cinzel',serif;font-size:clamp(.52rem,1.1vw,.72rem);
+  color:var(--gold3);letter-spacing:.38em;text-transform:uppercase;margin-top:.32rem;
+}
+.divorn{
+  display:flex;align-items:center;gap:.8rem;
+  color:var(--gold3);font-size:.85rem;margin:.45rem 0;
+}
+.divorn::before,.divorn::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(to right,transparent,var(--gold3),transparent);
+}
+
+/* Nav Tabs — ink ribbon style */
+.nav-tabs{display:flex;gap:2px;margin-bottom:1rem;flex-wrap:wrap;justify-content:center;}
+.ntab{
+  font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:.42rem 1rem;cursor:pointer;transition:all .25s;
+  background:rgba(240,224,192,.6);border:1px solid rgba(160,114,40,.25);color:var(--gold3);
+}
+.ntab.active,.ntab:hover{
+  background:var(--brown);border-color:var(--brown);color:var(--cream);
+  box-shadow:0 2px 8px rgba(122,66,24,.25);
+}
+.tab-pane{display:none;width:100%;max-width:800px;}
+.tab-pane.active{display:block;}
+.scroll-box{max-height:44vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--gold3) transparent;}
+.scroll-box::-webkit-scrollbar{width:3px;}
+.scroll-box::-webkit-scrollbar-thumb{background:var(--gold3);}
+
+/* Journal cards */
+.jgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem;}
+@media(max-width:520px){.jgrid{grid-template-columns:1fr;}}
+.jcard{cursor:pointer;transition:transform .28s ease;}
+.jcard:hover:not(.jlocked){transform:translateY(-4px) rotate(-.3deg);}
+.jcard.jlocked{cursor:not-allowed;opacity:.55;}
+.jinner{
+  background:linear-gradient(135deg,#8b3018 0%,#6b2010 45%,#4a1208 100%);
+  border:2px solid var(--gold3);border-radius:2px;
+  padding:1rem .95rem;
+  box-shadow:3px 4px 0 rgba(0,0,0,.28),0 6px 20px rgba(122,66,24,.35),
+             inset 0 1px 0 rgba(255,255,255,.08),inset -3px 0 0 rgba(0,0,0,.18);
+  position:relative;overflow:hidden;min-height:122px;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.jinner::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:10px;
+  background:linear-gradient(to right,rgba(0,0,0,.28),transparent);
+  border-right:1px solid rgba(201,148,58,.08);
+}
+.jinner::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 17px,rgba(255,255,255,.012) 17px,rgba(255,255,255,.012) 18px);
+  pointer-events:none;
+}
+.jcard.jlocked .jinner::after{background:repeating-linear-gradient(-45deg,transparent 0,transparent 7px,rgba(0,0,0,.04) 7px,rgba(0,0,0,.04) 9px);}
+.jyr{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold3);}
+.jtit{font-family:'Cinzel Decorative',cursive;font-size:clamp(.82rem,1.75vw,1.04rem);color:var(--cream2);margin:.2rem 0;}
+.jdesc{font-family:'IM Fell English',serif;font-size:.7rem;color:rgba(240,224,192,.6);font-style:italic;}
+.jmeta{display:flex;justify-content:space-between;align-items:center;margin-top:.58rem;padding-top:.38rem;border-top:1px solid rgba(201,148,58,.13);}
+.jcnt{font-family:'Cinzel',serif;font-size:.56rem;color:var(--gold3);}
+.pbar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-top:.28rem;}
+.pfill{height:100%;background:linear-gradient(to right,var(--gold3),var(--gold2));transition:width .5s;border-radius:2px;}
+.jlockico{position:absolute;top:.58rem;right:.6rem;font-size:.88rem;opacity:.6;}
+.jorn{position:absolute;bottom:.38rem;right:.62rem;font-size:1.2rem;opacity:.1;color:var(--cream2);}
+
+/* Leaderboard */
+.lb-table{width:100%;border-collapse:collapse;}
+.lb-table th{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold3);padding:.45rem .75rem;border-bottom:1px solid rgba(160,114,40,.2);text-align:left;}
+.lb-table td{font-family:'Lora',serif;font-size:.8rem;padding:.55rem .75rem;border-bottom:1px solid rgba(160,114,40,.07);color:var(--ink);}
+.lb-table tr:hover td{background:rgba(201,148,58,.06);}
+.lbr{font-family:'Cinzel Decorative',cursive;font-size:.95rem;color:var(--gold3);}
+.lbr.r1{color:#c8960a;text-shadow:0 0 8px rgba(200,150,10,.45);}
+.lbr.r2{color:#909090;}
+.lbr.r3{color:#a0622a;}
+.lbname{font-family:'Cinzel',serif;font-size:.74rem;color:var(--ink);}
+.lbscore{font-family:'Cinzel Decorative',cursive;font-size:.95rem;color:var(--brown);}
+.lbbadge{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.12em;background:rgba(122,66,24,.12);border:1px solid rgba(160,114,40,.2);padding:.12rem .45rem;color:var(--gold3);}
+.lb-empty{text-align:center;padding:1.5rem;font-family:'IM Fell English',serif;font-style:italic;color:rgba(122,66,24,.45);font-size:.88rem;}
+
+/* Point History */
+.ph-entry{display:flex;justify-content:space-between;align-items:center;padding:.6rem .85rem;border-bottom:1px solid rgba(160,114,40,.08);transition:background .2s;}
+.ph-entry:hover{background:rgba(201,148,58,.05);}
+.ph-title{font-family:'Cinzel',serif;font-size:.7rem;color:var(--ink);letter-spacing:.07em;}
+.ph-date{font-family:'Lora',serif;font-size:.62rem;color:rgba(122,66,24,.5);font-style:italic;margin-top:.15rem;}
+.ph-pts{font-family:'Cinzel Decorative',cursive;font-size:1.05rem;color:var(--brown);}
+.ph-empty{text-align:center;padding:1.5rem;font-family:'IM Fell English',serif;font-style:italic;color:rgba(122,66,24,.45);font-size:.88rem;}
+
+/* Buttons */
+.btn-c{
+  font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:.48rem 1.15rem;border:1px solid var(--gold3);
+  background:transparent;color:var(--brown);cursor:pointer;transition:all .28s;position:relative;
+}
+.btn-c::before{content:'';position:absolute;inset:2px;border:1px solid rgba(160,114,40,.12);pointer-events:none;}
+.btn-c:hover{background:var(--brown);border-color:var(--brown);color:var(--cream);box-shadow:0 3px 10px rgba(122,66,24,.22);}
+.mbtm{display:flex;gap:.65rem;margin-top:.8rem;justify-content:center;flex-wrap:wrap;}
+
+/* =========================================
+   GAME SCREEN
+========================================= */
+#sc-game{
+  flex-direction:column;padding:.85rem;z-index:20;
+  background:linear-gradient(160deg,#f5edd8 0%,#ede0c0 50%,#e5d4a8 100%);
+}
+.ghdr{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:800px;padding:.35rem 0;margin-bottom:.6rem;}
+.btn-back{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold3);background:transparent;border:1px solid rgba(160,114,40,.28);padding:.32rem .82rem;cursor:pointer;transition:all .28s;}
+.btn-back:hover{color:var(--brown);border-color:var(--brown);background:rgba(122,66,24,.06);}
+.ghud{display:flex;align-items:center;gap:1.15rem;}
+.huditem{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.08em;color:var(--brown);display:flex;align-items:center;gap:.3rem;}
+.tring{width:42px;height:42px;position:relative;flex-shrink:0;}
 .tring svg{transform:rotate(-90deg);}
 .tring circle{fill:none;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
-.tbg{stroke:rgba(201,168,76,.12);}
-.tfill{stroke:var(--g);stroke-dasharray:113;stroke-dashoffset:0;}
-.tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.76rem;color:var(--g);font-weight:600;}
+.tbg{stroke:rgba(122,66,24,.15);}
+.tfill{stroke:var(--brown);stroke-dasharray:113;stroke-dashoffset:0;}
+.tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.74rem;color:var(--brown);font-weight:600;}
 
-/* Book */
-.pcard{background:linear-gradient(135deg,rgba(242,232,205,.97) 0%,rgba(234,220,180,.95) 50%,rgba(222,202,160,.97) 100%);border:2px solid var(--gd);box-shadow:0 0 0 1px rgba(201,168,76,.24),0 8px 32px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(0,0,0,.06);position:relative;overflow:hidden;}
-.pcard::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 18% 18%,rgba(215,198,158,.36) 0%,transparent 48%),radial-gradient(ellipse at 82% 82%,rgba(180,155,100,.24) 0%,transparent 38%);pointer-events:none;}
-.oborder::after{content:'';position:absolute;inset:3px;border:1px solid rgba(201,168,76,.28);pointer-events:none;}
-.corn::before,.corn::after{content:'❧';position:absolute;color:var(--g);font-size:1rem;opacity:.5;}
+/* Parchment card */
+.pcard{
+  background:linear-gradient(135deg,#faf4e2 0%,#f2e8cc 50%,#ead8b2 100%);
+  border:2px solid var(--gold3);
+  box-shadow:0 0 0 1px rgba(160,114,40,.2),0 6px 24px rgba(122,66,24,.25),
+             inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.04);
+  position:relative;overflow:hidden;
+}
+.pcard::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 15% 15%,rgba(240,220,170,.35) 0%,transparent 48%),
+             radial-gradient(ellipse at 85% 85%,rgba(200,170,110,.22) 0%,transparent 40%);
+  pointer-events:none;
+}
+.oborder::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,114,40,.22);pointer-events:none;}
+.corn::before,.corn::after{content:'❧';position:absolute;color:var(--gold3);font-size:.95rem;opacity:.45;}
 .corn::before{top:6px;left:9px;transform:rotate(-45deg);}
 .corn::after{bottom:6px;right:9px;transform:rotate(135deg);}
+
+/* Open book layout */
 .book-card{width:100%;max-width:800px;display:flex;position:relative;}
-.book-card::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:5px;transform:translateX(-50%);background:linear-gradient(to right,rgba(0,0,0,.12),rgba(0,0,0,.04),rgba(0,0,0,.12));pointer-events:none;z-index:2;}
-.pl{flex:1;padding:1.5rem 1.3rem 1.5rem 1.7rem;border-right:2px solid rgba(107,26,26,.16);}
-.pr{flex:1;padding:1.5rem 1.7rem 1.5rem 1.3rem;}
-.badge{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.3em;text-transform:uppercase;color:var(--m);background:linear-gradient(135deg,var(--g),var(--gd));padding:.18rem .62rem;display:inline-block;margin-bottom:.55rem;}
-.pno{font-family:'Cinzel',serif;font-size:.62rem;color:var(--ml);letter-spacing:.2em;margin-bottom:.25rem;}
-.pauth{font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);letter-spacing:.12em;margin-bottom:.8rem;padding-bottom:.58rem;border-bottom:1px solid rgba(107,26,26,.15);font-style:italic;}
-.ptxt{font-family:'IM Fell English',serif;font-size:clamp(.92rem,2.3vw,1.28rem);color:var(--ink);line-height:1.95;text-align:center;font-style:italic;min-height:60px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.24em;}
-.blank{display:inline-block;border-bottom:2px solid var(--m);min-width:68px;height:1.45rem;background:rgba(107,26,26,.07);vertical-align:middle;margin:0 .14em;position:relative;}
-.blank::after{content:'?';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--m);font-size:.82rem;font-style:normal;font-family:'Cinzel',serif;}
-.page-deco{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;gap:.85rem;}
-.ruled-lines{width:100%;display:flex;flex-direction:column;gap:.5rem;margin-top:.45rem;}
-.ruled-lines div{height:1px;background:rgba(107,26,26,.1);}
-.optgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.62rem;margin-top:.9rem;width:100%;max-width:800px;}
-@media(max-width:460px){.optgrid{grid-template-columns:1fr;}}
-.optbtn{font-family:'IM Fell English',serif;font-size:clamp(.84rem,1.8vw,1.02rem);font-style:italic;color:var(--ink);background:linear-gradient(135deg,rgba(240,230,200,.97),rgba(220,200,155,.97));border:1px solid var(--gd);padding:.75rem .85rem;cursor:pointer;transition:all .22s;text-align:center;line-height:1.4;}
-.optbtn:hover:not(:disabled){background:linear-gradient(135deg,rgba(201,168,76,.24),rgba(201,168,76,.12));border-color:var(--g);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.17);color:var(--md);}
-.optbtn.correct{background:linear-gradient(135deg,rgba(34,100,50,.28),rgba(20,70,35,.38));border-color:#4a8c5a;color:#1a4a2a;font-weight:700;}
-.optbtn.wrong{background:linear-gradient(135deg,rgba(107,26,26,.28),rgba(74,15,15,.38));border-color:var(--m);color:var(--md);text-decoration:line-through;}
+.book-card::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:4px;transform:translateX(-50%);background:linear-gradient(to right,rgba(122,66,24,.1),rgba(122,66,24,.04),rgba(122,66,24,.1));pointer-events:none;z-index:2;}
+.pl{flex:1;padding:1.4rem 1.2rem 1.4rem 1.6rem;border-right:1px solid rgba(122,66,24,.14);}
+.pr{flex:1;padding:1.4rem 1.6rem 1.4rem 1.2rem;}
+.badge{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.28em;text-transform:uppercase;color:var(--cream);background:linear-gradient(135deg,var(--brown),var(--gold3));padding:.16rem .58rem;display:inline-block;margin-bottom:.52rem;}
+.pno{font-family:'Cinzel',serif;font-size:.6rem;color:var(--m-red);letter-spacing:.18em;margin-bottom:.22rem;}
+.pauth{font-family:'Cinzel',serif;font-size:.66rem;color:var(--brown2);letter-spacing:.1em;margin-bottom:.75rem;padding-bottom:.55rem;border-bottom:1px solid rgba(122,66,24,.12);font-style:italic;}
+.ptxt{font-family:'IM Fell English',serif;font-size:clamp(.88rem,2.1vw,1.22rem);color:var(--ink);line-height:1.95;text-align:center;font-style:italic;min-height:58px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.22em;}
+.blank{display:inline-block;border-bottom:2px solid var(--m-red);min-width:65px;height:1.4rem;background:rgba(139,32,32,.06);vertical-align:middle;margin:0 .12em;position:relative;}
+.blank::after{content:'?';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--m-red);font-size:.8rem;font-style:normal;font-family:'Cinzel',serif;}
+.page-deco{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;gap:.8rem;}
+.ruled-lines{width:100%;display:flex;flex-direction:column;gap:.48rem;margin-top:.4rem;}
+.ruled-lines div{height:1px;background:rgba(122,66,24,.1);}
+
+/* Options */
+.optgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.58rem;margin-top:.85rem;width:100%;max-width:800px;}
+@media(max-width:450px){.optgrid{grid-template-columns:1fr;}}
+.optbtn{
+  font-family:'IM Fell English',serif;font-size:clamp(.82rem,1.75vw,1rem);font-style:italic;
+  color:var(--ink);
+  background:linear-gradient(135deg,rgba(252,244,226,.98),rgba(240,224,195,.96));
+  border:1px solid var(--gold3);padding:.72rem .82rem;
+  cursor:pointer;transition:all .2s;text-align:center;line-height:1.4;
+}
+.optbtn:hover:not(:disabled){background:linear-gradient(135deg,rgba(201,148,58,.2),rgba(201,148,58,.1));border-color:var(--gold);transform:translateY(-2px);box-shadow:0 3px 10px rgba(122,66,24,.15);color:var(--brown2);}
+.optbtn.correct{background:linear-gradient(135deg,rgba(34,90,45,.2),rgba(20,60,28,.28));border-color:#4a8250;color:#1a4228;font-weight:700;}
+.optbtn.wrong{background:linear-gradient(135deg,rgba(139,32,32,.2),rgba(100,20,20,.28));border-color:var(--m-red);color:var(--m-red);text-decoration:line-through;}
 .optbtn:disabled{cursor:not-allowed;}
-#gfb{height:1.3rem;margin-top:.4rem;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.14em;text-align:center;}
+#gfb{height:1.25rem;margin-top:.38rem;font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.12em;text-align:center;}
 
 /* Feedback popup */
 .fpop{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;pointer-events:none;}
-.fpop-inner{font-family:'Cinzel Decorative',cursive;font-size:clamp(1.1rem,3.5vw,2rem);padding:.9rem 2.2rem;border:1px solid var(--gd);backdrop-filter:blur(4px);animation:fpani .85s ease forwards;pointer-events:none;}
-.fp-ok{background:rgba(15,50,25,.88);color:var(--gl);border-color:#4a8c5a;text-shadow:0 0 18px rgba(201,168,76,.5);}
-.fp-no{background:rgba(45,8,8,.88);color:var(--ml);border-color:var(--m);}
-@keyframes fpani{0%{opacity:0;transform:scale(.8);}28%{opacity:1;transform:scale(1.06);}58%{transform:scale(1);}100%{opacity:0;transform:translateY(-28px) scale(.88);}}
+.fpop-inner{font-family:'Cinzel Decorative',cursive;font-size:clamp(1rem,3.2vw,1.85rem);padding:.85rem 2rem;border:1px solid var(--gold3);animation:fpani .88s ease forwards;pointer-events:none;}
+.fp-ok{background:rgba(240,232,200,.95);color:var(--brown);border-color:var(--gold);box-shadow:0 4px 20px rgba(122,66,24,.3);}
+.fp-no{background:rgba(240,220,200,.95);color:var(--m-red);border-color:var(--m-red);box-shadow:0 4px 20px rgba(139,32,32,.25);}
+@keyframes fpani{0%{opacity:0;transform:scale(.78);}28%{opacity:1;transform:scale(1.06);}58%{transform:scale(1);}100%{opacity:0;transform:translateY(-24px) scale(.86);}}
 
-/* ════════════════════════════════════
-   SCREEN: RESULT
-════════════════════════════════════ */
-#sc-result{flex-direction:column;z-index:20;}
-.rcard{padding:2rem 2.6rem;text-align:center;max-width:470px;width:90%;}
-.rsring{width:108px;height:108px;border-radius:50%;border:3px solid var(--g);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:.9rem auto;background:rgba(107,26,26,.1);box-shadow:0 0 28px rgba(201,168,76,.18);}
-.rsnum{font-family:'Cinzel Decorative',cursive;font-size:1.9rem;color:var(--g);line-height:1;}
-.rslbl{font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.2em;color:var(--m);text-transform:uppercase;}
-.rtit{font-family:'Cinzel Decorative',cursive;font-size:1.4rem;color:var(--m);margin:.6rem 0 .22rem;}
-.rdesc{font-family:'IM Fell English',serif;font-size:.88rem;color:var(--ml);font-style:italic;margin-bottom:1.2rem;}
-.rstars{font-size:1.6rem;letter-spacing:.24rem;margin:.38rem 0;}
-.ubanner{display:flex;align-items:center;gap:.4rem;font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.12em;color:var(--g);background:rgba(107,26,26,.42);border:1px solid rgba(201,168,76,.24);padding:.34rem .85rem;margin-top:.4rem;}
+/* =========================================
+   RESULT SCREEN
+========================================= */
+#sc-result{flex-direction:column;z-index:20;background:linear-gradient(160deg,#f5edd8,#ede0c0,#e5d4a8);}
+.rcard{padding:1.85rem 2.4rem;text-align:center;max-width:455px;width:90%;}
+.rsring{width:104px;height:104px;border-radius:50%;border:2px solid var(--gold3);display:flex;align-items:center;justify-content:center;flex-direction:column;margin:.85rem auto;background:rgba(122,66,24,.07);box-shadow:0 0 22px rgba(201,148,58,.2);}
+.rsnum{font-family:'Cinzel Decorative',cursive;font-size:1.85rem;color:var(--brown);line-height:1;}
+.rslbl{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.18em;color:var(--gold3);text-transform:uppercase;}
+.rtit{font-family:'Cinzel Decorative',cursive;font-size:1.35rem;color:var(--brown);margin:.55rem 0 .2rem;}
+.rdesc{font-family:'IM Fell English',serif;font-size:.86rem;color:var(--brown2);font-style:italic;margin-bottom:1.1rem;}
+.rstars{font-size:1.5rem;letter-spacing:.22rem;margin:.35rem 0;color:var(--gold);}
+.ubanner{display:flex;align-items:center;gap:.38rem;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;color:var(--brown);background:rgba(201,148,58,.12);border:1px solid rgba(160,114,40,.25);padding:.32rem .82rem;margin-top:.38rem;}
 
-/* ════════════════════════════════════
-   SCREEN: TUTORIAL / KREATOR
-════════════════════════════════════ */
-#sc-tutorial,#sc-kreator{flex-direction:column;padding:1.3rem;z-index:20;}
-.tcard{padding:1.7rem 2rem;max-width:580px;width:100%;}
+/* Tutorial / Kreator */
+#sc-tutorial,#sc-kreator{flex-direction:column;padding:1.2rem;z-index:20;background:linear-gradient(160deg,#f5edd8,#ede0c0,#e5d4a8);}
+.tcard{padding:1.6rem 1.9rem;max-width:572px;width:100%;}
 
-/* ── SHARED ── */
-#toast{position:fixed;top:1.2rem;left:50%;transform:translateX(-50%);z-index:999;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem 1.3rem;background:linear-gradient(135deg,var(--md),var(--m));border:1px solid var(--gd);color:var(--g);box-shadow:0 4px 16px rgba(0,0,0,.55);opacity:0;transition:opacity .35s;pointer-events:none;white-space:nowrap;}
-#toast.on{opacity:1;}
-.spark{position:fixed;pointer-events:none;z-index:300;font-size:.95rem;animation:spfall 1.5s ease-out forwards;}
-@keyframes spfall{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-75px) scale(.28);}}
-.combo{position:fixed;z-index:300;font-family:'Cinzel Decorative',cursive;font-size:1.35rem;color:var(--g);text-shadow:0 0 20px rgba(201,168,76,.8);animation:cbfloat 1.2s ease-out forwards;pointer-events:none;}
-@keyframes cbfloat{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}50%{transform:translateX(-50%) translateY(-28px) scale(1.3);}100%{opacity:0;transform:translateX(-50%) translateY(-58px) scale(.78);}}
-.fadein{animation:fdin .6s ease forwards;}
-@keyframes fdin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+/* Spark / combo */
+.spark{position:fixed;pointer-events:none;z-index:300;font-size:.9rem;animation:spfall 1.5s ease-out forwards;}
+@keyframes spfall{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-70px) scale(.26);}}
+.combo{position:fixed;z-index:300;font-family:'Cinzel Decorative',cursive;font-size:1.3rem;color:var(--brown);animation:cbfloat 1.2s ease-out forwards;pointer-events:none;}
+@keyframes cbfloat{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}50%{transform:translateX(-50%) translateY(-26px) scale(1.28);}100%{opacity:0;transform:translateX(-50%) translateY(-55px) scale(.75);}}
+.fadein{animation:fdin .55s ease forwards;}
+@keyframes fdin{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .hidden{display:none!important;}
-.scroll-box{max-height:42vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--gd) transparent;}
-.scroll-box::-webkit-scrollbar{width:3px;}
-.scroll-box::-webkit-scrollbar-thumb{background:var(--gd);}
 </style>
+EOF
+wc -c /tmp/part2.html
+  cat > /tmp/part3.html << 'PART3EOF'
 </head>
 <body>
 
-<div id="bg-wood"></div>
-<div id="bg-grain"></div>
-<div id="bg-light"></div>
 <div id="toast"></div>
 
+<!-- NAME MODAL -->
 <div id="modal-name" class="off">
-  <div class="modal-inner" style="position:relative;">
-    <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gd);margin-bottom:.5rem;">Selamat Datang</div>
-    <div style="font-family:'Cinzel Decorative',cursive;font-size:1.4rem;color:var(--g);margin-bottom:.3rem;">Siapa Namamu, Pujangga?</div>
-    <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:.82rem;color:rgba(240,230,200,.65);margin-bottom:.5rem;">Namamu akan terukir di papan keabadian.</div>
+  <div class="mbox">
+    <div style="font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gold3);margin-bottom:.4rem;">Selamat Datang</div>
+    <div style="font-family:'Cinzel Decorative',cursive;font-size:1.3rem;color:var(--brown);margin-bottom:.2rem;">Siapa Namamu, Pujangga?</div>
+    <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:.8rem;color:var(--brown2);margin-bottom:.4rem;">Namamu akan terukir di papan keabadian.</div>
     <input class="minp" id="name-input" type="text" maxlength="20" placeholder="Nama Pujangga…" autocomplete="off"/>
-    <button class="btn-c" style="width:100%;" onclick="submitName()">✒ Mulai Perjalanan</button>
+    <button class="btn-c" style="width:100%;background:var(--brown);color:var(--cream);border-color:var(--brown);" onclick="submitName()">✒ Mulai Perjalanan</button>
   </div>
 </div>
 
+<!-- ========================================
+     SCREEN 1: PROLOG (Wayang + Ink Wash)
+======================================== -->
 <div class="screen" id="sc-prolog">
   <div id="stage">
-    <div id="stage-sky"></div>
-    <svg id="stage-svg" style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <div id="sky-wash"></div>
+    <svg id="stage-svg" viewBox="0 0 960 580" preserveAspectRatio="xMidYMid slice"
+         xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <filter id="inkblur"><feGaussianBlur stdDeviation="2.5"/></filter>
-        <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <filter id="softglow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <filter id="inkwash"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="3" result="n"/><feColorMatrix type="saturate" values="0" in="n" result="g"/><feBlend in="SourceGraphic" in2="g" mode="multiply" result="b"/><feComposite in="b" in2="SourceGraphic" operator="in"/></filter>
+        <!-- Ink wash filters -->
+        <filter id="inkblur" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3"/>
+        </filter>
+        <filter id="softblur" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="7"/>
+        </filter>
+        <filter id="harshblur">
+          <feGaussianBlur stdDeviation="1.2"/>
+        </filter>
+        <!-- Ink wash texture -->
+        <filter id="inkwash" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04 0.08" numOctaves="4" seed="5" result="noise"/>
+          <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
+          <feBlend in="SourceGraphic" in2="gray" mode="multiply" result="blend"/>
+          <feComposite in="blend" in2="SourceGraphic" operator="in"/>
+        </filter>
+        <!-- Gradients -->
+        <linearGradient id="skyGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f0e8c8"/>
+          <stop offset="40%" stop-color="#ece0b8"/>
+          <stop offset="100%" stop-color="#e8d8a0"/>
+        </linearGradient>
+        <linearGradient id="skyGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f5e8c0"/>
+          <stop offset="50%" stop-color="#f0dfa8"/>
+          <stop offset="100%" stop-color="#e8d090"/>
+        </linearGradient>
+        <linearGradient id="skyGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f8ecd0"/>
+          <stop offset="40%" stop-color="#f0e0b0"/>
+          <stop offset="100%" stop-color="#e8d098"/>
+        </linearGradient>
         <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(240,200,80,0.9)"/>
-          <stop offset="60%" stop-color="rgba(212,136,42,0.5)"/>
-          <stop offset="100%" stop-color="rgba(212,136,42,0)"/>
+          <stop offset="0%" stop-color="#f5d840"/>
+          <stop offset="45%" stop-color="#e8b830"/>
+          <stop offset="75%" stop-color="#d09020"/>
+          <stop offset="100%" stop-color="rgba(200,140,20,0)"/>
         </radialGradient>
         <radialGradient id="moonGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="rgba(240,225,185,0.92)"/>
-          <stop offset="70%" stop-color="rgba(200,180,140,0.4)"/>
-          <stop offset="100%" stop-color="rgba(200,180,140,0)"/>
+          <stop offset="0%" stop-color="#f8f0d8"/>
+          <stop offset="55%" stop-color="#e8dbb0"/>
+          <stop offset="100%" stop-color="rgba(230,210,160,0)"/>
         </radialGradient>
-        <linearGradient id="seaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="rgba(20,60,90,0.85)"/>
-          <stop offset="100%" stop-color="rgba(5,20,35,0.95)"/>
+        <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(190,205,185,0.7)"/>
+          <stop offset="100%" stop-color="rgba(160,178,155,0.85)"/>
         </linearGradient>
         <linearGradient id="groundGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="rgba(30,20,8,0.95)"/>
-          <stop offset="100%" stop-color="rgba(8,5,2,1)"/>
+          <stop offset="0%" stop-color="#c8b888"/>
+          <stop offset="100%" stop-color="#b09870"/>
         </linearGradient>
-        <clipPath id="stageClip"><rect x="0" y="0" width="900" height="600"/></clipPath>
+        <!-- Clip path -->
+        <clipPath id="svgClip"><rect x="0" y="0" width="960" height="580"/></clipPath>
       </defs>
-      <g id="g-stars"></g>
-      <g id="g-celestial"></g>
-      <g id="g-clouds"></g>
-      <g id="g-mountains"></g>
-      <g id="g-sea"></g>
-      <g id="g-trees"></g>
-      <g id="g-ground"></g>
-      <g id="g-structures"></g>
-      <g id="g-fire"></g>
-      <g id="g-wayang"></g>
-      <g id="g-fx"></g>
-      <g id="g-birds"></g>
+      <g clip-path="url(#svgClip)">
+        <!-- Sky base -->
+        <rect id="sky-rect" x="0" y="0" width="960" height="580" fill="url(#skyGrad1)"/>
+        <!-- Layer groups — filled by JS -->
+        <g id="g-sky"></g>
+        <g id="g-stars"></g>
+        <g id="g-sun"></g>
+        <g id="g-mist-far"></g>
+        <g id="g-mountains-far"></g>
+        <g id="g-mountains-mid"></g>
+        <g id="g-mountains-near"></g>
+        <g id="g-water"></g>
+        <g id="g-ground"></g>
+        <g id="g-trees-bg"></g>
+        <g id="g-lotus"></g>
+        <g id="g-structures"></g>
+        <g id="g-trees-fg"></g>
+        <g id="g-fire"></g>
+        <g id="g-wayang"></g>
+        <g id="g-fx"></g>
+        <g id="g-birds"></g>
+        <g id="g-petals"></g>
+      </g>
     </svg>
-    <div id="kelir"></div>
   </div>
 
-  <div id="babak-text">
-    <div id="babak-caption"></div>
-    <div id="babak-title"></div>
-    <div id="babak-body"></div>
-    <div style="margin-top:1.2rem;" id="enter-wrap"></div>
+  <div id="babak-ui">
+    <div class="bcap" id="bcap"></div>
+    <div class="btitle" id="btitle"></div>
+    <div class="bbody" id="bbody"></div>
+    <div class="btn-wrap" id="bwrap"></div>
   </div>
-  <div id="babak-dots"></div>
-  <button id="btn-skip-prolog" onclick="skipProlog()">Lewati ⟶</button>
+  <div id="bdots"></div>
+  <button id="btn-skip" onclick="skipProlog()">Lewati ⟶</button>
 </div>
 
+<!-- ========================================
+     SCREEN 2: MEJA KERJA
+======================================== -->
 <div class="screen off" id="sc-meja">
-  <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:820px;">
-    <div style="text-align:center;margin-bottom:1rem;" class="fadein">
+  <!-- Ink wash decorative bg -->
+  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.08;z-index:0;" viewBox="0 0 960 580" preserveAspectRatio="xMidYMid slice">
+    <text x="480" y="320" font-family="serif" font-size="320" fill="rgba(122,66,24,1)" text-anchor="middle" dominant-baseline="middle" transform="rotate(-8 480 290)">筆</text>
+  </svg>
+  <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:800px;position:relative;z-index:1;">
+    <div style="text-align:center;margin-bottom:.9rem;" class="fadein">
       <div class="logo-title">PUJANGGAKU</div>
-      <div class="logo-sub">Meja Penulis Nusantara · <span id="player-name-display" style="color:var(--g);font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.2em;"></span></div>
+      <div class="logo-sub">Meja Penulis Nusantara &nbsp;·&nbsp; <span id="player-disp" style="color:var(--brown);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.18em;"></span></div>
       <div class="divorn">❧</div>
     </div>
     <div class="nav-tabs fadein">
       <button class="ntab active" onclick="switchTab('tab-arsip',this)">📜 Arsip Tahun</button>
       <button class="ntab" onclick="switchTab('tab-lb',this)">🏆 Leaderboard</button>
       <button class="ntab" onclick="switchTab('tab-hist',this)">📋 Riwayat Poin</button>
-      <button class="ntab" onclick="switchTab('tab-menu',this)">⚙ Lainnya</button>
+      <button class="ntab" onclick="switchTab('tab-etc',this)">⚙ Lainnya</button>
     </div>
 
+    <!-- ARSIP -->
     <div class="tab-pane active scroll-box" id="tab-arsip">
       <div class="jgrid fadein" id="jgrid"></div>
     </div>
 
+    <!-- LEADERBOARD -->
     <div class="tab-pane scroll-box" id="tab-lb">
-      <div style="text-align:center;margin-bottom:.8rem;">
-        <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gd);">Papan Keabadian</div>
-        <div style="font-family:'Cinzel Decorative',cursive;font-size:1.3rem;color:var(--g);margin-top:.25rem;">Pujangga Terbaik</div>
-        <div class="divorn">⚜</div>
+      <div style="text-align:center;margin-bottom:.7rem;">
+        <div style="font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold3);">Papan Keabadian</div>
+        <div style="font-family:'Cinzel Decorative',cursive;font-size:1.22rem;color:var(--brown);margin-top:.22rem;">Pujangga Terbaik</div>
+        <div class="divorn" style="padding:0 .6rem;">⚜</div>
       </div>
       <table class="lb-table" id="lb-table">
-        <thead><tr><th>#</th><th>Nama Pujangga</th><th>Total Poin</th><th>Gelar</th><th>Level</th></tr></thead>
+        <thead><tr><th>#</th><th>Nama Pujangga</th><th>Poin</th><th>Gelar</th><th>Level</th></tr></thead>
         <tbody id="lb-body"></tbody>
       </table>
     </div>
 
+    <!-- RIWAYAT -->
     <div class="tab-pane scroll-box" id="tab-hist">
-      <div style="text-align:center;margin-bottom:.8rem;">
-        <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gd);">Jejak Tinta</div>
-        <div style="font-family:'Cinzel Decorative',cursive;font-size:1.3rem;color:var(--g);margin-top:.25rem;">Riwayat Poin</div>
-        <div class="divorn">❧</div>
+      <div style="text-align:center;margin-bottom:.7rem;">
+        <div style="font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold3);">Jejak Tinta</div>
+        <div style="font-family:'Cinzel Decorative',cursive;font-size:1.22rem;color:var(--brown);margin-top:.22rem;">Riwayat Poin</div>
+        <div class="divorn" style="padding:0 .6rem;">❧</div>
       </div>
       <div id="hist-list"></div>
     </div>
 
-    <div class="tab-pane" id="tab-menu">
-      <div class="mbtm" style="flex-wrap:wrap;">
+    <!-- LAINNYA -->
+    <div class="tab-pane" id="tab-etc">
+      <div class="mbtm">
         <button class="btn-c" onclick="showScreen('sc-tutorial')">📜 Tutorial</button>
         <button class="btn-c" onclick="showScreen('sc-kreator')">✒️ Kreator</button>
         <button class="btn-c" onclick="replayProlog()">🎭 Tonton Prolog</button>
@@ -382,15 +585,19 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
     </div>
   </div>
 </div>
+PART3EOF
+wc -c /tmp/part3.html
+  cat > /tmp/part4.html << 'PART4EOF'
 
+<!-- GAME SCREEN -->
 <div class="screen off" id="sc-game">
   <div class="ghdr">
     <button class="btn-back" onclick="backToMeja()">← Kembali ke Meja</button>
     <div class="ghud">
       <div class="huditem">✨ <span id="g-score">0</span></div>
-      <div class="huditem" style="font-size:.56rem;opacity:.72;">Halaman <span id="g-page">1/8</span></div>
+      <div class="huditem" style="font-size:.55rem;opacity:.75;">Hal. <span id="g-page">1/8</span></div>
       <div class="tring">
-        <svg viewBox="0 0 40 40" width="44" height="44">
+        <svg viewBox="0 0 40 40" width="42" height="42">
           <circle class="tbg" cx="20" cy="20" r="18"/>
           <circle class="tfill" id="tc" cx="20" cy="20" r="18"/>
         </svg>
@@ -398,7 +605,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
       </div>
     </div>
   </div>
-  <div class="pcard oborder corn book-card fadein" id="bookcard">
+  <div class="pcard oborder corn book-card fadein">
     <div class="pl">
       <div class="badge" id="g-badge">Tahun I</div>
       <div class="pno" id="g-pno">Halaman 1 dari 8</div>
@@ -407,662 +614,915 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Lora',serif;backgr
     </div>
     <div class="pr">
       <div class="page-deco">
-        <svg width="72" height="72" viewBox="0 0 72 72" style="opacity:.18;color:var(--m);">
-          <circle cx="36" cy="36" r="32" stroke="rgba(107,26,26,.38)" stroke-width="1" fill="none"/>
-          <circle cx="36" cy="36" r="24" stroke="rgba(107,26,26,.22)" stroke-width=".6" fill="none"/>
-          <path d="M36 10 L34 20 L24 20 L32 26 L29 36 L36 30 L43 36 L40 26 L48 20 L38 20Z" fill="rgba(107,26,26,.26)"/>
+        <svg width="68" height="68" viewBox="0 0 68 68" style="opacity:.25;">
+          <circle cx="34" cy="34" r="30" stroke="rgba(122,66,24,.45)" stroke-width="1" fill="none"/>
+          <circle cx="34" cy="34" r="22" stroke="rgba(122,66,24,.28)" stroke-width=".6" fill="none"/>
+          <!-- pagoda mini -->
+          <path d="M22,42 L34,20 L46,42Z" fill="rgba(122,66,24,.22)" stroke="rgba(122,66,24,.4)" stroke-width=".8"/>
+          <rect x="28" y="36" width="12" height="8" fill="rgba(122,66,24,.2)"/>
+          <path d="M18,44 L50,44" stroke="rgba(122,66,24,.3)" stroke-width="1"/>
         </svg>
-        <div style="font-family:'Cinzel',serif;font-size:.54rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(107,26,26,.45);text-align:center;line-height:1.8;">Pilih<br>Kata Tepat</div>
-        <div class="ruled-lines"><div></div><div style="width:88%"></div><div></div><div style="width:92%"></div><div style="width:80%"></div></div>
+        <div style="font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(122,66,24,.42);text-align:center;line-height:1.8;">Pilih<br>Kata Tepat</div>
+        <div class="ruled-lines">
+          <div></div><div style="width:85%;margin-left:auto;"></div>
+          <div></div><div style="width:90%;"></div><div style="width:78%;margin-left:auto;"></div>
+        </div>
       </div>
     </div>
   </div>
   <div class="optgrid" id="optgrid"></div>
-  <div id="gfb" style="color:var(--g);"></div>
+  <div id="gfb"></div>
 </div>
 
+<!-- RESULT SCREEN -->
 <div class="screen off" id="sc-result">
   <div class="pcard oborder rcard">
-    <div class="badge" id="r-badge" style="margin-bottom:.8rem;">Tahun I Selesai</div>
+    <div class="badge" id="r-badge" style="margin-bottom:.75rem;">Tahun I Selesai</div>
     <div class="rstars" id="r-stars">★★★</div>
     <div class="rsring"><div class="rsnum" id="r-score">0</div><div class="rslbl">poin</div></div>
     <div class="rtit" id="r-tit">Pujangga Agung</div>
     <div class="rdesc" id="r-desc">Tinta Nusantara telah meresap dalam jiwamu.</div>
     <div id="r-unlock" class="ubanner hidden">🔓 <span id="r-unlock-txt">Terbuka!</span></div>
-    <div style="display:flex;gap:.65rem;justify-content:center;margin-top:1.2rem;">
-      <button class="btn-c" onclick="retryLevel()" style="font-size:.6rem;">↻ Ulangi</button>
-      <button class="btn-c" onclick="showScreen('sc-meja');renderJournals();renderLB();renderHist();" style="font-size:.6rem;">⌂ Meja Utama</button>
+    <div style="display:flex;gap:.6rem;justify-content:center;margin-top:1.1rem;">
+      <button class="btn-c" onclick="retryLevel()" style="font-size:.58rem;">↻ Ulangi</button>
+      <button class="btn-c" onclick="goMeja()" style="font-size:.58rem;">⌂ Meja Utama</button>
     </div>
   </div>
 </div>
 
+<!-- TUTORIAL -->
 <div class="screen off" id="sc-tutorial">
   <div class="pcard oborder corn tcard">
-    <div style="text-align:center;margin-bottom:.9rem;"><div class="badge">Panduan Penjaga Tinta</div><div class="rtit" style="font-size:1.25rem;margin-top:.6rem;">Cara Bermain</div><div class="divorn" style="padding:0 .8rem;">⚜</div></div>
-    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.82rem;line-height:1.82;display:flex;flex-direction:column;gap:.78rem;">
-      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">1.</span><span>Setiap puisi ditampilkan dengan <strong>satu kata yang hilang</strong>. Temukan kata yang tepat.</span></div>
-      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">2.</span><span>Pilih dari <strong>3 pilihan jawaban</strong>. Hanya satu yang benar.</span></div>
-      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">3.</span><span><strong>Timer 30 detik</strong> per soal. Jawab cepat untuk bonus +1 sd +5 poin.</span></div>
-      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">4.</span><span>Benar = <em>"Sihir Dipulihkan" ✦</em>. Salah = <em>"Tinta Tercecer" ⟁</em>. Semua tercatat di Riwayat Poin.</span></div>
-      <div style="display:flex;gap:.6rem;"><span style="font-family:'Cinzel',serif;color:var(--m);font-weight:700;min-width:1.2rem;">5.</span><span>Selesaikan 8 halaman untuk buka segel jurnal berikutnya & nama masuk <strong>Papan Keabadian</strong>.</span></div>
+    <div style="text-align:center;margin-bottom:.85rem;">
+      <div class="badge">Panduan Penjaga Tinta</div>
+      <div class="rtit" style="font-size:1.2rem;margin-top:.58rem;color:var(--brown);">Cara Bermain</div>
+      <div class="divorn" style="padding:0 .75rem;">⚜</div>
     </div>
-    <div style="text-align:center;margin-top:1.2rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
+    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.8rem;line-height:1.8;display:flex;flex-direction:column;gap:.72rem;">
+      <div style="display:flex;gap:.58rem;"><span style="font-family:'Cinzel',serif;color:var(--m-red);font-weight:700;min-width:1.15rem;">1.</span><span>Setiap puisi ditampilkan dengan <strong>satu kata yang hilang</strong>. Temukan kata yang tepat.</span></div>
+      <div style="display:flex;gap:.58rem;"><span style="font-family:'Cinzel',serif;color:var(--m-red);font-weight:700;min-width:1.15rem;">2.</span><span>Pilih dari <strong>3 pilihan jawaban</strong>. Hanya satu yang benar.</span></div>
+      <div style="display:flex;gap:.58rem;"><span style="font-family:'Cinzel',serif;color:var(--m-red);font-weight:700;min-width:1.15rem;">3.</span><span><strong>Timer 30 detik</strong>. Jawab cepat untuk bonus poin hingga +5.</span></div>
+      <div style="display:flex;gap:.58rem;"><span style="font-family:'Cinzel',serif;color:var(--m-red);font-weight:700;min-width:1.15rem;">4.</span><span>Benar = <em>"Sihir Dipulihkan ✦"</em>. Salah = <em>"Tinta Tercecer ⟁"</em>.</span></div>
+      <div style="display:flex;gap:.58rem;"><span style="font-family:'Cinzel',serif;color:var(--m-red);font-weight:700;min-width:1.15rem;">5.</span><span>Selesaikan 8 halaman → buka segel jurnal berikutnya & masuk <strong>Papan Keabadian</strong>.</span></div>
+    </div>
+    <div style="text-align:center;margin-top:1.1rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
   </div>
 </div>
 
+<!-- KREATOR -->
 <div class="screen off" id="sc-kreator">
-  <div class="pcard oborder corn tcard" style="max-width:520px;">
-    <div style="text-align:center;margin-bottom:.9rem;"><div class="badge">Profil Kreator</div><div class="rtit" style="font-size:1.25rem;margin-top:.6rem;">Para Pujangga</div><div class="divorn" style="padding:0 .8rem;">❦</div></div>
-    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.8rem;line-height:1.88;display:flex;flex-direction:column;gap:.82rem;">
-      <p>PUJANGGAKU terinspirasi dari kekayaan sastra Indonesia yang tak ternilai.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;">
-        <div style="padding:.6rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);"><div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);font-weight:600;">Sapardi Djoko Damono</div><div style="font-size:.72rem;color:#555;margin-top:.12rem;font-style:italic;">"Aku Ingin", "Hujan Bulan Juni"</div></div>
-        <div style="padding:.6rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);"><div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);font-weight:600;">Chairil Anwar</div><div style="font-size:.72rem;color:#555;margin-top:.12rem;font-style:italic;">"Aku", "Diponegoro"</div></div>
-        <div style="padding:.6rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);"><div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);font-weight:600;">W.S. Rendra</div><div style="font-size:.72rem;color:#555;margin-top:.12rem;font-style:italic;">"Nyanyian Angsa"</div></div>
-        <div style="padding:.6rem;border:1px solid rgba(107,26,26,.18);background:rgba(107,26,26,.04);"><div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--m);font-weight:600;">Amir Hamzah</div><div style="font-size:.72rem;color:#555;margin-top:.12rem;font-style:italic;">"Nyanyi Sunyi", "Buah Rindu"</div></div>
-      </div>
-      <p style="font-style:italic;color:#666;font-size:.76rem;text-align:center;">Dibuat sebagai bentuk apresiasi terhadap warisan sastra Indonesia.</p>
+  <div class="pcard oborder corn tcard" style="max-width:510px;">
+    <div style="text-align:center;margin-bottom:.85rem;">
+      <div class="badge">Profil Kreator</div>
+      <div class="rtit" style="font-size:1.2rem;margin-top:.58rem;color:var(--brown);">Para Pujangga</div>
+      <div class="divorn" style="padding:0 .75rem;">❦</div>
     </div>
-    <div style="text-align:center;margin-top:1.2rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
+    <div style="font-family:'Lora',serif;color:var(--ink);font-size:.78rem;line-height:1.85;display:flex;flex-direction:column;gap:.78rem;">
+      <p>PUJANGGAKU terinspirasi dari kekayaan sastra Indonesia yang tak ternilai.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.58rem;">
+        <div style="padding:.58rem;border:1px solid rgba(160,114,40,.2);background:rgba(201,148,58,.06);">
+          <div style="font-family:'Cinzel',serif;font-size:.66rem;color:var(--m-red);font-weight:600;">Sapardi Djoko Damono</div>
+          <div style="font-size:.7rem;color:var(--brown2);margin-top:.1rem;font-style:italic;">"Aku Ingin", "Hujan Bulan Juni"</div>
+        </div>
+        <div style="padding:.58rem;border:1px solid rgba(160,114,40,.2);background:rgba(201,148,58,.06);">
+          <div style="font-family:'Cinzel',serif;font-size:.66rem;color:var(--m-red);font-weight:600;">Chairil Anwar</div>
+          <div style="font-size:.7rem;color:var(--brown2);margin-top:.1rem;font-style:italic;">"Aku", "Diponegoro"</div>
+        </div>
+        <div style="padding:.58rem;border:1px solid rgba(160,114,40,.2);background:rgba(201,148,58,.06);">
+          <div style="font-family:'Cinzel',serif;font-size:.66rem;color:var(--m-red);font-weight:600;">W.S. Rendra</div>
+          <div style="font-size:.7rem;color:var(--brown2);margin-top:.1rem;font-style:italic;">"Nyanyian Angsa"</div>
+        </div>
+        <div style="padding:.58rem;border:1px solid rgba(160,114,40,.2);background:rgba(201,148,58,.06);">
+          <div style="font-family:'Cinzel',serif;font-size:.66rem;color:var(--m-red);font-weight:600;">Amir Hamzah</div>
+          <div style="font-size:.7rem;color:var(--brown2);margin-top:.1rem;font-style:italic;">"Nyanyi Sunyi"</div>
+        </div>
+      </div>
+      <p style="font-style:italic;color:var(--brown2);font-size:.74rem;text-align:center;">Dibuat sebagai bentuk apresiasi terhadap warisan sastra Indonesia.</p>
+    </div>
+    <div style="text-align:center;margin-top:1.1rem;"><button class="btn-c" onclick="showScreen('sc-meja')">× Tutup</button></div>
   </div>
 </div>
-
+PART4EOF
+wc -c /tmp/part4.html
+    cat > /tmp/part5.js << 'JSEOF'
 <script>
-/* ════════════════════════════
-   SVG HELPERS
-════════════════════════════ */
-const NS='http://www.w3.org/2000/svg';
-function el(tag,attrs={},parent=null){
-  const e=document.createElementNS(NS,tag);
-  for(const[k,v] of Object.entries(attrs)) e.setAttribute(k,v);
-  if(parent) parent.appendChild(e);
+/* ============================================================
+   SVG HELPER
+============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k,v] of Object.entries(attrs||{})) e.setAttribute(k,v);
   return e;
 }
-function g(id){return document.getElementById(id);}
-function clr(id){const e=g(id);if(e)e.innerHTML='';}
+function gid(id){ return document.getElementById(id); }
+function clearLayer(id){ const e=gid(id); if(e) e.innerHTML=''; }
+function addToLayer(id, html){ const e=gid(id); if(e) e.insertAdjacentHTML('beforeend', html); }
 
-/* ════════════════════════════
-   WAYANG SHAPES LIBRARY
-════════════════════════════ */
-const W = {
-  /* Mountains — ink wash style */
-  mountain(x,y,w,h,fill='rgba(15,12,8,0.95)',stroke='rgba(201,168,76,0.06)'){
-    const pts=[];
-    const steps=12;
-    for(let i=0;i<=steps;i++){
-      const t=i/steps;
-      const bx=x+t*w;
-      const wave=Math.sin(t*Math.PI)*h + Math.sin(t*Math.PI*3)*(h*.15) + Math.sin(t*Math.PI*7)*(h*.05);
-      pts.push(`${bx},${y-wave}`);
+/* ============================================================
+   INK WASH DRAWING LIBRARY
+   All paths hand-crafted in Tang/Chinese painting style
+============================================================ */
+const IW = {
+
+  /* ── SKY GRADIENT RECT ── */
+  skyRect(c1, c2, c3) {
+    return `<defs>
+      <linearGradient id="dynSky" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="${c1}"/>
+        <stop offset="45%" stop-color="${c2}"/>
+        <stop offset="100%" stop-color="${c3}"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="960" height="580" fill="url(#dynSky)"/>`;
+  },
+
+  /* ── SUN — radiant disc ── */
+  sun(x, y, r=52) {
+    return `<g style="animation:sunpulse 3s ease-in-out infinite">
+      <circle cx="${x}" cy="${y}" r="${r*1.8}" fill="rgba(240,184,30,0.12)" filter="url(#softblur)"/>
+      <circle cx="${x}" cy="${y}" r="${r*1.3}" fill="rgba(240,184,30,0.18)" filter="url(#inkblur)"/>
+      <circle cx="${x}" cy="${y}" r="${r}" fill="url(#sunGrad)"/>
+      <circle cx="${x}" cy="${y}" r="${r*.55}" fill="rgba(248,224,80,0.55)"/>
+    </g>`;
+  },
+
+  /* ── MOON ── */
+  moon(x, y, r=45) {
+    return `<g>
+      <circle cx="${x}" cy="${y}" r="${r*1.6}" fill="rgba(248,240,200,0.18)" filter="url(#softblur)"/>
+      <circle cx="${x}" cy="${y}" r="${r}" fill="url(#moonGrad)"/>
+    </g>`;
+  },
+
+  /* ── INK WASH MOUNTAIN — layered brush strokes ── */
+  mountain(x, y, w, h, opacity=0.85, color='#a09070') {
+    // Each mountain has a distinct Tang painting silhouette
+    const peaks = [];
+    const n = Math.floor(w/60)+3;
+    for(let i=0; i<=n; i++){
+      const t = i/n;
+      const bx = x + t*w;
+      let ht = Math.sin(t*Math.PI)*h;
+      // Add secondary peaks
+      ht += Math.sin(t*Math.PI*3)*h*.22;
+      ht += Math.sin(t*Math.PI*7)*h*.08;
+      ht = Math.max(ht, 0);
+      peaks.push(`${bx},${y - ht}`);
     }
-    pts.push(`${x+w},${y}`);pts.push(`${x},${y}`);
-    return `<path d="M${pts.join('L')}Z" fill="${fill}" stroke="${stroke}" stroke-width="0.5"/>`;
+    peaks.push(`${x+w},${y}`, `${x},${y}`);
+    // Inner shadow line (ink wash detail)
+    const innerPks = peaks.slice(0, -2).map((p,i,arr)=>{
+      if(i===0||i===arr.length-1) return p;
+      const [bx,by] = p.split(',').map(Number);
+      return `${bx},${by+12}`;
+    });
+    return `<g opacity="${opacity}">
+      <path d="M${peaks.join('L')}Z" fill="${color}" filter="url(#harshblur)"/>
+      <path d="M${innerPks.join('L')}" stroke="rgba(150,120,60,0.12)" stroke-width="1.5" fill="none"/>
+    </g>`;
   },
 
-  /* Water waves */
-  wave(y,w,color='rgba(30,65,100,0.7)',offset=0){
-    return `<path d="M${-offset},${y} Q${w*.12},${y-8} ${w*.25},${y} Q${w*.38},${y+8} ${w*.5},${y} Q${w*.62},${y-8} ${w*.75},${y} Q${w*.88},${y+8} ${w},${y} L${w},${y+30} L${-offset},${y+30}Z" fill="${color}"/>`;
+  /* ── WATER / LAKE ── */
+  water(y, h=80) {
+    const w1=`M0,${y} Q240,${y-10} 480,${y} Q720,${y+10} 960,${y} L960,${y+h} L0,${y+h}Z`;
+    const w2=`M-100,${y+8} Q200,${y-2} 480,${y+8} Q760,${y+18} 1060,${y+8}`;
+    const w3=`M0,${y+20} Q240,${y+12} 480,${y+20} Q720,${y+28} 960,${y+20}`;
+    return `<g>
+      <path d="${w1}" fill="url(#waterGrad)"/>
+      <path d="${w2}" stroke="rgba(160,185,160,0.5)" stroke-width="1.2" fill="none"/>
+      <path d="${w3}" stroke="rgba(160,185,160,0.35)" stroke-width="0.8" fill="none"/>
+    </g>`;
   },
 
-  /* Tree — wayang batik style */
-  tree(x,y,h,color='rgba(10,18,6,0.92)'){
-    const w=h*.35;
+  /* ── GROUND ── */
+  ground(y) {
+    return `<g>
+      <rect x="0" y="${y}" width="960" height="${580-y}" fill="url(#groundGrad)"/>
+      <path d="M0,${y} Q240,${y-8} 480,${y} Q720,${y+8} 960,${y}" stroke="rgba(150,120,70,0.3)" stroke-width="1" fill="none"/>
+    </g>`;
+  },
+
+  /* ── PAGODA / PAVILION — Tang dynasty style ── */
+  pagoda(x, y, scale=1) {
+    const s = scale;
+    // Based on the image: raised platform on stilts, double curved roof, ornate top
+    return `<g transform="translate(${x},${y})">
+      <!-- Platform stilts -->
+      <rect x="${-28*s}" y="${0}" width="${8*s}" height="${28*s}" fill="#7a4218" stroke="rgba(90,46,14,.5)" stroke-width="0.8"/>
+      <rect x="${-8*s}" y="${0}" width="${8*s}" height="${28*s}" fill="#7a4218" stroke="rgba(90,46,14,.5)" stroke-width="0.8"/>
+      <rect x="${12*s}" y="${0}" width="${8*s}" height="${28*s}" fill="#7a4218" stroke="rgba(90,46,14,.5)" stroke-width="0.8"/>
+      <!-- Platform floor -->
+      <rect x="${-34*s}" y="${-4*s}" width="${72*s}" height="${6*s}" fill="#8a5020" stroke="rgba(90,46,14,.4)" stroke-width="0.8"/>
+      <!-- Main body -->
+      <rect x="${-26*s}" y="${-36*s}" width="${52*s}" height="${34*s}" fill="#7a4218" stroke="rgba(90,46,14,.5)" stroke-width="0.8"/>
+      <!-- Door -->
+      <rect x="${-8*s}" y="${-20*s}" width="${16*s}" height="${18*s}" rx="1" fill="rgba(50,25,8,.6)" stroke="rgba(90,46,14,.3)" stroke-width="0.7"/>
+      <!-- Window left -->
+      <rect x="${-22*s}" y="${-28*s}" width="${10*s}" height="${10*s}" rx="1" fill="rgba(50,25,8,.4)" stroke="rgba(90,46,14,.3)" stroke-width="0.6"/>
+      <!-- Window right -->
+      <rect x="${12*s}" y="${-28*s}" width="${10*s}" height="${10*s}" rx="1" fill="rgba(50,25,8,.4)" stroke="rgba(90,46,14,.3)" stroke-width="0.6"/>
+      <!-- Lower roof — curved eaves Tang style -->
+      <path d="M${-42*s},${-38*s} Q${-35*s},${-48*s} ${-26*s},${-40*s} L${26*s},${-40*s} Q${35*s},${-48*s} ${42*s},${-38*s} L${38*s},${-36*s} L${-38*s},${-36*s}Z" fill="#6a3810" stroke="rgba(90,46,14,.5)" stroke-width="0.8"/>
+      <!-- Lower roof eave tips -->
+      <path d="M${-42*s},${-38*s} Q${-46*s},${-34*s} ${-48*s},${-32*s}" stroke="#6a3810" stroke-width="${3*s}" fill="none" stroke-linecap="round"/>
+      <path d="M${42*s},${-38*s} Q${46*s},${-34*s} ${48*s},${-32*s}" stroke="#6a3810" stroke-width="${3*s}" fill="none" stroke-linecap="round"/>
+      <!-- Upper body small -->
+      <rect x="${-16*s}" y="${-60*s}" width="${32*s}" height="${22*s}" fill="#7a4218" stroke="rgba(90,46,14,.45)" stroke-width="0.7"/>
+      <!-- Upper roof -->
+      <path d="M${-28*s},${-62*s} Q${-22*s},${-74*s} ${-16*s},${-64*s} L${16*s},${-64*s} Q${22*s},${-74*s} ${28*s},${-62*s} L${24*s},${-60*s} L${-24*s},${-60*s}Z" fill="#6a3810" stroke="rgba(90,46,14,.5)" stroke-width="0.7"/>
+      <!-- Upper eave tips -->
+      <path d="M${-28*s},${-62*s} Q${-32*s},${-58*s} ${-34*s},${-56*s}" stroke="#6a3810" stroke-width="${2.5*s}" fill="none" stroke-linecap="round"/>
+      <path d="M${28*s},${-62*s} Q${32*s},${-58*s} ${34*s},${-56*s}" stroke="#6a3810" stroke-width="${2.5*s}" fill="none" stroke-linecap="round"/>
+      <!-- Finial top -->
+      <rect x="${-3*s}" y="${-82*s}" width="${6*s}" height="${20*s}" fill="#8a5020"/>
+      <path d="M${-6*s},${-82*s} Q0,${-90*s} ${6*s},${-82*s}" fill="#8a5020" stroke="rgba(90,46,14,.5)" stroke-width="0.7"/>
+      <circle cx="0" cy="${-90*s}" r="${3*s}" fill="rgba(201,148,58,0.7)"/>
+      <!-- Decorative rail at platform -->
+      <path d="M${-34*s},${-6*s} L${38*s},${-6*s}" stroke="rgba(90,46,14,.35)" stroke-width="1.5"/>
+      <!-- Shadow -->
+      <ellipse cx="0" cy="${28*s}" rx="${40*s}" ry="${6*s}" fill="rgba(100,60,20,0.15)" filter="url(#inkblur)"/>
+    </g>`;
+  },
+
+  /* ── SMALL DISTANT PAVILION ── */
+  pavilionSmall(x, y, scale=0.5) {
+    const s = scale;
+    return `<g transform="translate(${x},${y})" opacity="0.7">
+      <rect x="${-10*s}" y="0" width="${20*s}" height="${16*s}" fill="#8a5020"/>
+      <path d="M${-18*s},${-2*s} Q0,${-12*s} ${18*s},${-2*s} L${14*s},${0} L${-14*s},${0}Z" fill="#6a3810"/>
+      <rect x="${-3*s}" y="${-16*s}" width="${6*s}" height="${14*s}" fill="#8a5020"/>
+      <path d="M${-10*s},${-17*s} Q0,${-24*s} ${10*s},${-17*s} L${8*s},${-16*s} L${-8*s},${-16*s}Z" fill="#6a3810"/>
+    </g>`;
+  },
+
+  /* ── PINE TREE — ink wash style ── */
+  pineTree(x, y, h, color='rgba(80,60,30,0.9)') {
+    const w = h*0.55;
     return `<g>
       <rect x="${x-3}" y="${y-h}" width="6" height="${h}" fill="${color}"/>
-      <ellipse cx="${x}" cy="${y-h}" rx="${w}" ry="${h*.55}" fill="${color}"/>
-      <ellipse cx="${x}" cy="${y-h*.72}" rx="${w*.78}" ry="${h*.38}" fill="${color}"/>
-      <ellipse cx="${x}" cy="${y-h*.9}" rx="${w*.55}" ry="${h*.28}" fill="${color}"/>
+      <!-- Layered ink wash foliage -->
+      <ellipse cx="${x}" cy="${y-h}" rx="${w}" ry="${h*.48}" fill="${color}" filter="url(#harshblur)"/>
+      <ellipse cx="${x}" cy="${y-h*.75}" rx="${w*.82}" ry="${h*.36}" fill="${color}"/>
+      <ellipse cx="${x}" cy="${y-h*.9}" rx="${w*.6}" ry="${h*.26}" fill="${color}"/>
+      <!-- Highlight stroke -->
+      <path d="M${x-w*.4},${y-h*.85} Q${x},${y-h*.95} ${x+w*.4},${y-h*.85}" stroke="rgba(160,130,70,0.18)" stroke-width="1.2" fill="none"/>
     </g>`;
   },
 
-  /* Bamboo */
-  bamboo(x,y,h,color='rgba(8,16,5,0.95)'){
-    let s=`<rect x="${x-4}" y="${y-h}" width="8" height="${h}" rx="3" fill="${color}"/>`;
-    for(let i=0;i<h;i+=30) s+=`<rect x="${x-4}" y="${y-i}" width="8" height="3" rx="1" fill="rgba(20,35,12,0.9)"/>`;
-    s+=`<path d="${x},${y-h*0.7} Q${x+25},${y-h*0.8} ${x+40},${y-h*0.95}" stroke="${color}" stroke-width="3" fill="none"/>`;
-    s+=`<path d="${x},${y-h*0.5} Q${x-28},${y-h*0.6} ${x-42},${y-h*0.78}" stroke="${color}" stroke-width="2.5" fill="none"/>`;
-    return s;
-  },
-
-  /* WAYANG FIGURES */
-  /* Rakyat/Villager */
-  villager(x,y,size=1,facing=1,color='rgba(8,4,2,0.95)'){
-    const s=size*40;
-    const fx=facing>0?1:-1;
-    return `<g transform="translate(${x},${y}) scale(${fx*size},${size})">
-      <ellipse cx="0" cy="-${s*.6}" rx="${s*.18}" ry="${s*.28}" fill="${color}"/>
-      <circle cx="0" cy="-${s*.95}" r="${s*.15}" fill="${color}"/>
-      <path d="M-${s*.18},-${s*.95} Q0,-${s*1.15} ${s*.18},-${s*.95} L${s*.12},-${s*.88} L-${s*.12},-${s*.88}Z" fill="${color}"/>
-      <path d="M-${s*.18},-${s*.7} Q-${s*.38},-${s*.6} -${s*.32},-${s*.42}" stroke="${color}" stroke-width="${s*.06}" fill="none" stroke-linecap="round"/>
-      <path d="M${s*.18},-${s*.7} Q${s*.35},-${s*.55} ${s*.28},-${s*.38}" stroke="${color}" stroke-width="${s*.06}" fill="none" stroke-linecap="round"/>
-      <path d="M-${s*.08},-${s*.32} L-${s*.12},0" stroke="${color}" stroke-width="${s*.07}" fill="none" stroke-linecap="round"/>
-      <path d="M${s*.08},-${s*.32} L${s*.12},0" stroke="${color}" stroke-width="${s*.07}" fill="none" stroke-linecap="round"/>
-      <path d="M-${s*.14},-${s*.75} Q0,-${s*.6} ${s*.14},-${s*.75}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
+  /* ── PLUM / RED MAPLE TREE (like image) ── */
+  redTree(x, y, h) {
+    const clusterColor = '#c44a1a';
+    const stemColor = 'rgba(80,50,20,0.95)';
+    return `<g style="animation:float1 ${4+Math.random()*2}s ease-in-out infinite">
+      <!-- Main trunk -->
+      <path d="M${x},${y} Q${x-12},${y-h*.3} ${x-8},${y-h*.6} Q${x-4},${y-h*.8} ${x},${y-h}" stroke="${stemColor}" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- Branch 1 -->
+      <path d="M${x-5},${y-h*.5} Q${x-30},${y-h*.55} ${x-40},${y-h*.42}" stroke="${stemColor}" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- Branch 2 -->
+      <path d="M${x-3},${y-h*.72} Q${x+20},${y-h*.68} ${x+35},${y-h*.58}" stroke="${stemColor}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Branch 3 top -->
+      <path d="M${x},${y-h} Q${x-15},${y-h*1.12} ${x-22},${y-h*1.08}" stroke="${stemColor}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Leaf clusters — fan-shaped like image -->
+      ${IW._leafCluster(x-38, y-h*.5, 22, clusterColor)}
+      ${IW._leafCluster(x+32, y-h*.62, 20, clusterColor)}
+      ${IW._leafCluster(x-18, y-h*1.08, 18, clusterColor)}
+      ${IW._leafCluster(x+5, y-h*.95, 16, clusterColor)}
+      ${IW._leafCluster(x-8, y-h*.78, 14, clusterColor)}
     </g>`;
   },
 
-  /* Warrior — Prajurit -->
-  warrior(x,y,size=1,facing=1,pose='stand'){
-    const s=size*50;const fx=facing>0?1:-1;
-    const armAngle=pose==='fight'?-30:0;
-    return `<g transform="translate(${x},${y}) scale(${fx},1)">
-      <path d="M-${s*.22},-${s*.7} L-${s*.26},-${s*.35} L${s*.26},-${s*.35} L${s*.22},-${s*.7}Z" fill="rgba(8,4,2,0.96)"/>
-      <path d="M-${s*.22},-${s*.7} Q-${s*.38},-${s*.72} -${s*.3},-${s*.58}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
-      <path d="M${s*.22},-${s*.7} Q${s*.38},-${s*.72} ${s*.3},-${s*.58}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
-      <circle cx="0" cy="-${s*.92}" r="${s*.16}" fill="rgba(8,4,2,0.96)"/>
-      <path d="M-${s*.2},-${s*.92} Q-${s*.12},-${s*1.18} 0,-${s*1.2} Q${s*.12},-${s*1.18} ${s*.2},-${s*.92}" fill="rgba(8,4,2,0.96)" stroke="rgba(201,168,76,0.5)" stroke-width="0.8"/>
-      <line x1="${s*.26}" y1="-${s*.65}" x2="${s*.5+armAngle}" y2="-${s*1.4}" stroke="rgba(8,4,2,0.9)" stroke-width="${s*.055}"/>
-      <path d="M${s*.48+armAngle},-${s*1.42} L${s*.52+armAngle},-${s*1.5} L${s*.44+armAngle},-${s*1.42}Z" fill="rgba(201,168,76,0.7)"/>
-      <ellipse cx="-${s*.35}" cy="-${s*.58}" rx="${s*.14}" ry="${s*.2}" fill="rgba(8,4,2,0.9)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8" transform="rotate(-15,-${s*.35},-${s*.58})"/>
-      <path d="M-${s*.1},-${s*.35} L-${s*.14},0" stroke="rgba(8,4,2,0.95)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
-      <path d="M${s*.1},-${s*.35} L${s*.14},0" stroke="rgba(8,4,2,0.95)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
-      <path d="M-${s*.2},-${s*.62} Q0,-${s*.55} ${s*.2},-${s*.62}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
-      <path d="M-${s*.18},-${s*.5} Q0,-${s*.44} ${s*.18},-${s*.5}" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" fill="none"/>
-    </g>`;
-  },
-
-  /* Raja/King */
-  raja(x,y,size=1,facing=1){
-    const s=size*55;const fx=facing>0?1:-1;
-    return `<g transform="translate(${x},${y}) scale(${fx},1)">
-      <path d="M-${s*.28},-${s*.8} L-${s*.35},-${s*.1} L${s*.35},-${s*.1} L${s*.28},-${s*.8}Z" fill="rgba(8,4,2,0.97)" stroke="rgba(201,168,76,0.35)" stroke-width="0.8"/>
-      <path d="M-${s*.28},-${s*.8} Q-${s*.5},-${s*.78} -${s*.45},-${s*.6}" fill="rgba(8,4,2,0.94)" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
-      <path d="M${s*.28},-${s*.8} Q${s*.5},-${s*.78} ${s*.45},-${s*.6}" fill="rgba(8,4,2,0.94)" stroke="rgba(201,168,76,0.5)" stroke-width="1"/>
-      <circle cx="0" cy="-${s*.98}" r="${s*.17}" fill="rgba(8,4,2,0.97)"/>
-      <path d="M-${s*.22},-${s*.98} L-${s*.18},-${s*1.28} L-${s*.08},-${s*1.12} L0,-${s*1.32} L${s*.08},-${s*1.12} L${s*.18},-${s*1.28} L${s*.22},-${s*.98}Z" fill="rgba(8,4,2,0.97)" stroke="rgba(201,168,76,0.7)" stroke-width="0.9"/>
-      <circle cx="0" cy="-${s*1.28}" r="${s*.04}" fill="rgba(201,168,76,0.8)"/>
-      <circle cx="-${s*.15}" cy="-${s*1.22}" r="${s*.03}" fill="rgba(201,168,76,0.6)"/>
-      <circle cx="${s*.15}" cy="-${s*1.22}" r="${s*.03}" fill="rgba(201,168,76,0.6)"/>
-      <line x1="${s*.3}" y1="-${s*.75}" x2="${s*.42}" y2="-${s*1.25}" stroke="rgba(8,4,2,0.9)" stroke-width="${s*.055}"/>
-      <circle cx="${s*.44}" cy="-${s*1.28}" r="${s*.06}" fill="rgba(201,168,76,0.6)"/>
-      <path d="M-${s*.25},-${s*.72} Q0,-${s*.65} ${s*.25},-${s*.72}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
-      <path d="M-${s*.28},-${s*.55} Q0,-${s*.48} ${s*.28},-${s*.55}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
-      <path d="M-${s*.3},-${s*.38} Q0,-${s*.32} ${s*.3},-${s*.38}" stroke="rgba(201,168,76,0.2)" stroke-width="0.7" fill="none"/>
-      <path d="M-${s*.1},-${s*.1} L-${s*.12},0" stroke="rgba(8,4,2,0.96)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
-      <path d="M${s*.1},-${s*.1} L${s*.12},0" stroke="rgba(8,4,2,0.96)" stroke-width="${s*.08}" fill="none" stroke-linecap="round"/>
-    </g>`;
-  },
-
-  /* Pujangga — The Hero */
-  pujangga(x,y,size=1,facing=1,aura=false){
-    const s=size*60;const fx=facing>0?1:-1;
-    let auraEl='';
-    if(aura){
-      auraEl=`<circle cx="0" cy="-${s*.7}" r="${s*.9}" fill="rgba(201,168,76,0.06)" filter="url(#softglow)"/>
-               <circle cx="0" cy="-${s*.7}" r="${s*.65}" fill="rgba(201,168,76,0.04)" filter="url(#softglow)"/>`;
+  _leafCluster(cx, cy, r, color) {
+    // Fan-shaped leaf cluster like in the reference image
+    let petals = '';
+    for(let i=0; i<8; i++){
+      const angle = (i/8)*Math.PI*1.8 - 0.5;
+      const ex = cx + Math.cos(angle)*r*1.2;
+      const ey = cy + Math.sin(angle)*r*.9;
+      petals += `<path d="M${cx},${cy} Q${cx+Math.cos(angle+.4)*r*.7},${cy+Math.sin(angle+.4)*r*.6} ${ex},${ey} Q${cx+Math.cos(angle-.3)*r*.6},${cy+Math.sin(angle-.3)*r*.5} ${cx},${cy}Z" fill="${color}" opacity="${0.7+Math.random()*.3}"/>`;
     }
-    return `<g transform="translate(${x},${y}) scale(${fx},1)">
-      ${auraEl}
-      <path d="M-${s*.24},-${s*.85} Q-${s*.38},-${s*.5} -${s*.32},-${s*.05} Q-${s*.18},-${s*.02} 0,0 Q${s*.18},-${s*.02} ${s*.32},-${s*.05} Q${s*.38},-${s*.5} ${s*.24},-${s*.85}Z" fill="rgba(6,3,1,0.97)" stroke="rgba(201,168,76,0.18)" stroke-width="0.8"/>
-      <path d="M-${s*.24},-${s*.72} Q-${s*.58},-${s*.65} -${s*.52},-${s*.45} Q-${s*.38},-${s*.4} -${s*.28},-${s*.52}" fill="rgba(6,3,1,0.95)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
-      <path d="M${s*.24},-${s*.72} Q${s*.58},-${s*.65} ${s*.52},-${s*.45} Q${s*.38},-${s*.4} ${s*.28},-${s*.52}" fill="rgba(6,3,1,0.95)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
-      <circle cx="0" cy="-${s*1.02}" r="${s*.18}" fill="rgba(6,3,1,0.97)"/>
-      <path d="M-${s*.22},-${s*1.02} Q-${s*.1},-${s*1.26} 0,-${s*1.28} Q${s*.1},-${s*1.26} ${s*.22},-${s*1.02}" fill="rgba(6,3,1,0.96)" stroke="rgba(201,168,76,0.45)" stroke-width="0.9"/>
-      <path d="M-${s*.02},-${s*1.28} Q0,-${s*1.35} ${s*.08},-${s*1.3}" stroke="rgba(201,168,76,0.5)" stroke-width="1.2" fill="none"/>
-      <path d="M-${s*.06},-${s*1.04} Q-${s*.03},-${s*1.0} 0,-${s*1.04}" stroke="rgba(201,168,76,0.15)" stroke-width="0.6" fill="none"/>
-      <path d="M${s*.46},-${s*.48} Q${s*.35},-${s*.72} ${s*.22},-${s*.68}" stroke="rgba(8,4,2,0.88)" stroke-width="${s*.05}" fill="none"/>
-      <path d="M${s*.48},-${s*.46} Q${s*.55},-${s*.35} ${s*.5},-${s*.28}" stroke="rgba(201,168,76,0.7)" stroke-width="1.5" fill="none"/>
-      <rect x="-${s*.5}" y="-${s*.62}" width="${s*.18}" height="${s*.28}" rx="2" fill="rgba(240,230,200,0.15)" stroke="rgba(201,168,76,0.4)" stroke-width="0.8"/>
-      <line x1="-${s*.5}" y1="-${s*.62}" x2="-${s*.5}" y2="-${s*.34}" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
-      <line x1="-${s*.32}" y1="-${s*.62}" x2="-${s*.32}" y2="-${s*.34}" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
-      <line x1="-${s*.47}" y1="-${s*.56}" x2="-${s*.35}" y2="-${s*.56}" stroke="rgba(201,168,76,0.25)" stroke-width="0.6"/>
-      <line x1="-${s*.47}" y1="-${s*.5}" x2="-${s*.35}" y2="-${s*.5}" stroke="rgba(201,168,76,0.25)" stroke-width="0.6"/>
-      <line x1="-${s*.47}" y1="-${s*.44}" x2="-${s*.38}" y2="-${s*.44}" stroke="rgba(201,168,76,0.2)" stroke-width="0.6"/>
-      <path d="M-${s*.2},-${s*.78} Q0,-${s*.72} ${s*.2},-${s*.78}" stroke="rgba(201,168,76,0.3)" stroke-width="0.8" fill="none"/>
-      <path d="M-${s*.25},-${s*.62} Q0,-${s*.55} ${s*.25},-${s*.62}" stroke="rgba(201,168,76,0.24)" stroke-width="0.7" fill="none"/>
-      <path d="M-${s*.28},-${s*.46} Q0,-${s*.4} ${s*.28},-${s*.46}" stroke="rgba(201,168,76,0.18)" stroke-width="0.7" fill="none"/>
-    </g>`;
+    return `<g>${petals}<circle cx="${cx}" cy="${cy}" r="${r*.35}" fill="${color}" opacity="0.8"/></g>`;
   },
 
-  /* Candi / Temple structure */
-  candi(x,y,scale=1){
-    const s=scale*80;
+  /* ── BAMBOO ── */
+  bamboo(x, y, h, color='rgba(70,90,40,0.9)') {
+    let s = `<rect x="${x-4}" y="${y-h}" width="8" height="${h}" rx="3" fill="${color}" filter="url(#harshblur)"/>`;
+    for(let i=20; i<h; i+=28) s+=`<rect x="${x-4}" y="${y-i}" width="8" height="3" rx="1" fill="rgba(90,110,50,0.8)"/>`;
+    s+=`<path d="M${x},${y-h*.65} Q${x+30},${y-h*.72} ${x+48},${y-h*.85}" stroke="${color}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    s+=`<path d="M${x},${y-h*.45} Q${x-32},${y-h*.52} ${x-48},${y-h*.68}" stroke="${color}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    return `<g>${s}</g>`;
+  },
+
+  /* ── LOTUS FLOWER — like reference image ── */
+  lotus(x, y, size=1) {
+    const s = size;
+    const petalColor = '#e06030';
+    const leafColor = 'rgba(160,190,120,0.75)';
     return `<g transform="translate(${x},${y})">
-      <rect x="-${s*.8}" y="-${s*.15}" width="${s*1.6}" height="${s*.15}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.2)" stroke-width="0.7"/>
-      <rect x="-${s*.65}" y="-${s*.32}" width="${s*1.3}" height="${s*.18}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.22)" stroke-width="0.7"/>
-      <rect x="-${s*.52}" y="-${s*.5}" width="${s*1.04}" height="${s*.2}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.25)" stroke-width="0.7"/>
-      <rect x="-${s*.38}" y="-${s*.7}" width="${s*.76}" height="${s*.22}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.28)" stroke-width="0.8"/>
-      <rect x="-${s*.25}" y="-${s*1.2}" width="${s*.5}" height="${s*.52}" fill="rgba(8,5,2,0.96)" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
-      <rect x="-${s*.22}" y="-${s*1.38}" width="${s*.44}" height="${s*.2}" fill="rgba(8,5,2,0.95)" stroke="rgba(201,168,76,0.32)" stroke-width="0.7"/>
-      <rect x="-${s*.18}" y="-${s*1.58}" width="${s*.36}" height="${s*.22}" fill="rgba(8,5,2,0.94)" stroke="rgba(201,168,76,0.35)" stroke-width="0.7"/>
-      <rect x="-${s*.13}" y="-${s*1.78}" width="${s*.26}" height="${s*.22}" fill="rgba(8,5,2,0.93)" stroke="rgba(201,168,76,0.38)" stroke-width="0.7"/>
-      <path d="M-${s*.08},-${s*1.78} Q0,-${s*2.05} ${s*.08},-${s*1.78}" fill="rgba(8,5,2,0.92)" stroke="rgba(201,168,76,0.5)" stroke-width="0.9"/>
-      <circle cx="0" cy="-${s*2.05}" r="${s*.04}" fill="rgba(201,168,76,0.7)"/>
-      <rect x="-${s*.1}" y="-${s*1.08}" width="${s*.2}" height="${s*.28}" rx="2" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.3)" stroke-width="0.8"/>
-      <path d="M-${s*.1},-${s*.8} Q0,-${s*.88} ${s*.1},-${s*.8}" stroke="rgba(201,168,76,0.25)" stroke-width="0.7" fill="none"/>
+      <!-- Big lotus leaves -->
+      <ellipse cx="${-20*s}" cy="${5*s}" rx="${32*s}" ry="${14*s}" fill="${leafColor}" stroke="rgba(100,130,60,0.4)" stroke-width="0.8"/>
+      <ellipse cx="${18*s}" cy="${8*s}" rx="${28*s}" ry="${12*s}" fill="${leafColor}" stroke="rgba(100,130,60,0.4)" stroke-width="0.8"/>
+      <!-- White lotus petal backs -->
+      <ellipse cx="${0}" cy="${-2*s}" rx="${18*s}" ry="${22*s}" fill="rgba(245,240,220,0.8)" filter="url(#harshblur)"/>
+      <!-- Petals -->
+      ${IW._lotusPetals(0, 0, s, petalColor)}
+      <!-- Center -->
+      <circle cx="0" cy="${-8*s}" r="${5*s}" fill="rgba(240,200,60,0.8)"/>
+      <circle cx="0" cy="${-8*s}" r="${3*s}" fill="rgba(255,220,80,0.9)"/>
     </g>`;
   },
 
-  /* Fire element */
-  fire(x,y,size=1){
-    const s=size*30;
-    return `<g transform="translate(${x},${y})" style="animation:fireFlicker 0.4s ease-in-out infinite">
-      <path d="M0,0 Q-${s*.3},-${s*.5} 0,-${s} Q${s*.3},-${s*.5} 0,0Z" fill="rgba(220,80,20,0.8)"/>
-      <path d="M0,0 Q-${s*.2},-${s*.35} 0,-${s*.7} Q${s*.2},-${s*.35} 0,0Z" fill="rgba(240,150,30,0.85)"/>
-      <path d="M0,0 Q-${s*.1},-${s*.2} 0,-${s*.4} Q${s*.1},-${s*.2} 0,0Z" fill="rgba(255,220,80,0.9)"/>
-      <ellipse cx="0" cy="${s*.05}" rx="${s*.4}" ry="${s*.1}" fill="rgba(80,30,10,0.5)" filter="url(#inkblur)"/>
+  _lotusPetals(cx, cy, s, color) {
+    let p = '';
+    const angles = [0, 45, 90, 135, 180, 225, 270, 315];
+    angles.forEach(a => {
+      const rad = a * Math.PI/180;
+      const px = cx + Math.cos(rad)*12*s;
+      const py = cy + Math.sin(rad)*8*s - 10*s;
+      p += `<path d="M${cx},${cy+2*s} Q${px + Math.cos(rad+.8)*8*s},${py + Math.sin(rad+.8)*6*s} ${px},${py} Q${px + Math.cos(rad-.8)*6*s},${py + Math.sin(rad-.8)*5*s} ${cx},${cy+2*s}Z" fill="${color}" opacity="0.82"/>`;
+    });
+    return p;
+  },
+
+  /* ── ROCKS / STONES ── */
+  rock(x, y, w, h) {
+    return `<g>
+      <ellipse cx="${x}" cy="${y}" rx="${w}" ry="${h}" fill="rgba(190,170,120,0.7)" stroke="rgba(150,120,70,0.3)" stroke-width="0.8" filter="url(#harshblur)"/>
+      <ellipse cx="${x-w*.2}" cy="${y-h*.15}" rx="${w*.35}" ry="${h*.28}" fill="rgba(220,200,150,0.4)"/>
     </g>`;
   },
 
-  /* Bird silhouette */
-  bird(x,y,s=1){
-    return `<path d="M${x},${y} Q${x+s*8},${y-s*5} ${x+s*16},${y} Q${x+s*8},${y-s*2} ${x},${y}Z M${x+s*16},${y} Q${x+s*24},${y-s*5} ${x+s*32},${y}" stroke="rgba(8,4,2,0.7)" stroke-width="${s*1.2}" fill="none"/>`;
+  /* ── MIST BAND ── */
+  mist(y, opacity=0.4) {
+    return `<ellipse cx="480" cy="${y}" rx="520" ry="28" fill="rgba(245,240,220,${opacity})" filter="url(#softblur)"/>`;
   },
 
-  /* Stars */
-  stars(count=80){
-    let s='';
-    for(let i=0;i<count;i++){
-      const x=Math.random()*900,y=Math.random()*350;
-      const r=Math.random()*1.4+.2;
-      const op=.15+Math.random()*.75;
-      const dur=3+Math.random()*6;
-      s+=`<circle cx="${x}" cy="${y}" r="${r}" fill="rgba(240,225,185,${op})" style="animation:starTwinkle ${dur}s ease-in-out infinite;animation-delay:${Math.random()*5}s"/>`;
+  /* ── WAYANG JAWA — traditional flat puppet silhouette ── */
+  wayangJawa(x, y, scale, facing, type, extra) {
+    const s = scale || 1;
+    const fx = facing === -1 ? -1 : 1;
+    let body = '';
+
+    if(type === 'raja') {
+      // Raja/King wayang — crown, formal pose
+      body = `
+        <!-- Gelung/crown -->
+        <path d="M-6,-82 L-4,-98 L0,-105 L4,-98 L6,-82 Q4,-78 0,-76 Q-4,-78 -6,-82Z" fill="currentColor" stroke="rgba(180,120,40,0.6)" stroke-width="0.5"/>
+        <!-- Sumping ear ornament -->
+        <path d="M10,-68 Q18,-65 16,-58 Q12,-55 9,-58Z" fill="currentColor" stroke="rgba(180,120,40,0.4)" stroke-width="0.4"/>
+        <path d="M-10,-68 Q-18,-65 -16,-58 Q-12,-55 -9,-58Z" fill="currentColor" stroke="rgba(180,120,40,0.4)" stroke-width="0.4"/>
+        <!-- Head — elongated wayang style -->
+        <path d="M-8,-76 Q-12,-65 -10,-55 Q-8,-48 0,-46 Q8,-48 10,-55 Q12,-65 8,-76 Q4,-82 0,-82 Q-4,-82 -8,-76Z" fill="currentColor"/>
+        <!-- Neck -->
+        <rect x="-4" y="-46" width="8" height="10" fill="currentColor"/>
+        <!-- Torso — wayang flat angular body -->
+        <path d="M-18,-36 L-14,-8 L14,-8 L18,-36 Q12,-42 0,-44 Q-12,-42 -18,-36Z" fill="currentColor"/>
+        <!-- Jarik/batik skirt -->
+        <path d="M-16,-8 L-18,12 L18,12 L16,-8Z" fill="currentColor"/>
+        <path d="M-18,12 L-16,30 L16,30 L18,12Z" fill="currentColor"/>
+        <!-- Leg left -->
+        <path d="M-10,30 L-12,55 Q-14,58 -12,60 L-6,60 Q-4,58 -6,55 L-4,30Z" fill="currentColor"/>
+        <!-- Leg right -->
+        <path d="M10,30 L12,55 Q14,58 12,60 L6,60 Q4,58 6,55 L4,30Z" fill="currentColor"/>
+        <!-- Right arm — raised, holding scepter -->
+        <path d="M18,-32 Q32,-28 38,-18 Q42,-10 40,-2" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M40,-2 L42,-25" stroke="currentColor" stroke-width="4" fill="none"/>
+        <circle cx="42" cy="-26" r="3" fill="rgba(200,150,40,0.7)"/>
+        <!-- Left arm — down, gesture -->
+        <path d="M-18,-30 Q-28,-20 -32,-8 Q-34,2 -30,8" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <!-- Batik detail lines -->
+        <path d="M-14,-32 Q0,-28 14,-32" stroke="rgba(200,150,40,0.25)" stroke-width="0.7" fill="none"/>
+        <path d="M-15,-20 Q0,-16 15,-20" stroke="rgba(200,150,40,0.2)" stroke-width="0.7" fill="none"/>
+      `;
+    } else if(type === 'pujangga') {
+      // Pujangga/Scholar — udeng headwrap, holding scroll + pen
+      body = `
+        <!-- Udeng headwrap — Javanese scholar -->
+        <path d="M-10,-78 Q-8,-90 0,-92 Q8,-90 10,-78" fill="currentColor" stroke="rgba(180,120,40,0.5)" stroke-width="0.5"/>
+        <!-- Udeng knot -->
+        <path d="M6,-90 Q10,-88 8,-82" stroke="currentColor" stroke-width="3" fill="none"/>
+        <!-- Head elongated -->
+        <path d="M-8,-78 Q-12,-68 -10,-56 Q-8,-48 0,-46 Q8,-48 10,-56 Q12,-68 8,-78Z" fill="currentColor"/>
+        <!-- Long nose — wayang style -->
+        <path d="M8,-62 Q14,-58 12,-52" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Neck -->
+        <rect x="-4" y="-46" width="8" height="10" fill="currentColor"/>
+        <!-- Torso with wide sleeves -->
+        <path d="M-20,-36 L-16,-5 L16,-5 L20,-36 Q12,-44 0,-46 Q-12,-44 -20,-36Z" fill="currentColor"/>
+        <!-- Wide flowing sleeve left -->
+        <path d="M-20,-32 Q-36,-26 -44,-14 Q-48,-5 -44,2 Q-40,6 -36,2 Q-34,-4 -32,-10 L-20,-24Z" fill="currentColor"/>
+        <!-- Hand left holding scroll -->
+        <circle cx="-36" cy="4" r="4" fill="currentColor"/>
+        <!-- Scroll in left hand -->
+        <rect x="-48" y="-8" width="15" height="24" rx="2" fill="rgba(245,235,200,0.4)" stroke="rgba(180,120,40,0.5)" stroke-width="0.8"/>
+        <line x1="-48" y1="-8" x2="-48" y2="16" stroke="rgba(180,120,40,0.6)" stroke-width="1.5"/>
+        <line x1="-33" y1="-8" x2="-33" y2="16" stroke="rgba(180,120,40,0.6)" stroke-width="1.5"/>
+        <line x1="-46" y1="-2" x2="-35" y2="-2" stroke="rgba(180,120,40,0.22)" stroke-width="0.6"/>
+        <line x1="-46" y1="3" x2="-35" y2="3" stroke="rgba(180,120,40,0.22)" stroke-width="0.6"/>
+        <line x1="-46" y1="8" x2="-35" y2="8" stroke="rgba(180,120,40,0.22)" stroke-width="0.6"/>
+        <!-- Wide sleeve right -->
+        <path d="M20,-32 Q34,-24 42,-10 Q46,0 42,6 Q38,10 34,6 Q32,0 28,-8 L20,-24Z" fill="currentColor"/>
+        <!-- Right hand holding quill/pen -->
+        <circle cx="34" cy="8" r="4" fill="currentColor"/>
+        <path d="M34,8 Q38,2 42,-8 Q46,-18 44,-26" stroke="rgba(180,120,40,0.7)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Jarik skirt with batik detail -->
+        <path d="M-16,-5 L-18,20 L18,20 L16,-5Z" fill="currentColor"/>
+        <path d="M-15,0 Q0,4 15,0" stroke="rgba(200,150,40,0.22)" stroke-width="0.7" fill="none"/>
+        <!-- Legs -->
+        <path d="M-8,20 Q-10,40 -12,55 Q-14,58 -10,60 L-4,60 Q-2,58 -2,55 L-4,20Z" fill="currentColor"/>
+        <path d="M8,20 Q10,40 12,55 Q14,58 10,60 L4,60 Q2,58 2,55 L4,20Z" fill="currentColor"/>
+        <!-- Batik robe detail -->
+        <path d="M-16,-28 Q0,-22 16,-28" stroke="rgba(200,150,40,0.25)" stroke-width="0.7" fill="none"/>
+        <path d="M-16,-16 Q0,-11 16,-16" stroke="rgba(200,150,40,0.2)" stroke-width="0.7" fill="none"/>
+      `;
+    } else if(type === 'warrior') {
+      const pose = extra === 'fight' ? 1 : 0;
+      body = `
+        <!-- Helmet — wayang warrior style -->
+        <path d="M-9,-80 Q-6,-96 0,-100 Q6,-96 9,-80" fill="currentColor" stroke="rgba(180,120,40,0.4)" stroke-width="0.5"/>
+        <path d="M-12,-80 Q-14,-74 -12,-68 L12,-68 Q14,-74 12,-80Z" fill="currentColor"/>
+        <!-- Face -->
+        <path d="M-8,-68 Q-12,-56 -10,-46 Q-8,-40 0,-38 Q8,-40 10,-46 Q12,-56 8,-68Z" fill="currentColor"/>
+        <!-- Neck -->
+        <rect x="-4" y="-38" width="8" height="10" fill="currentColor"/>
+        <!-- Armor torso -->
+        <path d="M-22,-28 L-18,2 L18,2 L22,-28 Q14,-38 0,-40 Q-14,-38 -22,-28Z" fill="currentColor"/>
+        <!-- Shoulder guards -->
+        <path d="M-22,-26 Q-34,-24 -32,-14 Q-28,-8 -22,-12Z" fill="currentColor" stroke="rgba(180,120,40,0.3)" stroke-width="0.6"/>
+        <path d="M22,-26 Q34,-24 32,-14 Q28,-8 22,-12Z" fill="currentColor" stroke="rgba(180,120,40,0.3)" stroke-width="0.6"/>
+        <!-- Skirt armor plates -->
+        <path d="M-18,2 L-20,24 L20,24 L18,2Z" fill="currentColor"/>
+        <!-- Legs -->
+        <path d="M-10,24 L-12,52 Q-14,56 -10,58 L-4,58 Q-2,56 -4,52 L-4,24Z" fill="currentColor"/>
+        <path d="M10,24 L12,52 Q14,56 10,58 L4,58 Q2,56 4,52 L4,24Z" fill="currentColor"/>
+        <!-- Spear arm — raised ${pose ? 'aggressively' : 'upright'} -->
+        <path d="M22,-24 Q${pose?40:-36},${pose?-14:-18} ${pose?52:-48},${pose?-4:-8}" stroke="currentColor" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <!-- Spear pole -->
+        <line x1="${pose?52:-48}" y1="${pose?-4:-8}" x2="${pose?56:-52}" y2="${pose?-60:-65}" stroke="currentColor" stroke-width="4"/>
+        <!-- Spear tip -->
+        <path d="M${pose?53:-53},${pose?-62:-67} L${pose?58:-48},${pose?-68:-73} L${pose?60:-50},${pose?-62:-67}Z" fill="rgba(200,150,40,0.8)"/>
+        <!-- Shield arm -->
+        <path d="M-22,-22 Q-32,-16 -36,-4 Q-38,4 -34,10" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <!-- Shield -->
+        <ellipse cx="-36" cy="12" rx="12" ry="18" fill="currentColor" stroke="rgba(180,120,40,0.4)" stroke-width="0.8" transform="rotate(-15 -36 12)"/>
+        <line x1="-40" y1="6" x2="-32" y2="18" stroke="rgba(180,120,40,0.3)" stroke-width="0.7"/>
+        <!-- Armor detail -->
+        <path d="M-18,-20 Q0,-14 18,-20" stroke="rgba(200,150,40,0.22)" stroke-width="0.7" fill="none"/>
+        <path d="M-18,-8 Q0,-3 18,-8" stroke="rgba(200,150,40,0.18)" stroke-width="0.7" fill="none"/>
+      `;
+    } else if(type === 'villager') {
+      body = `
+        <!-- Blangkon headgear -->
+        <path d="M-8,-72 Q-6,-82 0,-84 Q6,-82 8,-72" fill="currentColor"/>
+        <!-- Head -->
+        <path d="M-8,-72 Q-12,-60 -10,-50 Q-8,-44 0,-42 Q8,-44 10,-50 Q12,-60 8,-72Z" fill="currentColor"/>
+        <!-- Neck -->
+        <rect x="-4" y="-42" width="8" height="9" fill="currentColor"/>
+        <!-- Body in kebaya/batik -->
+        <path d="M-14,-33 L-12,0 L12,0 L14,-33 Q8,-42 0,-44 Q-8,-42 -14,-33Z" fill="currentColor"/>
+        <!-- Right arm -->
+        <path d="M14,-28 Q24,-20 26,-8 Q26,0 22,4" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <!-- Left arm -->
+        <path d="M-14,-28 Q-24,-20 -26,-8 Q-26,0 -22,4" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <!-- Sarong/jarik -->
+        <path d="M-12,0 L-14,22 L14,22 L12,0Z" fill="currentColor"/>
+        <!-- Legs -->
+        <path d="M-6,22 Q-8,40 -8,52 Q-8,56 -4,57 L0,57 Q2,56 2,52 L0,22Z" fill="currentColor"/>
+        <path d="M6,22 Q8,40 8,52 Q8,56 4,57 L2,57 Q0,56 0,52 L2,22Z" fill="currentColor"/>
+        <!-- Batik detail -->
+        <path d="M-11,-24 Q0,-20 11,-24" stroke="rgba(200,150,40,0.2)" stroke-width="0.6" fill="none"/>
+        <path d="M-11,-12 Q0,-8 11,-12" stroke="rgba(200,150,40,0.18)" stroke-width="0.6" fill="none"/>
+      `;
+    }
+
+    const color = 'rgba(40,20,8,0.95)';
+    return `<g transform="translate(${x},${y}) scale(${fx*s},${s})" color="${color}" style="color:${color};fill:${color};">
+      ${body}
+    </g>`;
+  },
+
+  /* ── AURA RING around pujangga ── */
+  aura(x, y, r=90) {
+    return `<g style="animation:aurashine 2.5s ease-in-out infinite">
+      <circle cx="${x}" cy="${y}" r="${r}" fill="rgba(201,148,58,0.07)" filter="url(#softblur)"/>
+      <circle cx="${x}" cy="${y}" r="${r*.65}" fill="rgba(201,148,58,0.05)" filter="url(#inkblur)"/>
+    </g>`;
+  },
+
+  /* ── BIRDS in ink wash style ── */
+  birds(startX, y, count=5) {
+    let b = '';
+    for(let i=0; i<count; i++){
+      const bx = startX + i*80;
+      const by = y + Math.sin(i*1.3)*12;
+      b += `<path d="M${bx},${by} Q${bx+10},${by-7} ${bx+20},${by} Q${bx+10},${by-3} ${bx},${by}Z M${bx+20},${by} Q${bx+30},${by-7} ${bx+40},${by}" stroke="rgba(80,50,20,0.65)" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+    }
+    return `<g style="animation:birdfly 22s linear infinite">${b}</g>`;
+  },
+
+  /* ── FALLING PETALS ── */
+  fallingPetals(count=12) {
+    let p = '';
+    for(let i=0; i<count; i++){
+      const x = 50 + Math.random()*860;
+      const y = 50 + Math.random()*400;
+      const s = 0.5 + Math.random()*0.8;
+      const dur = 8 + Math.random()*10;
+      const del = Math.random()*8;
+      p += `<path d="M0,0 Q${4*s},${-6*s} ${8*s},0 Q${4*s},${6*s} 0,0Z" 
+        fill="rgba(196,74,26,${0.4+Math.random()*.4})" 
+        transform="translate(${x},${y}) rotate(${Math.random()*360})"
+        style="animation:petal ${dur}s ease-in-out infinite ${del}s;"
+        style="--px:${(Math.random()*40-20)}px;--py:${-(40+Math.random()*60)}px;--px2:${(Math.random()*60-30)}px;--py2:${-(80+Math.random()*100)}px"/>`;
+    }
+    return p;
+  },
+
+  /* ── FIRE TORCH ── */
+  torch(x, y, size=1) {
+    const s = size;
+    return `<g transform="translate(${x},${y})">
+      <rect x="${-3*s}" y="0" width="${6*s}" height="${16*s}" fill="rgba(100,60,20,0.8)"/>
+      <g style="animation:float1 0.35s ease-in-out infinite">
+        <path d="M0,0 Q${-6*s},${-10*s} 0,${-20*s} Q${6*s},${-10*s} 0,0Z" fill="rgba(220,90,20,0.85)"/>
+        <path d="M0,0 Q${-4*s},${-7*s} 0,${-14*s} Q${4*s},${-7*s} 0,0Z" fill="rgba(240,160,30,0.88)"/>
+        <path d="M0,0 Q${-2*s},${-4*s} 0,${-8*s} Q${2*s},${-4*s} 0,0Z" fill="rgba(255,220,60,0.9)"/>
+      </g>
+    </g>`;
+  },
+
+  /* ── SMOKE ── */
+  smoke(x, y) {
+    return `<g>
+      <circle cx="${x}" cy="${y}" r="12" fill="rgba(180,160,120,0.35)" filter="url(#inkblur)" style="animation:smokeup 3s ease-out infinite"/>
+      <circle cx="${x+5}" cy="${y-15}" r="9" fill="rgba(180,160,120,0.25)" filter="url(#inkblur)" style="animation:smokeup 3.5s ease-out infinite 0.5s"/>
+    </g>`;
+  },
+
+  /* ── LIGHTNING ── */
+  lightning() {
+    return `<g style="animation:thunderflash 3.5s ease-in-out infinite">
+      <path d="M380,40 L355,145 L375,145 L345,285" stroke="rgba(255,245,180,0.85)" stroke-width="2" fill="none"/>
+      <path d="M600,25 L575,118 L596,118 L566,248" stroke="rgba(255,245,180,0.65)" stroke-width="1.5" fill="none"/>
+    </g>`;
+  },
+
+  /* ── FLOATING INK TEXT FRAGMENTS ── */
+  inkWords(words) {
+    return words.map((w, i) => {
+      const x = 80 + i*145 + Math.sin(i*1.8)*30;
+      const y = 220 + Math.cos(i*2.1)*60;
+      const ang = -10 + i*4;
+      return `<text x="${x}" y="${y}" font-family="'IM Fell English',serif" 
+        font-style="italic" font-size="${13+i*1.5}" 
+        fill="rgba(122,66,24,${0.12+i*.03})" 
+        transform="rotate(${ang} ${x} ${y})"
+        style="animation:smokeup ${5+i}s ease-in-out infinite ${i*.6}s">${w}</text>`;
+    }).join('');
+  },
+
+  /* ── STARS ── */
+  stars(count=60) {
+    let s = '';
+    for(let i=0; i<count; i++){
+      const x=Math.random()*960, y=Math.random()*280;
+      const r=.3+Math.random()*1.2;
+      const op=.2+Math.random()*.7;
+      s += `<circle cx="${x}" cy="${y}" r="${r}" fill="rgba(240,220,140,${op})" style="animation:twinkle ${3+Math.random()*5}s ease-in-out infinite ${Math.random()*4}s"/>`;
     }
     return s;
-  },
-
-  /* Ink splash FX */
-  inkSplash(x,y,size=1){
-    return `<circle cx="${x}" cy="${y}" r="${size*20}" fill="rgba(201,168,76,0.15)" style="animation:inkSpread 1.5s ease-out forwards" filter="url(#softglow)"/>`;
   }
 };
 
-/* ════════════════════════════
-   BABAK (CHAPTERS) DATA
-════════════════════════════ */
-const BABAK=[
+JSEOF
+wc -c /tmp/part5.js
+Keluaran
+  cat > /tmp/part6.js << 'JSEOF2'
+
+/* ============================================================
+   BABAK SCENE DEFINITIONS
+   6 chapters — each fully self-contained
+============================================================ */
+const BABAK = [
   {
-    id:0,
-    cap:'Babak Pertama',
-    title:'Awal Mula Dunia',
-    body:'Di fajar pertama semesta, langit, laut, dan pegunungan tercipta dalam keindahan yang belum pernah terlihat. Nusantara lahir dari mimpi para dewa.',
-    sky:'linear-gradient(180deg,#050218 0%,#0a0835 30%,#180d45 60%,#0d0825 100%)',
-    render:'babak_kosmos'
+    id: 0,
+    cap: 'Babak Pertama',
+    title: 'Fajar Pertama Semesta',
+    body: 'Di fajar pertama semesta, langit berbintang menyapa bumi yang sunyi. Cahaya pertama menyebar perlahan, melukis cakrawala Nusantara dengan tangan sang pencipta.',
+    isLast: false
   },
   {
-    id:1,
-    cap:'Babak Kedua',
-    title:'Keindahan yang Sempurna',
-    body:'Hutan bambu yang berbisik, gunung yang menjulang ke awan, laut yang bernyanyi dengan ombaknya — semesta Nusantara hidup dalam harmoni abadi.',
-    sky:'linear-gradient(180deg,#080520 0%,#120c38 40%,#1a1548 70%,#0e0a28 100%)',
-    render:'babak_alam'
+    id: 1,
+    cap: 'Babak Kedua',
+    title: 'Keindahan Alam Nusantara',
+    body: 'Gunung menjulang ke awan, laut berbisik mengalun merdu, hutan bambu menari diterpa angin, dan bunga teratai mekar di kolam yang tenang. Semesta hidup dalam harmoni abadi.',
+    isLast: false
   },
   {
-    id:2,
-    cap:'Babak Ketiga',
-    title:'Lahirnya Peradaban',
-    body:'Dari tanah subur yang diberkati, manusia membangun kerajaan. Candi-candi menjulang, lagu-lagu pujangga menggema, dan tinta mengalir deras menuliskan sejarah.',
-    sky:'linear-gradient(180deg,#0a0520 0%,#1a0d35 35%,#250e18 65%,#150808 100%)',
-    render:'babak_peradaban'
+    id: 2,
+    cap: 'Babak Ketiga',
+    title: 'Lahirnya Peradaban',
+    body: 'Dari tanah subur yang diberkati, manusia mendirikan kerajaan. Candi-candi megah menjulang, pujangga-pujangga agung menuliskan kebijaksanaan, dan tinta mengalir deras mencatat sejarah yang gemilang.',
+    isLast: false
   },
   {
-    id:3,
-    cap:'Babak Keempat',
-    title:'Api Perang Membara',
-    body:'Namun ambisi memecah persatuan. Kerajaan bertempur satu sama lain, langit memerah dengan kobaran api, dan tinta para pujangga menetes jatuh bersama airmata.',
-    sky:'linear-gradient(180deg,#180508 0%,#2d0808 35%,#420a0a 60%,#1a0505 100%)',
-    render:'babak_perang'
+    id: 3,
+    cap: 'Babak Keempat',
+    title: 'Api Perang Membara',
+    body: 'Namun ambisi membakar persatuan. Kerajaan bertempur satu sama lain. Langit memerah, candi-candi retak, dan jeritan prajurit menggantikan nyanyian pujangga. Tinta bercampur darah.',
+    isLast: false
   },
   {
-    id:4,
-    cap:'Babak Kelima',
-    title:'Tinta yang Tercecer',
-    body:'Setelah api padam, kesunyian turun. Kata-kata bijak lenyap, bait-bait puisi tercerai-berai. Tinta Nusantara yang sakral menghilang dari peredaran.',
-    sky:'linear-gradient(180deg,#0a0808 0%,#120a0a 40%,#0e0c0a 70%,#080808 100%)',
-    render:'babak_kehancuran'
+    id: 4,
+    cap: 'Babak Kelima',
+    title: 'Tinta yang Tercecer',
+    body: 'Setelah api padam, kesunyian turun bagai kabut musim dingin. Kata-kata bijak lenyap, bait-bait puisi tercerai-berai. Tinta Nusantara yang sakral menghilang — tinggal puing-puing sunyi.',
+    isLast: false
   },
   {
-    id:5,
-    cap:'Babak Keenam · Takdir',
-    title:'Sang Pujangga Penjaga',
-    body:'Namun takdir berkata lain. Dari kabut dan keheningan, muncul seorang penjaga — Sang Pujangga — yang dipilih semesta untuk mengumpulkan kembali kata-kata yang hilang dan memulihkan sihir tinta Nusantara.',
-    sky:'linear-gradient(180deg,#080510 0%,#120930 40%,#1a0c28 65%,#0a0612 100%)',
-    render:'babak_pujangga',
-    isLast:true
+    id: 5,
+    cap: 'Babak Keenam · Takdir',
+    title: 'Sang Pujangga Penjaga',
+    body: 'Namun takdir berkata lain. Dari kabut zaman muncul seorang penjaga — Sang Pujangga — yang dipilih semesta untuk mengumpulkan kembali kata-kata yang hilang dan memulihkan sihir tinta Nusantara.',
+    isLast: true
   }
 ];
 
-/* ════════════════════════════
-   PROLOG ENGINE
-════════════════════════════ */
-let babakIdx=0,babakTimer=null,prologRunning=true;
+/* ============================================================
+   SCENE RENDER FUNCTIONS — one per babak
+============================================================ */
+const SCENES = {
 
-function renderBabak(b){
-  const sky=g('stage-sky');
-  sky.style.background=b.sky;
-
-  // Clear layers
-  ['g-stars','g-celestial','g-clouds','g-mountains','g-sea','g-trees','g-ground','g-structures','g-fire','g-wayang','g-fx','g-birds'].forEach(clr);
-
-  // Render scene
-  const fn=SCENES[b.render];
-  if(fn) fn();
-
-  // Update text
-  const bt=g('babak-text');
-  bt.classList.remove('babak-visible');
-  g('babak-caption').textContent=b.cap;
-  g('babak-title').textContent=b.title;
-  g('babak-body').textContent=b.body;
-
-  // Enter button on last babak
-  const ew=g('enter-wrap');
-  ew.innerHTML='';
-  if(b.isLast){
-    const btn=document.createElement('button');
-    btn.id='btn-enter-prolog';
-    btn.innerHTML='✒ Masuki Arsip';
-    btn.onclick=enterMeja;
-    ew.appendChild(btn);
-    setTimeout(()=>btn.style.display='inline-block',500);
-  }
-
-  setTimeout(()=>bt.classList.add('babak-visible'),200);
-
-  // Dots
-  renderDots();
-}
-
-function renderDots(){
-  const d=g('babak-dots');d.innerHTML='';
-  BABAK.forEach((b,i)=>{
-    const dot=document.createElement('div');
-    dot.className='bdot'+(i===babakIdx?' active':'');
-    dot.onclick=()=>jumpBabak(i);
-    d.appendChild(dot);
-  });
-}
-
-function jumpBabak(i){
-  babakIdx=i;
-  clearTimeout(babakTimer);
-  renderBabak(BABAK[i]);
-  if(!BABAK[i].isLast) scheduleBabak();
-}
-
-function scheduleBabak(){
-  clearTimeout(babakTimer);
-  babakTimer=setTimeout(()=>{
-    if(!prologRunning)return;
-    if(babakIdx<BABAK.length-1){
-      babakIdx++;
-      renderBabak(BABAK[babakIdx]);
-      if(!BABAK[babakIdx].isLast) scheduleBabak();
-    }
-  },6500);
-}
-
-function skipProlog(){
-  prologRunning=false;
-  clearTimeout(babakTimer);
-  checkNameAndEnter();
-}
-
-function replayProlog(){
-  showScreen('sc-prolog');
-  prologRunning=true;
-  babakIdx=0;
-  renderBabak(BABAK[0]);
-  scheduleBabak();
-}
-
-/* ════════════════════════════
-   SCENE RENDERERS
-════════════════════════════ */
-function ins(layerId,html){const e=g(layerId);if(e)e.innerHTML+=html;}
-
-const SCENES={
-  babak_kosmos(){
-    // Stars + cosmos
-    ins('g-stars',W.stars(150));
-    // Cosmic swirl
-    ins('g-celestial',`
-      <circle cx="450" cy="200" r="180" fill="none" stroke="rgba(201,168,76,0.05)" stroke-width="60" filter="url(#softglow)"/>
-      <circle cx="450" cy="200" r="80" fill="rgba(201,168,76,0.03)" filter="url(#softglow)"/>
-      <circle cx="450" cy="200" r="30" fill="rgba(201,168,76,0.06)" filter="url(#softglow)"/>
-      <circle cx="450" cy="200" r="8" fill="rgba(240,225,185,0.8)" filter="url(#glow)"/>
+  /* BABAK 0: FAJAR PERTAMA — stars, dawn sky, lone sun rising */
+  scene0() {
+    // Night-to-dawn palette
+    addToLayer('g-sky', IW.skyRect('#1a1030','#2a1840','#1a1228'));
+    addToLayer('g-stars', IW.stars(120));
+    // Crescent moon
+    addToLayer('g-sun', `
+      <circle cx="700" cy="130" r="48" fill="url(#moonGrad)" filter="url(#inkblur)"/>
+      <circle cx="718" cy="124" r="40" fill="#1a1030"/>
     `);
-    // Nebula wisps
-    ins('g-clouds',`
-      <ellipse cx="200" cy="150" rx="180" ry="60" fill="rgba(40,20,80,0.25)" filter="url(#inkblur)"/>
-      <ellipse cx="700" cy="120" rx="160" ry="50" fill="rgba(20,40,80,0.2)" filter="url(#inkblur)"/>
-      <ellipse cx="450" cy="350" rx="300" ry="80" fill="rgba(60,15,15,0.15)" filter="url(#inkblur)"/>
-    `);
-    // Mountains silhouette far
-    ins('g-mountains',W.mountain(0,600,900,220,'rgba(8,5,3,0.9)'));
-    ins('g-mountains',W.mountain(0,600,900,120,'rgba(10,7,4,0.95)'));
+    // Faint dawn glow on horizon
+    addToLayer('g-sky', `<ellipse cx="480" cy="420" rx="520" ry="120" fill="rgba(180,120,40,0.12)" filter="url(#softblur)"/>`);
+    // Silhouette mountains far
+    addToLayer('g-mountains-far', IW.mountain(0, 480, 960, 200, 0.7, '#100c18'));
+    addToLayer('g-mountains-mid', IW.mountain(-40, 480, 1000, 150, 0.85, '#14101e'));
+    addToLayer('g-mountains-near', IW.mountain(100, 490, 760, 100, 0.92, '#1a1428'));
+    // Mist bands
+    addToLayer('g-mist-far', IW.mist(380, 0.35));
+    addToLayer('g-mist-far', IW.mist(410, 0.28));
     // Ground
-    ins('g-ground',`<rect x="0" y="550" width="900" height="50" fill="rgba(5,3,1,0.98)"/>`);
-    // Floating light particles
-    for(let i=0;i<20;i++){
-      const x=Math.random()*900,y=100+Math.random()*350;
-      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${.8+Math.random()*2}" fill="rgba(201,168,76,${.1+Math.random()*.5})" filter="url(#glow)" style="animation:starTwinkle ${2+Math.random()*4}s ease-in-out infinite;animation-delay:${Math.random()*3}s"/>`);
-    }
-    // A lone wayang figure emerging from light
-    ins('g-wayang',`<g style="animation:wRise 2s ease forwards;opacity:0;" transform="translate(450,520)">${W.pujangga(0,0,0.8,1,true).replace('translate(450,520)','')}</g>`);
-    ins('g-wayang',W.pujangga(450,540,0.85,1,true));
-  },
-
-  babak_alam(){
-    ins('g-stars',W.stars(60));
-    // Moon
-    ins('g-celestial',`
-      <circle cx="680" cy="100" r="65" fill="url(#moonGrad)" filter="url(#softglow)"/>
-      <circle cx="680" cy="100" r="48" fill="rgba(240,225,185,0.06)"/>
+    addToLayer('g-ground', `<rect x="0" y="470" width="960" height="110" fill="rgba(20,15,30,0.95)"/>`);
+    // Lone rising glow / cosmic centre
+    addToLayer('g-fx', `
+      <circle cx="480" cy="380" r="160" fill="rgba(180,120,40,0.06)" filter="url(#softblur)"/>
+      <circle cx="480" cy="380" r="80" fill="rgba(180,120,40,0.04)" filter="url(#softblur)"/>
     `);
-    // Ink wash mountains — layered parallax
-    ins('g-mountains',W.mountain(0,580,900,260,'rgba(6,10,5,0.88)','rgba(201,168,76,0.04)'));
-    ins('g-mountains',W.mountain(-50,580,1000,180,'rgba(8,12,6,0.92)','rgba(201,168,76,0.05)'));
-    ins('g-mountains',W.mountain(100,580,700,130,'rgba(10,14,8,0.96)','rgba(201,168,76,0.06)'));
-    // Sea
-    ins('g-sea',`<rect x="0" y="420" width="900" height="180" fill="url(#seaGrad)"/>`);
-    for(let i=0;i<4;i++){
-      ins('g-sea',W.wave(420+i*12,900,`rgba(${20+i*5},${50+i*8},${80+i*5},${0.5+i*.1})`,i*100));
-    }
-    // Bamboo grove
-    for(let i=0;i<8;i++){
-      ins('g-trees',W.bamboo(60+i*18,600,120+Math.random()*60,'rgba(6,12,4,0.94)'));
-    }
-    for(let i=0;i<6;i++){
-      ins('g-trees',W.bamboo(800+i*15,600,100+Math.random()*50,'rgba(6,12,4,0.92)'));
-    }
-    // Trees
-    ins('g-trees',W.tree(180,580,80));ins('g-trees',W.tree(220,590,65));
-    ins('g-trees',W.tree(700,580,90));ins('g-trees',W.tree(750,585,70));
-    // Ground
-    ins('g-ground',`<rect x="0" y="570" width="900" height="30" fill="rgba(5,8,3,0.98)"/>`);
-    // Birds
-    let birds='';
-    for(let i=0;i<6;i++) birds+=W.bird(120+i*60,80+i*8,0.9);
-    ins('g-birds',`<g style="animation:birdFly 18s linear infinite;">${birds}</g>`);
-    // Fireflies
-    for(let i=0;i<15;i++){
-      const x=200+Math.random()*500,y=350+Math.random()*150;
-      ins('g-fx',`<circle cx="${x}" cy="${y}" r="1.8" fill="rgba(232,201,106,0.75)" filter="url(#glow)" style="animation:starTwinkle ${2+Math.random()*3}s ease-in-out infinite;animation-delay:${Math.random()*4}s"/>`);
-    }
-    // Villagers in distance
-    for(let i=0;i<5;i++){
-      ins('g-wayang',W.villager(200+i*80,570,0.6,i%2?1:-1));
-    }
-  },
-
-  babak_peradaban(){
-    ins('g-stars',W.stars(30));
-    // Sun setting/rising golden
-    ins('g-celestial',`
-      <circle cx="150" cy="200" r="75" fill="url(#sunGrad)" filter="url(#softglow)"/>
-      <circle cx="150" cy="200" r="48" fill="rgba(212,136,42,0.25)"/>
-    `);
-    // Clouds
-    ins('g-clouds',`
-      <ellipse cx="400" cy="120" rx="200" ry="45" fill="rgba(30,20,10,0.35)" filter="url(#inkblur)"/>
-      <ellipse cx="650" cy="90" rx="160" ry="38" fill="rgba(35,22,10,0.3)" filter="url(#inkblur)"/>
-    `);
-    // Mountains
-    ins('g-mountains',W.mountain(0,580,900,200,'rgba(8,6,3,0.9)'));
-    ins('g-mountains',W.mountain(200,580,500,140,'rgba(10,8,4,0.95)'));
-    // Candi complex
-    ins('g-structures',W.candi(220,560,1.2));
-    ins('g-structures',W.candi(450,560,1.5));
-    ins('g-structures',W.candi(680,555,1.1));
-    // Trees flanking
-    ins('g-trees',W.tree(100,570,70));ins('g-trees',W.tree(140,575,55));
-    ins('g-trees',W.tree(760,570,70));ins('g-trees',W.tree(800,575,60));
-    // Ground
-    ins('g-ground',`<rect x="0" y="560" width="900" height="40" fill="rgba(6,4,2,0.98)"/>`);
-    // Path
-    ins('g-ground',`<path d="M420,600 Q430,570 450,555 Q470,540 490,560" stroke="rgba(201,168,76,0.12)" stroke-width="6" fill="none"/>`);
-    // Wayang figures — raja + rakyat procession
-    ins('g-wayang',W.raja(330,560,0.9,1));
-    ins('g-wayang',W.raja(560,558,0.85,-1));
-    for(let i=0;i<4;i++) ins('g-wayang',W.villager(120+i*55,560,0.55,1));
-    for(let i=0;i<4;i++) ins('g-wayang',W.villager(680+i*45,560,0.55,-1));
-    ins('g-wayang',W.warrior(240,558,0.7,1,'stand'));
-    ins('g-wayang',W.warrior(650,558,0.7,-1,'stand'));
-    // Torch fires at candi
-    ins('g-fire',W.fire(200,553,0.8));
-    ins('g-fire',W.fire(440,545,1));
-    ins('g-fire',W.fire(460,545,1));
-    ins('g-fire',W.fire(670,550,0.8));
-    // Gold particles — prosperity
+    // Stars as floating spirits
     for(let i=0;i<18;i++){
-      const x=100+Math.random()*700,y=250+Math.random()*250;
-      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${.5+Math.random()*1.5}" fill="rgba(201,168,76,${.2+Math.random()*.6})" filter="url(#glow)" style="animation:starTwinkle ${1.5+Math.random()*3}s ease-in-out infinite;animation-delay:${Math.random()*3}s"/>`);
+      const x=100+Math.random()*760, y=100+Math.random()*280;
+      addToLayer('g-fx', `<circle cx="${x}" cy="${y}" r="${.6+Math.random()*1.8}" fill="rgba(240,200,80,${.2+Math.random()*.6})" style="animation:twinkle ${2+Math.random()*4}s ease-in-out infinite ${Math.random()*3}s"/>`);
     }
+    // Text Chinese character — 天 (heaven)
+    addToLayer('g-fx', `<text x="480" y="320" font-size="80" text-anchor="middle" fill="rgba(200,160,60,0.08)" font-family="serif">天</text>`);
   },
 
-  babak_perang(){
-    // Dark red sky done via CSS
-    ins('g-celestial',`
-      <ellipse cx="450" cy="80" rx="350" ry="120" fill="rgba(180,20,10,0.15)" filter="url(#softglow)"/>
-    `);
-    // Thunder lightning
-    ins('g-fx',`<g style="animation:thunderFlash 3s ease-in-out infinite;">
-      <path d="M380,50 L355,150 L375,150 L348,280" stroke="rgba(255,255,200,0.8)" stroke-width="2" fill="none"/>
-      <path d="M580,30 L558,120 L578,120 L550,240" stroke="rgba(255,255,200,0.6)" stroke-width="1.5" fill="none"/>
-    </g>`);
-    // Smoke
-    for(let i=0;i<8;i++){
-      ins('g-clouds',`<ellipse cx="${150+i*85}" cy="${300+Math.random()*80}" rx="${40+Math.random()*50}" ry="${20+Math.random()*30}" fill="rgba(25,15,8,${.4+Math.random()*.4})" filter="url(#inkblur)" style="animation:smokeRise ${3+Math.random()*4}s ease-out infinite;animation-delay:${Math.random()*3}s"/>`);
-    }
-    // Mountains
-    ins('g-mountains',W.mountain(0,580,900,200,'rgba(10,5,3,0.95)'));
-    // Ruins of candi — broken
-    ins('g-structures',`
-      <g opacity="0.7">
-        <rect x="180" y="480" width="80" height="80" fill="rgba(8,4,2,0.95)" stroke="rgba(180,20,10,0.2)" stroke-width="0.8"/>
-        <path d="M180,480 L210,440 L240,480" fill="rgba(8,4,2,0.9)"/>
-        <rect x="380" y="460" width="120" height="100" fill="rgba(8,4,2,0.96)" stroke="rgba(180,20,10,0.25)" stroke-width="0.8"/>
-        <path d="M380,460 L420,400 L460,460" fill="rgba(8,4,2,0.92)"/>
-        <path d="M460,460 L490,420" stroke="rgba(180,20,10,0.3)" stroke-width="2" fill="none"/><rect x="650" y="470" width="90" height="90" fill="rgba(8,4,2,0.94)"/>
-      </g>
-    `);
-    // Ground with scattered debris
-    ins('g-ground',`<rect x="0" y="560" width="900" height="40" fill="rgba(6,3,2,0.98)"/>`);
-    // Fires of destruction
-    for(let i=0;i<8;i++) ins('g-fire',W.fire(80+i*110,560,1+Math.random()*.8));
-    // Warriors fighting
-    ins('g-wayang',`<g style="animation:wFight 1.8s ease-in-out infinite;">${W.warrior(300,558,0.85,1,'fight')}</g>`);
-    ins('g-wayang',`<g style="animation:wFight 1.8s ease-in-out infinite;animation-delay:0.3s;">${W.warrior(480,558,0.85,-1,'fight')}</g>`);
-    ins('g-wayang',`<g style="animation:wFight 2s ease-in-out infinite;animation-delay:0.6s;">${W.warrior(180,558,0.7,1,'fight')}</g>`);
-    ins('g-wayang',`<g style="animation:wFight 2s ease-in-out infinite;animation-delay:0.9s;">${W.warrior(660,558,0.7,-1,'fight')}</g>`);
-    // Fallen warrior
-    ins('g-wayang',`<g style="animation:wFall 3s ease forwards;opacity:1;">${W.warrior(420,558,0.65,1)}</g>`);
-    // Red particles — blood/embers
-    for(let i=0;i<25;i++){
-      const x=Math.random()*900,y=100+Math.random()*400;
-      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${.4+Math.random()*1.8}" fill="rgba(${180+Math.random()*60},${Math.random()*30},${Math.random()*10},${.3+Math.random()*.6})" filter="url(#glow)" style="animation:starTwinkle ${.8+Math.random()*2}s ease-in-out infinite;animation-delay:${Math.random()*2}s"/>`);
-    }
-  },
-
-  babak_kehancuran(){
-    ins('g-stars',W.stars(20));
-    // Mist / emptiness
-    ins('g-clouds',`
-      <rect x="0" y="0" width="900" height="600" fill="rgba(5,4,3,0.3)"/>
-      <ellipse cx="450" cy="300" rx="450" ry="200" fill="rgba(10,8,6,0.4)" filter="url(#inkblur)"/>
-    `);
-    // Ruins silhouette
-    ins('g-mountains',W.mountain(0,580,900,160,'rgba(8,6,3,0.92)'));
-    ins('g-structures',`
-      <g opacity="0.5">
-        <rect x="100" y="490" width="60" height="70" fill="rgba(8,5,3,0.88)"/>
-        <path d="M100,490 L125,445" stroke="rgba(40,25,15,0.5)" stroke-width="2" fill="none"/>
-        <rect x="280" y="470" width="90" height="90" fill="rgba(8,5,3,0.9)"/>
-        <rect x="520" y="480" width="70" height="80" fill="rgba(8,5,3,0.88)"/>
-        <rect x="720" y="495" width="55" height="65" fill="rgba(8,5,3,0.86)"/>
-      </g>
-    `);
-    ins('g-ground',`<rect x="0" y="558" width="900" height="42" fill="rgba(5,3,2,0.98)"/>`);
-    // Scattered quill / scroll fragments
-    ins('g-fx',`
-      <g opacity="0.35">
-        <path d="M300,520 Q310,510 325,520 Q315,525 300,520Z" fill="rgba(240,230,200,0.4)"/>
-        <path d="M420,535 Q435,520 448,530" stroke="rgba(201,168,76,0.3)" stroke-width="1.5" fill="none"/>
-        <rect x="560" y="525" width="40" height="22" rx="2" fill="rgba(240,230,200,0.08)" stroke="rgba(201,168,76,0.25)" stroke-width="0.8"/>
-        <path d="M200,510 Q215,498 228,508" stroke="rgba(201,168,76,0.25)" stroke-width="1.5" fill="none"/>
-      </g>
-    `);
-    // Lone villager figure — mourning
-    ins('g-wayang',`<g style="animation:wSwayL 4s ease-in-out infinite;">${W.villager(450,560,0.7,1)}</g>`);
-    // Fading words floating away
-    const words=['...cinta...','...rindu...','...tabah...','...merdeka...','...sunyi...'];
-    words.forEach((w,i)=>{
-      ins('g-fx',`<text x="${100+i*160}" y="${250+Math.sin(i)*80}" font-family="serif" font-size="14" fill="rgba(201,168,76,${.1+i*.04})" transform="rotate(${-8+i*4})" style="animation:smokeRise ${4+i}s ease-out infinite;animation-delay:${i*.8}s">${w}</text>`);
-    });
-    // Dim particles
-    for(let i=0;i<8;i++){
-      const x=Math.random()*900,y=100+Math.random()*350;
-      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${.5+Math.random()}" fill="rgba(201,168,76,${.08+Math.random()*.15})" style="animation:starTwinkle ${4+Math.random()*6}s ease-in-out infinite;animation-delay:${Math.random()*5}s"/>`);
-    }
-  },
-
-  babak_pujangga(){
-    ins('g-stars',W.stars(100));
-    // Mystic moon
-    ins('g-celestial',`
-      <circle cx="450" cy="130" r="90" fill="url(#moonGrad)" filter="url(#softglow)"/>
-      <circle cx="450" cy="130" r="68" fill="rgba(240,225,185,0.05)"/>
-      <circle cx="450" cy="130" r="42" fill="rgba(240,225,185,0.04)"/>
-    `);
-    // Misty mountains
-    ins('g-mountains',W.mountain(0,580,900,240,'rgba(6,8,5,0.85)','rgba(201,168,76,0.04)'));
-    ins('g-mountains',W.mountain(100,580,700,160,'rgba(8,10,6,0.9)','rgba(201,168,76,0.05)'));
-    // Soft trees
-    for(let i=0;i<4;i++) ins('g-trees',W.tree(50+i*60,570,65+i*10));
-    for(let i=0;i<4;i++) ins('g-trees',W.tree(720+i*40,568,60+i*8));
+  /* BABAK 1: KEINDAHAN ALAM — full ink wash landscape */
+  scene1() {
+    addToLayer('g-sky', IW.skyRect('#f5e8c0','#eede98','#e8d480'));
+    // Sun
+    addToLayer('g-sun', IW.sun(155, 115, 55));
+    // Far mountains — ink wash grey like reference image
+    addToLayer('g-mountains-far', IW.mountain(0, 440, 960, 210, 0.55, '#c0b898'));
+    addToLayer('g-mountains-far', IW.mountain(80, 440, 800, 175, 0.65, '#b8ae88'));
+    addToLayer('g-mountains-far', IW.mountain(200, 450, 560, 145, 0.72, '#b0a480'));
+    // Mid mountains
+    addToLayer('g-mountains-mid', IW.mountain(-30, 490, 500, 160, 0.78, '#a09470'));
+    addToLayer('g-mountains-mid', IW.mountain(480, 490, 510, 140, 0.75, '#a89870'));
+    // Small distant pavilion on a mountain
+    addToLayer('g-structures', IW.pavilionSmall(510, 310, 0.45));
+    // Mist bands
+    addToLayer('g-mist-far', IW.mist(345, 0.55));
+    addToLayer('g-mist-far', IW.mist(370, 0.42));
+    addToLayer('g-mist-far', IW.mist(395, 0.32));
+    // Water / lake
+    addToLayer('g-water', IW.water(440, 60));
     // Ground
-    ins('g-ground',`<rect x="0" y="560" width="900" height="40" fill="rgba(4,6,3,0.98)"/>`);
-    // Candi in background — restored, glowing
-    ins('g-structures',`<g opacity="0.65" filter="url(#softglow)">${W.candi(450,560,1.6).replace('fill="rgba(8,5,2,0','fill="rgba(10,6,3,0')}</g>`);
-    // Fireflies / spirits
-    for(let i=0;i<25;i++){
-      const x=150+Math.random()*600,y=200+Math.random()*280;
-      ins('g-fx',`<circle cx="${x}" cy="${y}" r="${1+Math.random()*2}" fill="rgba(201,168,76,${.3+Math.random()*.65})" filter="url(#glow)" style="animation:starTwinkle ${1.2+Math.random()*3}s ease-in-out infinite;animation-delay:${Math.random()*4}s"/>`);
+    addToLayer('g-ground', IW.ground(490));
+    // Red maple trees — left side like reference
+    addToLayer('g-trees-bg', IW.redTree(55, 490, 130));
+    addToLayer('g-trees-bg', IW.redTree(95, 490, 105));
+    // Pine trees right
+    addToLayer('g-trees-fg', IW.pineTree(820, 490, 95, 'rgba(80,60,30,0.88)'));
+    addToLayer('g-trees-fg', IW.pineTree(870, 490, 75, 'rgba(80,60,30,0.82)'));
+    // Lotus flowers left foreground
+    addToLayer('g-lotus', IW.lotus(135, 500, 1.1));
+    addToLayer('g-lotus', IW.lotus(195, 508, 0.85));
+    addToLayer('g-lotus', IW.lotus(88, 508, 0.75));
+    // Rocks
+    addToLayer('g-lotus', IW.rock(165, 510, 24, 10));
+    addToLayer('g-lotus', IW.rock(240, 514, 18, 8));
+    // Path / road right side
+    addToLayer('g-ground', `<path d="M820,580 Q810,540 800,510 Q790,490 780,470" stroke="rgba(150,120,70,0.3)" stroke-width="6" fill="none" stroke-linecap="round"/>`);
+    // Birds
+    addToLayer('g-birds', IW.birds(500, 160, 5));
+    addToLayer('g-birds', IW.birds(-120, 200, 4));
+    // Falling petals
+    addToLayer('g-petals', IW.fallingPetals(10));
+    // Bamboo mid
+    addToLayer('g-trees-bg', IW.bamboo(780, 490, 95, 'rgba(70,85,40,0.82)'));
+    addToLayer('g-trees-bg', IW.bamboo(805, 490, 80, 'rgba(70,85,40,0.75)'));
+  },
+
+  /* BABAK 2: PERADABAN — pagoda, people, ceremony */
+  scene2() {
+    addToLayer('g-sky', IW.skyRect('#f2e4b0','#edd898','#e8cc80'));
+    addToLayer('g-sun', IW.sun(200, 130, 50));
+    // Mountains
+    addToLayer('g-mountains-far', IW.mountain(0, 450, 960, 190, 0.5, '#c4b890'));
+    addToLayer('g-mountains-mid', IW.mountain(0, 470, 960, 145, 0.65, '#b8a878'));
+    // Mist
+    addToLayer('g-mist-far', IW.mist(358, 0.5));
+    addToLayer('g-mist-far', IW.mist(380, 0.38));
+    // Water reflection
+    addToLayer('g-water', IW.water(455, 45));
+    // Ground
+    addToLayer('g-ground', IW.ground(488));
+    // MAIN PAGODA — center stage
+    addToLayer('g-structures', IW.pagoda(490, 488, 1.4));
+    // Smaller pagodas sides
+    addToLayer('g-structures', IW.pagoda(240, 488, 0.85));
+    addToLayer('g-structures', IW.pagoda(740, 488, 0.9));
+    // Trees flanking
+    addToLayer('g-trees-bg', IW.pineTree(130, 488, 85, 'rgba(70,55,25,0.88)'));
+    addToLayer('g-trees-bg', IW.pineTree(168, 488, 68, 'rgba(70,55,25,0.82)'));
+    addToLayer('g-trees-fg', IW.redTree(840, 488, 100));
+    addToLayer('g-trees-fg', IW.redTree(880, 490, 80));
+    // Torches
+    addToLayer('g-fire', IW.torch(455, 481, 0.9));
+    addToLayer('g-fire', IW.torch(530, 481, 0.9));
+    addToLayer('g-fire', IW.torch(222, 481, 0.75));
+    addToLayer('g-fire', IW.torch(720, 481, 0.75));
+    // Lotus foreground
+    addToLayer('g-lotus', IW.lotus(110, 500, 0.9));
+    // Wayang procession
+    addToLayer('g-wayang', IW.wayangJawa(310, 488, 0.72, 1, 'raja', null));
+    addToLayer('g-wayang', IW.wayangJawa(600, 488, 0.72, -1, 'raja', null));
+    for(let i=0;i<3;i++) addToLayer('g-wayang', IW.wayangJawa(120+i*58, 488, 0.52, 1, 'villager', null));
+    for(let i=0;i<3;i++) addToLayer('g-wayang', IW.wayangJawa(750+i*48, 488, 0.52, -1, 'villager', null));
+    addToLayer('g-wayang', IW.wayangJawa(218, 488, 0.6, 1, 'warrior', null));
+    addToLayer('g-wayang', IW.wayangJawa(695, 488, 0.6, -1, 'warrior', null));
+    // Gold particles / prosperity
+    for(let i=0;i<15;i++){
+      const x=150+Math.random()*660, y=200+Math.random()*240;
+      addToLayer('g-fx', `<circle cx="${x}" cy="${y}" r="${.5+Math.random()*1.5}" fill="rgba(201,148,58,${.25+Math.random()*.55})" style="animation:twinkle ${1.5+Math.random()*3}s ease-in-out infinite ${Math.random()*2.5}s"/>`);
     }
-    // Words returning / floating up
-    const ww=['Aku','Cinta','Tabah','Merdeka','Jiwa','Rindu'];
-    ww.forEach((w,i)=>{
-      ins('g-fx',`<text x="${150+i*105}" y="${380-i*15}" font-family="'IM Fell English',serif" font-size="${12+i*2}" fill="rgba(201,168,76,${.2+i*.05})" font-style="italic" style="animation:smokeRise ${5+i*1.2}s ease-in-out infinite;animation-delay:${i*.6}s">${w}</text>`);
-    });
-    // THE PUJANGGA — center, large, with full aura
-    ins('g-wayang',`<g style="animation:wFloat 4s ease-in-out infinite;">${W.pujangga(450,558,1.15,1,true)}</g>`);
-    // Golden ink rays from pujangga
-    ins('g-fx',`
-      <g opacity="0.22" filter="url(#softglow)">
-        <line x1="450" y1="480" x2="200" y2="350" stroke="rgba(201,168,76,0.5)" stroke-width="1.5"/>
-        <line x1="450" y1="480" x2="700" y2="340" stroke="rgba(201,168,76,0.4)" stroke-width="1.2"/>
-        <line x1="450" y1="480" x2="450" y2="200" stroke="rgba(201,168,76,0.6)" stroke-width="2"/>
-        <line x1="450" y1="480" x2="150" y2="420" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
-        <line x1="450" y1="480" x2="750" y2="420" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+    addToLayer('g-birds', IW.birds(300, 170, 4));
+    addToLayer('g-petals', IW.fallingPetals(8));
+  },
+
+  /* BABAK 3: PERANG — dark sky, fire, fighting warriors */
+  scene3() {
+    addToLayer('g-sky', IW.skyRect('#2a1008','#380e08','#500c08'));
+    // Dark red glow
+    addToLayer('g-sky', `<ellipse cx="480" cy="300" rx="480" ry="200" fill="rgba(200,50,10,0.15)" filter="url(#softblur)"/>`);
+    // Lightning
+    addToLayer('g-fx', IW.lightning());
+    // Smoke clouds
+    for(let i=0;i<10;i++){
+      addToLayer('g-fx', `<ellipse cx="${80+i*85}" cy="${240+Math.random()*80}" rx="${38+Math.random()*45}" ry="${18+Math.random()*25}" fill="rgba(60,35,15,${.35+Math.random()*.35})" filter="url(#inkblur)" style="animation:smokeup ${3+Math.random()*3}s ease-out infinite ${Math.random()*2.5}s"/>`);
+    }
+    // Dark silhouette mountains
+    addToLayer('g-mountains-far', IW.mountain(0, 460, 960, 200, 0.88, '#1a0c06'));
+    addToLayer('g-mountains-near', IW.mountain(0, 475, 960, 130, 0.94, '#120806'));
+    // Ruined structures
+    addToLayer('g-structures', `
+      <g opacity="0.75">
+        <rect x="155" y="390" width="70" height="90" fill="rgba(30,15,6,0.95)" stroke="rgba(180,60,20,0.2)" stroke-width="0.8"/>
+        <path d="M155,390 L190,345 L225,390" fill="rgba(28,14,5,0.9)"/>
+        <path d="M222,360 L245,310" stroke="rgba(180,60,20,0.25)" stroke-width="2" fill="none"/>
+        <rect x="395" y="375" width="110" height="105" fill="rgba(30,15,6,0.95)"/>
+        <path d="M395,375 L450,318 L505,375" fill="rgba(28,14,5,0.92)"/>
+        <rect x="680" y="385" width="80" height="95" fill="rgba(30,15,6,0.92)"/>
       </g>
     `);
+    // Ground
+    addToLayer('g-ground', `<rect x="0" y="470" width="960" height="110" fill="rgba(22,10,5,0.98)"/>`);
+    // Fires everywhere
+    for(let i=0;i<8;i++) addToLayer('g-fire', IW.torch(80+i*115, 468, 1.1+Math.random()*.6));
+    for(let i=0;i<4;i++) addToLayer('g-fire', IW.smoke(200+i*180, 455));
+    // FIGHTING WARRIORS — animated
+    addToLayer('g-wayang', `<g style="animation:warfight 1.6s ease-in-out infinite">${IW.wayangJawa(310, 470, 0.88, 1, 'warrior', 'fight')}</g>`);
+    addToLayer('g-wayang', `<g style="animation:warfight 1.6s ease-in-out infinite 0.4s">${IW.wayangJawa(490, 470, 0.88, -1, 'warrior', 'fight')}</g>`);
+    addToLayer('g-wayang', `<g style="animation:warfight 1.8s ease-in-out infinite 0.2s">${IW.wayangJawa(165, 470, 0.68, 1, 'warrior', 'fight')}</g>`);
+    addToLayer('g-wayang', `<g style="animation:warfight 1.8s ease-in-out infinite 0.7s">${IW.wayangJawa(700, 470, 0.68, -1, 'warrior', 'fight')}</g>`);
+    // Fallen warrior
+    addToLayer('g-wayang', `<g style="animation:fallover 3.5s ease forwards">${IW.wayangJawa(430, 470, 0.6, 1, 'warrior', null)}</g>`);
+    // Ember particles
+    for(let i=0;i<28;i++){
+      const x=Math.random()*960, y=80+Math.random()*380;
+      addToLayer('g-fx', `<circle cx="${x}" cy="${y}" r="${.4+Math.random()*2}" fill="rgba(${200+Math.random()*50},${30+Math.random()*40},${Math.random()*20},${.25+Math.random()*.65})" style="animation:twinkle ${.6+Math.random()*2}s ease-in-out infinite ${Math.random()*2}s"/>`);
+    }
+  },
+
+  /* BABAK 4: KEHANCURAN — emptiness, scattered words */
+  scene4() {
+    addToLayer('g-sky', IW.skyRect('#c8b888','#bca870','#b09858'));
+    // Mist heavy
+    for(let i=0;i<4;i++) addToLayer('g-mist-far', IW.mist(280+i*35, 0.45-i*.05));
+    // Mountains barely visible through mist
+    addToLayer('g-mountains-far', IW.mountain(0, 460, 960, 180, 0.4, '#a89860'));
+    addToLayer('g-mountains-mid', IW.mountain(0, 470, 960, 130, 0.55, '#b0a068'));
+    // Ruins
+    addToLayer('g-structures', `
+      <g opacity="0.55">
+        <rect x="80" y="400" width="55" height="70" fill="rgba(100,70,30,0.8)"/>
+        <path d="M80,400 L107,360" stroke="rgba(100,70,30,0.5)" stroke-width="2.5" fill="none"/>
+        <rect x="265" y="388" width="80" height="82" fill="rgba(100,70,30,0.82)"/>
+        <path d="M265,388 L305,340 L345,388" fill="rgba(90,62,22,0.75)"/>
+        <rect x="520" y="395" width="65" height="75" fill="rgba(100,70,30,0.78)"/>
+        <rect x="720" y="402" width="50" height="68" fill="rgba(100,70,30,0.72)"/>
+      </g>
+    `);
+    addToLayer('g-ground', IW.ground(468));
+    // Scattered scroll fragments
+    addToLayer('g-fx', `
+      <g opacity="0.42">
+        <path d="M295,428 Q308,418 322,428 Q312,434 295,428Z" fill="rgba(240,225,185,0.5)" stroke="rgba(160,114,40,0.3)" stroke-width="0.7"/>
+        <path d="M430,438 Q448,424 462,432" stroke="rgba(160,114,40,0.3)" stroke-width="1.5" fill="none"/>
+        <rect x="570" y="430" width="38" height="22" rx="2" fill="rgba(240,225,185,0.12)" stroke="rgba(160,114,40,0.28)" stroke-width="0.8"/>
+        <path d="M195,415 Q210,402 225,412" stroke="rgba(160,114,40,0.25)" stroke-width="1.5" fill="none"/>
+      </g>
+    `);
+    // Scattered ink words floating away
+    addToLayer('g-fx', IW.inkWords(['...cinta...','...rindu...','...tabah...','...merdeka...','...sunyi...','...jiwa...']));
+    // Lone mourning villager
+    addToLayer('g-wayang', `<g style="animation:float1 4.5s ease-in-out infinite">${IW.wayangJawa(480, 468, 0.75, 1, 'villager', null)}</g>`);
+    // Sparse particles
+    for(let i=0;i<8;i++){
+      const x=100+Math.random()*760, y=100+Math.random()*320;
+      addToLayer('g-fx', `<circle cx="${x}" cy="${y}" r="${.4+Math.random()}" fill="rgba(160,120,50,${.1+Math.random()*.2})" style="animation:twinkle ${4+Math.random()*6}s ease-in-out infinite ${Math.random()*5}s"/>`);
+    }
+  },
+
+  /* BABAK 5: PUJANGGA PENJAGA — the hero emerges */
+  scene5() {
+    addToLayer('g-sky', IW.skyRect('#f2e4b0','#e8d898','#e0cc80'));
+    addToLayer('g-sun', IW.moon(680, 110, 52));
+    // Stars light
+    addToLayer('g-stars', IW.stars(50));
+    // Mountains — restored beauty
+    addToLayer('g-mountains-far', IW.mountain(0, 455, 960, 200, 0.5, '#c0b488'));
+    addToLayer('g-mountains-mid', IW.mountain(0, 468, 960, 155, 0.62, '#b4a870'));
+    // Mist gentle
+    addToLayer('g-mist-far', IW.mist(348, 0.48));
+    addToLayer('g-mist-far', IW.mist(372, 0.35));
+    // Water
+    addToLayer('g-water', IW.water(448, 42));
+    // Ground
+    addToLayer('g-ground', IW.ground(486));
+    // Restored candi glow
+    addToLayer('g-structures', IW.pagoda(490, 486, 1.5));
+    addToLayer('g-structures', `<g opacity="0.38" filter="url(#softblur)">${IW.pagoda(490, 486, 1.5)}</g>`);
+    // Flanking trees
+    addToLayer('g-trees-bg', IW.pineTree(115, 486, 80, 'rgba(70,55,25,0.82)'));
+    addToLayer('g-trees-bg', IW.pineTree(155, 486, 62, 'rgba(70,55,25,0.75)'));
+    addToLayer('g-trees-fg', IW.redTree(840, 486, 110));
+    addToLayer('g-trees-fg', IW.redTree(892, 488, 85));
+    // Bamboo
+    addToLayer('g-trees-bg', IW.bamboo(760, 486, 85, 'rgba(65,80,38,0.8)'));
+    // Lotus foreground
+    addToLayer('g-lotus', IW.lotus(128, 498, 1.0));
+    addToLayer('g-lotus', IW.lotus(184, 504, 0.8));
+    // AURA behind pujangga
+    addToLayer('g-fx', IW.aura(480, 420, 105));
+    // Ink rays from pujangga
+    addToLayer('g-fx', `
+      <g opacity="0.18" filter="url(#softblur)">
+        <line x1="480" y1="430" x2="220" y2="310" stroke="rgba(201,148,58,0.6)" stroke-width="2"/>
+        <line x1="480" y1="430" x2="740" y2="300" stroke="rgba(201,148,58,0.5)" stroke-width="1.5"/>
+        <line x1="480" y1="430" x2="480" y2="180" stroke="rgba(201,148,58,0.7)" stroke-width="2.5"/>
+        <line x1="480" y1="430" x2="130" y2="390" stroke="rgba(201,148,58,0.4)" stroke-width="1.2"/>
+        <line x1="480" y1="430" x2="830" y2="390" stroke="rgba(201,148,58,0.4)" stroke-width="1.2"/>
+      </g>
+    `);
+    // THE PUJANGGA — large, floating, with glow
+    addToLayer('g-wayang', `<g style="animation:float1 3.8s ease-in-out infinite">${IW.wayangJawa(480, 486, 1.1, 1, 'pujangga', null)}</g>`);
+    // Words returning like magic
+    const rWords = ['Aku','Cinta','Tabah','Merdeka','Jiwa','Rindu','Sajak'];
+    rWords.forEach((w,i)=>{
+      addToLayer('g-fx', `<text x="${120+i*112}" y="${380-i*14}" font-family="'IM Fell English',serif" font-style="italic" font-size="${13+i}" fill="rgba(122,66,24,${.18+i*.04})" style="animation:smokeup ${4.5+i*1.1}s ease-in-out infinite ${i*.55}s">${w}</text>`);
+    });
+    // Fireflies / spirits
+    for(let i=0;i<22;i++){
+      const x=140+Math.random()*680, y=200+Math.random()*240;
+      addToLayer('g-fx', `<circle cx="${x}" cy="${y}" r="${.8+Math.random()*2.2}" fill="rgba(201,148,58,${.28+Math.random()*.6})" style="animation:twinkle ${1.2+Math.random()*2.8}s ease-in-out infinite ${Math.random()*3.5}s"/>`);
+    }
+    addToLayer('g-birds', IW.birds(220, 175, 5));
+    addToLayer('g-petals', IW.fallingPetals(12));
   }
 };
 
-/* ════════════════════════════
-   PUISI DATA
-════════════════════════════ */
-const PUISI=[
-  {l:0,a:"Sapardi Djoko Damono",b:["Aku ingin
+JSEOF2
+wc -c /tmp/part6.js
